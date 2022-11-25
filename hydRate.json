@@ -1,0 +1,1741 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "hydRate",
+        "version": "1.0.0",
+        "description": "API for hydRate application",
+        "contact": {
+            "name": "Aiden Gonzalez",
+            "url": "https://aidengonzalez.dev/",
+            "email": "aidenlgonzalez2@gmail.com"
+        },
+        "license": {
+            "name": "MIT License",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "paths": {
+        "/api/oauth": {
+            "summary": "Primary endpoint for Oauth2 password authentication scheme",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OauthRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OauthSuccessResponse"
+                                }
+                            }
+                        },
+                        "description": "Successful oauth request, return tokens and token information"
+                    },
+                    "400": {
+                        "description": "Request is missing required information or is incorrectly formatted"
+                    },
+                    "401": {
+                        "description": "Client and/or user credentials are incorrect"
+                    }
+                },
+                "summary": "Oauth2 password authentication"
+            }
+        },
+        "/api/oauth/refresh": {
+            "summary": "For using refresh token to obtain new access token",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OauthRefreshRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OauthSuccessResponse"
+                                }
+                            }
+                        },
+                        "description": "Successful refresh request, grant new tokens"
+                    },
+                    "400": {
+                        "description": "Request is missing required information or is incorrectly formatted"
+                    },
+                    "401": {
+                        "description": "Client credentials incorrect or refresh token expired!"
+                    }
+                },
+                "summary": "Oauth2 token refresh"
+            }
+        },
+        "/api/signup": {
+            "summary": "Request creation of new user account",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SignupRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Account successfully created"
+                    },
+                    "401": {
+                        "description": "Client credentials invalid!"
+                    }
+                },
+                "summary": "Create new user account"
+            }
+        },
+        "/api/fountains": {
+            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) fountains",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of fountain to fetch.\nOverrides all other query parameters!",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "longitude",
+                        "description": "Longitude to fetch fountains around.\nIf provided, must also provide latitude!",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "latitude",
+                        "description": "Latitude to fetch fountains around.\nIf provided, must provide longitude!",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "bottle_filler",
+                        "description": "Filter fountains by bottle_filler property",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "radius",
+                        "description": "Radius to fetch fountains within",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Fountain"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successful query.  Return array of fountains."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get a group of fountains (query) or a certain fountain (by ID)"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FountainInfo"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of fountain to update",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fountain successfully updated!"
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Update fountain info for a particular fountain"
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FountainInfo"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Malformed request! Missing some information or not in right format."
+                    },
+                    "201": {
+                        "headers": {
+                            "Location": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "Location": {
+                                        "value": "http://hydrate.com/api/fountains?id=XXXXX"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successfully added fountain!"
+                    },
+                    "401": {
+                        "description": "Access token incorrect / insufficient / expired!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Add a fountain"
+            }
+        },
+        "/api/bathrooms": {
+            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) bathrooms",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of bathroom to fetch.\nOverrides all other query parameters!",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "longitude",
+                        "description": "Longitude to fetch bathrooms around.\nIf provided, must also provide latitude!",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "latitude",
+                        "description": "Latitude to fetch bathrooms around.\nIf provided, must provide longitude!",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "radius",
+                        "description": "Radius to fetch bathrooms within",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query",
+                        "required": false
+                    },
+                    {
+                        "name": "baby_changer",
+                        "description": "Filter bathrooms by baby_changer property",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "gender",
+                        "description": "Filter bathrooms by gender property",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": false
+                    },
+                    {
+                        "name": "sanitary_products",
+                        "description": "Filter bathrooms by sanitary_products property",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Fountain"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successful query.  Return array of fountains."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get a group of bathrooms (query) or a certain bathroom (by ID)"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BathroomInfo"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of bathroom to update",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bathroom successfully updated!"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Update bathroom info for a particular bathroom"
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BathroomInfo"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "headers": {
+                            "Location": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "Location": {
+                                        "value": "http://hydrate.com/api/bathrooms?id=XXXXX"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successfully added bathroom!"
+                    },
+                    "400": {
+                        "description": "Malformed request! Missing some information or not in right format."
+                    },
+                    "401": {
+                        "description": "Access token incorrect / insufficient / expired!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Add a bathroom"
+            }
+        },
+        "/api/bathrooms/ratings": {
+            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) bathroom ratings",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of bathroom to fetch ratings for",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "name": "page_size",
+                        "description": "Optional pagination: Size of pages to fetch (number of ratings per page)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "page_offset",
+                        "description": "Optional pagination: Offset of page to fetch (default is 0, max is 100)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BathroomRating"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successful query.  Return array of bathroom ratings."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get ratings for a particular bathroom"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BathroomRatingDetails"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of bathroom rating to update",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bathroom rating successfully updated!"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Update bathroom rating"
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BathroomRatingDetails"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "bathroom_id",
+                        "description": "ID of bathroom to add rating to",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "headers": {
+                            "Location": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "Location": {
+                                        "value": "http://hydrate.com/api/bathrooms/ratings?id=XXXXX"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successfully added bathroom rating!"
+                    },
+                    "400": {
+                        "description": "Malformed request! Missing some information or not in right format."
+                    },
+                    "401": {
+                        "description": "Access token incorrect / insufficient / expired!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Add a bathroom rating"
+            }
+        },
+        "/api/fountains/ratings": {
+            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) fountain ratings",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of fountain to fetch ratings for",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "name": "page_size",
+                        "description": "Optional pagination: Size of pages to fetch (number of ratings per page)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "page_offset",
+                        "description": "Optional pagination: Offset of page to fetch (default is 0, max is 100)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/FountainRating"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successful query.  Return array of fountain ratings."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get ratings for a particular fountain"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FountainRatingDetails"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of fountain rating to update",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fountain rating successfully updated!"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Update fountain rating"
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FountainRatingDetails"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "fountain_id",
+                        "description": "ID of fountain to add rating to",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "headers": {
+                            "Location": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "Location": {
+                                        "value": "http://hydrate.com/api/fountains/ratings?id=XXXXX"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successfully added fountain rating!"
+                    },
+                    "400": {
+                        "description": "Malformed request! Missing some information or not in right format."
+                    },
+                    "401": {
+                        "description": "Access token incorrect / insufficient / expired!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Add a fountain rating"
+            }
+        },
+        "/api/bathrooms/pictures": {
+            "summary": "Add, retrieve, and delete bathroom pictures",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "offset",
+                        "description": "Offset of photo to fetch (first picture is 0)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "bathroom_id",
+                        "description": "ID of bathroom to fetch pictures for",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Picture"
+                                }
+                            }
+                        },
+                        "description": "Successful photo link request"
+                    },
+                    "400": {
+                        "description": "Malformed request (may be missing required parameters)"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    },
+                    "404": {
+                        "description": "Picture of bathroom with provided offset does not exist!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get bathroom photos",
+                "description": "Fetches all if no offset provided.  Otherwise fetches just that photo."
+            },
+            "post": {
+                "requestBody": {
+                    "description": "Picture link",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "bathroom_id",
+                        "description": "ID of bathroom to add photo for",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "headers": {
+                            "Location": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "Location": {
+                                        "value": "http://hydrate.com/api/bathrooms/pictures?bathroom_id=XXX&offset=X"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successfully added picture!"
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Add bathroom picture (link only, file hosting will have to be handled separately)"
+            },
+            "delete": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of picture to remove",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully removed picture!"
+                    },
+                    "400": {
+                        "description": "Malformed request (missing ID?)"
+                    },
+                    "403": {
+                        "description": "Authorization/authentication failed!"
+                    },
+                    "404": {
+                        "description": "Picture with provided ID not found!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Delete a bathroom picture"
+            }
+        },
+        "/api/fountains/pictures": {
+            "summary": "Add, retrieve, and delete fountain pictures",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "offset",
+                        "description": "Offset of photo to fetch (first picture is 0)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "fountain_id",
+                        "description": "ID of fountain to fetch pictures for",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Picture"
+                                }
+                            }
+                        },
+                        "description": "Successful photo link request"
+                    },
+                    "400": {
+                        "description": "Malformed request (may be missing required parameters)"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    },
+                    "404": {
+                        "description": "Picture of fountain with provided offset does not exist!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get fountain photos",
+                "description": "Fetches all if no offset provided.  Otherwise fetches just that photo."
+            },
+            "post": {
+                "requestBody": {
+                    "description": "Picture link",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "fountain_id",
+                        "description": "ID of fountain to add photo for",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "headers": {
+                            "Location": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "Location": {
+                                        "value": "http://hydrate.com/api/fountains/pictures?fountain_id=XXX&offset=X"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successfully added picture!"
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Add fountain picture (link only, file hosting will have to be handled separately)"
+            },
+            "delete": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of picture to remove",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully removed picture!"
+                    },
+                    "400": {
+                        "description": "Malformed request (missing ID?)"
+                    },
+                    "403": {
+                        "description": "Authorization/authentication failed!"
+                    },
+                    "404": {
+                        "description": "Picture with provided ID not found!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Delete a fountain picture"
+            }
+        },
+        "/api/profiles": {
+            "summary": "Endpoint for getting and updating profiles",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "username",
+                        "description": "Username of user to fetch profile for",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserProfile"
+                                }
+                            }
+                        },
+                        "description": "Successfully fetched user profile"
+                    },
+                    "400": {
+                        "description": "Malformed request (missing username?)"
+                    },
+                    "403": {
+                        "description": "Authorization/authentication failed (access token invalid, or maybe not allowed to view this profile?)"
+                    },
+                    "404": {
+                        "description": "User with provided username not found!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get a profile by username"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserProfile"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of user whose profile to update",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated user profile!"
+                    },
+                    "400": {
+                        "description": "Malformed request!"
+                    },
+                    "401": {
+                        "description": "Authorization/authentication failed!"
+                    },
+                    "404": {
+                        "description": "Could not find user with ID"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Update user profile by user ID"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "description": "",
+                "required": [
+                    "username",
+                    "email",
+                    "created",
+                    "hashed_password",
+                    "profile",
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "description": "Username of user",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email address of user",
+                        "type": "string"
+                    },
+                    "created": {
+                        "description": "Timestamp of when user was created",
+                        "type": "number"
+                    },
+                    "hashed_password": {
+                        "$ref": "#/components/schemas/HashedPassword",
+                        "description": "Hash of user password for authentication"
+                    },
+                    "profile": {
+                        "$ref": "#/components/schemas/UserProfile",
+                        "description": "User profile"
+                    },
+                    "id": {
+                        "description": "Unique user id (not technically necessary but helpful)",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "username": "some text",
+                    "email": "some text",
+                    "created": 15532523,
+                    "hashed_password": {
+                        "hash_pass": "some text",
+                        "hash_salt": "some text"
+                    },
+                    "profile": {
+                        "full_name": "some text",
+                        "picture_link": "some text"
+                    },
+                    "id": "some text"
+                }
+            },
+            "UserProfile": {
+                "description": "",
+                "required": [
+                    "full_name",
+                    "picture_link"
+                ],
+                "type": "object",
+                "properties": {
+                    "full_name": {
+                        "description": "Full name of user",
+                        "type": "string"
+                    },
+                    "picture_link": {
+                        "description": "Link to profile photo",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "full_name": "some text",
+                    "picture_link": "some text"
+                }
+            },
+            "FountainRating": {
+                "description": "",
+                "required": [
+                    "id",
+                    "fountain_id",
+                    "user_id",
+                    "details"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Unique id of fountain rating (technically not necessary but nice to have)",
+                        "type": "string"
+                    },
+                    "fountain_id": {
+                        "description": "ID of fountain rating is for",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "ID of user who created rating",
+                        "type": "string"
+                    },
+                    "details": {
+                        "$ref": "#/components/schemas/FountainRatingDetails",
+                        "description": "Details of fountain rating"
+                    }
+                },
+                "example": {
+                    "id": "some text",
+                    "fountain_id": "some text",
+                    "user_id": "some text",
+                    "details": {
+                        "pressure": 2,
+                        "taste": 1,
+                        "temperature": 5
+                    }
+                }
+            },
+            "Picture": {
+                "description": "",
+                "required": [
+                    "id",
+                    "f_or_b_id",
+                    "picture_link"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Unique ID of picture",
+                        "type": "string"
+                    },
+                    "f_or_b_id": {
+                        "description": "Fountain or bathroom ID picture is for",
+                        "type": "string"
+                    },
+                    "picture_link": {
+                        "description": "Link to picture",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "id": "some text",
+                    "f_or_b_id": "some text",
+                    "picture_link": "some text"
+                }
+            },
+            "BathroomRating": {
+                "description": "",
+                "required": [
+                    "id",
+                    "bathroom_id",
+                    "user_id",
+                    "details"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Unique id of bathroom rating",
+                        "type": "string"
+                    },
+                    "bathroom_id": {
+                        "description": "ID of bathroom rating is for",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "ID of user who created bathroom rating",
+                        "type": "string"
+                    },
+                    "details": {
+                        "$ref": "#/components/schemas/BathroomRatingDetails",
+                        "description": "Details of bathroom rating"
+                    }
+                },
+                "example": {
+                    "id": "some text",
+                    "bathroom_id": "some text",
+                    "user_id": "some text",
+                    "details": {
+                        "cleanliness": 3,
+                        "decor": 4,
+                        "drying": 2,
+                        "privacy": 4,
+                        "washing": 5
+                    }
+                }
+            },
+            "OauthRequest": {
+                "description": "Body of POST request for Oauth2 authentication",
+                "required": [
+                    "client_credentials",
+                    "user_credentials"
+                ],
+                "type": "object",
+                "properties": {
+                    "client_credentials": {
+                        "$ref": "#/components/schemas/ClientCredentials",
+                        "description": "Credentials for client application"
+                    },
+                    "user_credentials": {
+                        "$ref": "#/components/schemas/UserCredentials",
+                        "description": "Credentials for user"
+                    }
+                },
+                "example": {
+                    "client_credentials": {
+                        "client_id": "some text",
+                        "client_secret": "some text"
+                    },
+                    "user_credentials": {
+                        "email": "some text",
+                        "password": "some text"
+                    }
+                }
+            },
+            "UserCredentials": {
+                "description": "Set of login credentials",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "description": "Email address of user",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "User's password",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "email": "some text",
+                    "password": "some text"
+                }
+            },
+            "ClientCredentials": {
+                "description": "Secret credentials of trusted client",
+                "required": [
+                    "client_id",
+                    "client_secret"
+                ],
+                "type": "object",
+                "properties": {
+                    "client_id": {
+                        "description": "ID of client application",
+                        "type": "string"
+                    },
+                    "client_secret": {
+                        "description": "Secret of client application",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "client_id": "some text",
+                    "client_secret": "some text"
+                }
+            },
+            "OauthSuccessResponse": {
+                "description": "Tokens and token information returned after successful Oauth2 request   ",
+                "required": [
+                    "access_token",
+                    "refresh_token",
+                    "token_type",
+                    "expires"
+                ],
+                "type": "object",
+                "properties": {
+                    "access_token": {
+                        "description": "Access token for user",
+                        "type": "string"
+                    },
+                    "refresh_token": {
+                        "description": "Token to use to get a new token once access_token expires",
+                        "type": "string"
+                    },
+                    "token_type": {
+                        "description": "Type of token (will be \"Bearer\")",
+                        "type": "string"
+                    },
+                    "expires": {
+                        "description": "Number of seconds that access_token is valid for",
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "access_token": "some text",
+                    "refresh_token": "some text",
+                    "token_type": "some text",
+                    "expires": 36000
+                }
+            },
+            "OauthRefreshRequest": {
+                "description": "Request format for refreshing oauth access token",
+                "required": [
+                    "client_credentials",
+                    "refresh_token"
+                ],
+                "type": "object",
+                "properties": {
+                    "client_credentials": {
+                        "$ref": "#/components/schemas/ClientCredentials",
+                        "description": "Credentials for client application"
+                    },
+                    "refresh_token": {
+                        "description": "Refresh token",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "client_credentials": {
+                        "client_id": "some text",
+                        "client_secret": "some text"
+                    },
+                    "refresh_token": "some text"
+                }
+            },
+            "HashedPassword": {
+                "description": "SHA256 hashed password (with salt)",
+                "required": [
+                    "hash_pass",
+                    "hash_salt"
+                ],
+                "type": "object",
+                "properties": {
+                    "hash_pass": {
+                        "description": "Hashed password (SHA256)",
+                        "type": "string"
+                    },
+                    "hash_salt": {
+                        "description": "Salt used for SHA256 hash",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "hash_pass": "some text",
+                    "hash_salt": "some text"
+                }
+            },
+            "Location": {
+                "description": "Identify a unique location (longitude and latitude)",
+                "required": [
+                    "longitude",
+                    "latitude"
+                ],
+                "type": "object",
+                "properties": {
+                    "longitude": {
+                        "description": "Longitude of location",
+                        "type": "number"
+                    },
+                    "latitude": {
+                        "description": "Latitude of location",
+                        "type": "number"
+                    }
+                },
+                "example": {
+                    "longitude": 38.13,
+                    "latitude": 35.74
+                }
+            },
+            "SignupRequest": {
+                "description": "Information needed for signup request",
+                "required": [
+                    "user_credentials",
+                    "username",
+                    "client_credentials"
+                ],
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "description": "New username for new user",
+                        "type": "string"
+                    },
+                    "user_credentials": {
+                        "$ref": "#/components/schemas/UserCredentials",
+                        "description": "Set of new credentials for new user"
+                    },
+                    "client_credentials": {
+                        "$ref": "#/components/schemas/ClientCredentials",
+                        "description": "Set of client credentials"
+                    }
+                },
+                "example": {
+                    "username": "some text",
+                    "user_credentials": {
+                        "email": "some text",
+                        "password": "some text"
+                    },
+                    "client_credentials": {
+                        "client_id": "some text",
+                        "client_secret": "some text"
+                    }
+                }
+            },
+            "Fountain": {
+                "description": "Basic fountain information",
+                "required": [
+                    "id",
+                    "info"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Unique ID of fountain",
+                        "type": "string"
+                    },
+                    "info": {
+                        "$ref": "#/components/schemas/FountainInfo",
+                        "description": "Fountain information"
+                    }
+                },
+                "example": {
+                    "id": "some text",
+                    "info": {
+                        "name": "some text",
+                        "bottle_filler": true,
+                        "location": {
+                            "longitude": 76.73,
+                            "latitude": 39.89
+                        }
+                    }
+                }
+            },
+            "FountainInfo": {
+                "description": "",
+                "required": [
+                    "name",
+                    "bottle_filler",
+                    "location"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Name for fountain",
+                        "type": "string"
+                    },
+                    "bottle_filler": {
+                        "description": "Whether or not the fountain features a dedicated bottle filler",
+                        "type": "boolean"
+                    },
+                    "location": {
+                        "$ref": "#/components/schemas/Location",
+                        "description": "Location of fountain"
+                    }
+                },
+                "example": {
+                    "name": "some text",
+                    "bottle_filler": true,
+                    "location": {
+                        "longitude": 20.66,
+                        "latitude": 98.72
+                    }
+                }
+            },
+            "BathroomInfo": {
+                "description": "",
+                "required": [
+                    "name",
+                    "gender",
+                    "sanitary_products",
+                    "baby_changer",
+                    "location"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Name of bathroom",
+                        "type": "string"
+                    },
+                    "gender": {
+                        "description": "Gender/sex of bathroom",
+                        "pattern": "^((male)|(female)|(unisex))$",
+                        "type": "string"
+                    },
+                    "sanitary_products": {
+                        "description": "Whether or not bathroom has sanitary products available (such as tampons and pads)",
+                        "type": "boolean"
+                    },
+                    "baby_changer": {
+                        "description": "Whether or not bathroom has a baby changer available",
+                        "type": "boolean"
+                    },
+                    "location": {
+                        "$ref": "#/components/schemas/Location",
+                        "description": "Location of bathroom"
+                    }
+                },
+                "example": {
+                    "name": "some text",
+                    "gender": "some text",
+                    "sanitary_products": true,
+                    "baby_changer": true,
+                    "location": {
+                        "longitude": 67.81,
+                        "latitude": 46.38
+                    }
+                }
+            },
+            "Bathroom": {
+                "description": "Bathroom",
+                "required": [
+                    "id",
+                    "info"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Unique ID of bathroom",
+                        "type": "string"
+                    },
+                    "info": {
+                        "$ref": "#/components/schemas/BathroomInfo",
+                        "description": "Info for bathroom"
+                    }
+                },
+                "example": {
+                    "id": "some text",
+                    "info": {
+                        "name": "some text",
+                        "gender": "some text",
+                        "sanitary_products": true,
+                        "baby_changer": true,
+                        "location": {
+                            "longitude": 4.21,
+                            "latitude": 27.87
+                        }
+                    }
+                }
+            },
+            "BathroomRatingDetails": {
+                "description": "Actual details of bathroom rating",
+                "required": [
+                    "cleanliness",
+                    "decor",
+                    "drying",
+                    "privacy",
+                    "washing"
+                ],
+                "type": "object",
+                "properties": {
+                    "cleanliness": {
+                        "description": "Cleanliness rating of bathroom (0-5)",
+                        "type": "integer"
+                    },
+                    "decor": {
+                        "description": "Decor rating of bathroom (0-5)",
+                        "type": "integer"
+                    },
+                    "drying": {
+                        "description": "Drying rating of bathroom (0-5)",
+                        "type": "integer"
+                    },
+                    "privacy": {
+                        "description": "Privacy rating of bathroom (0-5)",
+                        "type": "integer"
+                    },
+                    "washing": {
+                        "description": "Washing rating of bathroom (0-5)",
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "cleanliness": 76,
+                    "decor": 1,
+                    "drying": 2,
+                    "privacy": 3,
+                    "washing": 5
+                }
+            },
+            "FountainRatingDetails": {
+                "description": "Details of fountain rating",
+                "required": [
+                    "pressure",
+                    "taste",
+                    "temperature"
+                ],
+                "type": "object",
+                "properties": {
+                    "pressure": {
+                        "description": "Pressure rating for fountain (0-5)",
+                        "type": "integer"
+                    },
+                    "taste": {
+                        "description": "Taste rating for fountain (0-5)",
+                        "type": "integer"
+                    },
+                    "temperature": {
+                        "description": "Temperature rating for fountain (0-5)",
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "pressure": 5,
+                    "taste": 4,
+                    "temperature": 1
+                }
+            }
+        },
+        "securitySchemes": {
+            "Password_Oauth2": {
+                "flows": {
+                    "password": {
+                        "tokenUrl": "/oauth",
+                        "refreshUrl": "/refresh",
+                        "scopes": {
+                            "Standard Access Scope": "For standard user access"
+                        }
+                    }
+                },
+                "type": "oauth2",
+                "description": "Oauth2 \"Resource Owner Password Credentials\" scheme with access and refresh tokens"
+            },
+            "Access_Token": {
+                "type": "apiKey",
+                "description": "After using Oauth2 to retrieve access token, can use access token to authenticate and authorize for protected endpoints (Authorization = Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}

@@ -1,11 +1,55 @@
+require('dotenv').config();
 import express from 'express';
-const app = express();
-const port = 3000;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+// Server port
+const port = process.env.PORT;
+
+// Server
+const server = express();
+
+// Body parser middleware
+const BodyParser = require('body-parser');
+server.use(BodyParser.json());
+server.use(BodyParser.urlencoded({ extended: true }));
+
+// Spec validator middleware (using to validate requests)
+const OpenApiValidator = require('express-openapi-validator');
+server.use(
+  OpenApiValidator.middleware({
+    apiSpec: './lantern.yaml',
+    validateRequests: true, // (default)
+    validateResponses: false // false by default
+  })
+);
+
+// Error handling middleware
+server.use((err, req, res, next) => {
+  // format error
+  res.status(err.status || 500).json({
+    message: err.message,
+    errors: err.errors
+  });
 });
 
-app.listen(port, () => {
+// Routers
+const bathroomsRouter = require('./bathrooms/bathroomsRouter');
+const fountainsRouter = require('./fountains/fountainsRouter');
+const oauthRouter = require('./oauth/oauthRouter');
+const profilesRouter = require('./profiles/profilesRouter');
+const signupRouter = require('./signup/signupRouter');
+server.use('/api/', bathroomsRouter);
+server.use('/api/', fountainsRouter);
+server.use('/api/', oauthRouter);
+server.use('/api/', profilesRouter);
+server.use('/api/', signupRouter);
+
+// Base endpoint
+server.get('/', (req, res) => {
+    res.send('Server OK');
+});
+
+server.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);
 });
+
+module.exports = server;
