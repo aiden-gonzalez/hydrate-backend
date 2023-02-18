@@ -15,74 +15,6 @@
         }
     },
     "paths": {
-        "/api/oauth": {
-            "summary": "Primary endpoint for Oauth2 password authentication scheme",
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/OauthRequest"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/OauthSuccessResponse"
-                                }
-                            }
-                        },
-                        "description": "Successful oauth request, return tokens and token information"
-                    },
-                    "400": {
-                        "description": "Request is missing required information or is incorrectly formatted"
-                    },
-                    "401": {
-                        "description": "Client and/or user credentials are incorrect"
-                    }
-                },
-                "summary": "Oauth2 password authentication"
-            }
-        },
-        "/api/oauth/refresh": {
-            "summary": "For using refresh token to obtain new access token",
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/OauthRefreshRequest"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/OauthSuccessResponse"
-                                }
-                            }
-                        },
-                        "description": "Successful refresh request, grant new tokens"
-                    },
-                    "400": {
-                        "description": "Request is missing required information or is incorrectly formatted"
-                    },
-                    "401": {
-                        "description": "Client credentials incorrect or refresh token expired!"
-                    }
-                },
-                "summary": "Oauth2 token refresh"
-            }
-        },
         "/api/signup": {
             "summary": "Request creation of new user account",
             "post": {
@@ -1119,6 +1051,74 @@
                 ],
                 "summary": "Update user profile by user ID"
             }
+        },
+        "/api/auth": {
+            "summary": "Primary endpoint for password authentication scheme",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthSuccessResponse"
+                                }
+                            }
+                        },
+                        "description": "Successful oauth request, return tokens and token information"
+                    },
+                    "400": {
+                        "description": "Request is missing required information or is incorrectly formatted"
+                    },
+                    "401": {
+                        "description": "Client and/or user credentials are incorrect"
+                    }
+                },
+                "summary": "Oauth2 password authentication"
+            }
+        },
+        "/api/auth/refresh": {
+            "summary": "For using refresh token to obtain new access token",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthRefreshRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthSuccessResponse"
+                                }
+                            }
+                        },
+                        "description": "Successful refresh request, grant new tokens"
+                    },
+                    "400": {
+                        "description": "Request is missing required information or is incorrectly formatted"
+                    },
+                    "401": {
+                        "description": "Client credentials incorrect or refresh token expired!"
+                    }
+                },
+                "summary": "Auth token refresh"
+            }
         }
     },
     "components": {
@@ -1303,34 +1303,6 @@
                     }
                 }
             },
-            "OauthRequest": {
-                "description": "Body of POST request for Oauth2 authentication",
-                "required": [
-                    "client_credentials",
-                    "user_credentials"
-                ],
-                "type": "object",
-                "properties": {
-                    "client_credentials": {
-                        "$ref": "#/components/schemas/ClientCredentials",
-                        "description": "Credentials for client application"
-                    },
-                    "user_credentials": {
-                        "$ref": "#/components/schemas/UserCredentials",
-                        "description": "Credentials for user"
-                    }
-                },
-                "example": {
-                    "client_credentials": {
-                        "client_id": "some text",
-                        "client_secret": "some text"
-                    },
-                    "user_credentials": {
-                        "email": "some text",
-                        "password": "some text"
-                    }
-                }
-            },
             "UserCredentials": {
                 "description": "Set of login credentials",
                 "required": [
@@ -1373,65 +1345,6 @@
                 "example": {
                     "client_id": "some text",
                     "client_secret": "some text"
-                }
-            },
-            "OauthSuccessResponse": {
-                "description": "Tokens and token information returned after successful Oauth2 request   ",
-                "required": [
-                    "access_token",
-                    "refresh_token",
-                    "token_type",
-                    "expires"
-                ],
-                "type": "object",
-                "properties": {
-                    "access_token": {
-                        "description": "Access token for user",
-                        "type": "string"
-                    },
-                    "refresh_token": {
-                        "description": "Token to use to get a new token once access_token expires",
-                        "type": "string"
-                    },
-                    "token_type": {
-                        "description": "Type of token (will be \"Bearer\")",
-                        "type": "string"
-                    },
-                    "expires": {
-                        "description": "Number of seconds that access_token is valid for",
-                        "type": "integer"
-                    }
-                },
-                "example": {
-                    "access_token": "some text",
-                    "refresh_token": "some text",
-                    "token_type": "some text",
-                    "expires": 36000
-                }
-            },
-            "OauthRefreshRequest": {
-                "description": "Request format for refreshing oauth access token",
-                "required": [
-                    "client_credentials",
-                    "refresh_token"
-                ],
-                "type": "object",
-                "properties": {
-                    "client_credentials": {
-                        "$ref": "#/components/schemas/ClientCredentials",
-                        "description": "Credentials for client application"
-                    },
-                    "refresh_token": {
-                        "description": "Refresh token",
-                        "type": "string"
-                    }
-                },
-                "example": {
-                    "client_credentials": {
-                        "client_id": "some text",
-                        "client_secret": "some text"
-                    },
-                    "refresh_token": "some text"
                 }
             },
             "HashedPassword": {
@@ -1714,25 +1627,87 @@
                     "taste": 4,
                     "temperature": 1
                 }
+            },
+            "AuthSuccessResponse": {
+                "description": "Tokens and token information returned after successful auth request   ",
+                "required": [
+                    "access_token",
+                    "refresh_token",
+                    "token_type",
+                    "expires"
+                ],
+                "type": "object",
+                "properties": {
+                    "access_token": {
+                        "description": "Access token for user",
+                        "type": "string"
+                    },
+                    "refresh_token": {
+                        "description": "Token to use to get a new token once access_token expires",
+                        "type": "string"
+                    },
+                    "token_type": {
+                        "description": "Type of token (will be \"Bearer\")",
+                        "type": "string"
+                    },
+                    "expires": {
+                        "description": "Number of seconds that access_token is valid for",
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "access_token": "some text",
+                    "refresh_token": "some text",
+                    "token_type": "some text",
+                    "expires": 36000
+                }
+            },
+            "AuthRefreshRequest": {
+                "description": "Request format for refreshing auth access token",
+                "required": [
+                    "expired_token",
+                    "refresh_token"
+                ],
+                "type": "object",
+                "properties": {
+                    "refresh_token": {
+                        "description": "Refresh token",
+                        "type": "string"
+                    },
+                    "expired_token": {
+                        "description": "Expired access token",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "refresh_token": "some text",
+                    "expired_token": "some text"
+                }
+            },
+            "AuthRequest": {
+                "description": "Body of POST request for authentication",
+                "required": [
+                    "user_credentials"
+                ],
+                "type": "object",
+                "properties": {
+                    "user_credentials": {
+                        "$ref": "#/components/schemas/UserCredentials",
+                        "description": "Credentials for user"
+                    }
+                },
+                "example": {
+                    "user_credentials": {
+                        "email": "some text",
+                        "password": "some text"
+                    }
+                }
             }
         },
         "securitySchemes": {
-            "Password_Oauth2": {
-                "flows": {
-                    "password": {
-                        "tokenUrl": "/oauth",
-                        "refreshUrl": "/refresh",
-                        "scopes": {
-                            "Standard Access Scope": "For standard user access"
-                        }
-                    }
-                },
-                "type": "oauth2",
-                "description": "Oauth2 \"Resource Owner Password Credentials\" scheme with access and refresh tokens"
-            },
             "Access_Token": {
                 "type": "apiKey",
-                "description": "After using Oauth2 to retrieve access token, can use access token to authenticate and authorize for protected endpoints (Authorization = Bearer <token>)",
+                "description": "Obtain access token after sending email and password",
                 "name": "Authorization",
                 "in": "header"
             }

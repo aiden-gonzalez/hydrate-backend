@@ -34,12 +34,12 @@ server.use((err, req, res, next) => {
 // Routers
 const bathroomsRouter = require('./bathrooms/bathroomsRouter');
 const fountainsRouter = require('./fountains/fountainsRouter');
-const oauthRouter = require('./oauth/oauthRouter');
+const authRouter = require('./auth/authRouter');
 const profilesRouter = require('./profiles/profilesRouter');
 const signupRouter = require('./signup/signupRouter');
 server.use('/api/', bathroomsRouter);
 server.use('/api/', fountainsRouter);
-server.use('/api/', oauthRouter);
+server.use('/api/', authRouter);
 server.use('/api/', profilesRouter);
 server.use('/api/', signupRouter);
 
