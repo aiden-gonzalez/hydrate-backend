@@ -10,6 +10,8 @@ let fount;
 let pic;
 let user;
 
+// TODO incorporate Mongoose?
+
 function connect () {
     client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
     client.connect(err => {
