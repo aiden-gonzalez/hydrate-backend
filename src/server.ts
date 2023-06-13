@@ -16,7 +16,7 @@ server.use(BodyParser.urlencoded({ extended: true }));
 const OpenApiValidator = require('express-openapi-validator');
 server.use(
   OpenApiValidator.middleware({
-    apiSpec: './lantern.yaml',
+    apiSpec: './hydRate.json',
     validateRequests: true, // (default)
     validateResponses: false // false by default
   })
