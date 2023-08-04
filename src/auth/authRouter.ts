@@ -1,5 +1,6 @@
-const authRouter = require('express').Router();
-const authController = require('./authController');
+import authController = require('./authController');
+import express from "express";
+const authRouter = express.Router();
 
 // auth
 authRouter.post(
@@ -10,4 +11,4 @@ authRouter.post(
 // auth/refresh
 authRouter.post('/auth/refresh', authController.refreshToken);
 
-module.exports = authRouter;
+export default authRouter;

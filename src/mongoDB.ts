@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose = require("mongoose");
 const mongoURL = process.env.MONGO_URL;
 
 mongoose.set("strictQuery", false);
@@ -6,7 +6,10 @@ mongoose.set("strictQuery", false);
 const bath = mongoose.model("Bath", new mongoose.Schema({
     id: String,
     name: String,
-    gender: String,
+    gender: {
+        type: String,
+        enum: ["male", "female", "unisex"]
+    },
     sanitary_products: Boolean,
     baby_changer: Boolean,
     longitude: Number,
@@ -16,11 +19,31 @@ const bath = mongoose.model("Bath", new mongoose.Schema({
 const bathRate = mongoose.model("BathRate", new mongoose.Schema({
     id: String,
     bathroom_id: String,
-    cleanliness: Number,
-    privacy: Number,
-    washing: Number,
-    drying: Number,
-    decor: Number
+    cleanliness: {
+        type: Number,
+        min: 0,
+        max: 5
+    },
+    privacy: {
+        type: Number,
+        min: 0,
+        max: 5
+    },
+    washing: {
+        type: Number,
+        min: 0,
+        max: 5
+    },
+    drying: {
+        type: Number,
+        min: 0,
+        max: 5
+    },
+    decor: {
+        type: Number,
+        min: 0,
+        max: 5
+    }
 }));
 
 const fount = mongoose.model("Fount", new mongoose.Schema({
@@ -34,9 +57,21 @@ const fount = mongoose.model("Fount", new mongoose.Schema({
 const fountRate = mongoose.model("FountRate", new mongoose.Schema({
     id: String,
     fountain_id: String,
-    taste: Number,
-    temperature: Number,
-    pressure: Number
+    taste: {
+        type: Number,
+        min: 0,
+        max: 5
+    },
+    temperature: {
+        type: Number,
+        min: 0,
+        max: 5
+    },
+    pressure: {
+        type: Number,
+        min: 0,
+        max: 5
+    }
 }));
 
 const user = mongoose.model("User", new mongoose.Schema({
@@ -57,20 +92,11 @@ const pic = mongoose.model("Pic", new mongoose.Schema({
     picture_link: String
 }))
 
-function connect () {
-    mongoose.connect(mongoURL).then(() => {
-
-    }).catch((err) => console.log(err));
-    // client.connect(err => {
-    //     db = client.db("hydRate");
-    //     bathRate = db.collection("Bathroom Ratings");
-    //     bath = db.collection("Bathrooms");
-    //     fountRate = db.collection("Fountain Ratings");
-    //     fount = db.collection("Fountains");
-    //     pic = db.collection("Pictures");
-    //     user = db.collection("Users");
-    // });
+async function main() {
+    await mongoose.connect(mongoURL);
 }
+
+main().catch((err) => console.log(err));
 
 function get() {
     return db;

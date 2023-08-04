@@ -1,7 +1,8 @@
-const signupRouter = require('express').Router();
-const signupController = require('./signupController');
+import signupController = require('./signupController');
+import express from "express";
+const signupRouter = express.Router();
 
 // signup
 signupRouter.post('/profiles', signupController.createAccount);
 
-module.exports = signupRouter;
+export default signupRouter;
