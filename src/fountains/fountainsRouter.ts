@@ -1,5 +1,6 @@
-const fountainsRouter = require('express').Router();
-const fountainsController = require('./fountainsController');
+import fountainsController = require('./fountainsController');
+import express from "express";
+const fountainsRouter = express.Router();
 
 // fountains
 fountainsRouter.get('/fountains', fountainsController.getFountains);
@@ -16,4 +17,4 @@ fountainsRouter.get('/fountains/ratings', fountainsController.getFountainRatings
 fountainsRouter.put('/fountains/ratings', fountainsController.updateFountainRating);
 fountainsRouter.post('/fountains/ratings', fountainsController.addFountainRating);
 
-module.exports = fountainsRouter;
+export default fountainsRouter;

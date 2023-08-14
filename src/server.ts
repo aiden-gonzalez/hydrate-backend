@@ -1,4 +1,4 @@
-require('dotenv').config();
+import 'dotenv/config';
 import express from 'express';
 
 // Server port
@@ -8,12 +8,12 @@ const port = process.env.PORT;
 const server = express();
 
 // Body parser middleware
-const BodyParser = require('body-parser');
+import  BodyParser = require('body-parser');
 server.use(BodyParser.json());
 server.use(BodyParser.urlencoded({ extended: true }));
 
 // Spec validator middleware (using to validate requests)
-const OpenApiValidator = require('express-openapi-validator');
+import OpenApiValidator = require('express-openapi-validator');
 server.use(
   OpenApiValidator.middleware({
     apiSpec: './hydRate.json',
@@ -32,11 +32,11 @@ server.use((err, req, res, next) => {
 });
 
 // Routers
-const bathroomsRouter = require('./bathrooms/bathroomsRouter');
-const fountainsRouter = require('./fountains/fountainsRouter');
-const authRouter = require('./auth/authRouter');
-const profilesRouter = require('./profiles/profilesRouter');
-const signupRouter = require('./signup/signupRouter');
+import bathroomsRouter from "./bathrooms/bathroomsRouter";
+import fountainsRouter from './fountains/fountainsRouter'
+import authRouter from './auth/authRouter';
+import profilesRouter from './profiles/profilesRouter';
+import signupRouter from './signup/signupRouter';
 server.use('/api/', bathroomsRouter);
 server.use('/api/', fountainsRouter);
 server.use('/api/', authRouter);

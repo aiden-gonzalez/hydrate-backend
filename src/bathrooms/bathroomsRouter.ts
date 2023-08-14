@@ -1,5 +1,6 @@
-const bathroomsRouter = require('express').Router();
-const bathroomsController = require('./bathroomsController');
+import bathroomsController = require('./bathroomsController');
+import express from "express";
+const bathroomsRouter = express.Router();
 
 // bathrooms
 bathroomsRouter.get('/bathrooms', bathroomsController.getBathrooms);
@@ -16,4 +17,4 @@ bathroomsRouter.get('/bathrooms/ratings', bathroomsController.getBathroomRatings
 bathroomsRouter.put('/bathrooms/ratings', bathroomsController.updateBathroomRating);
 bathroomsRouter.post('/bathrooms/ratings', bathroomsController.addBathroomRating);
 
-module.exports = bathroomsRouter;
+export default bathroomsRouter;
