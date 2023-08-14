@@ -33,7 +33,7 @@
                         "description": "Account successfully created"
                     },
                     "401": {
-                        "description": "Client credentials invalid!"
+                        "description": "Credentials invalid!"
                     }
                 },
                 "summary": "Create new user account"
@@ -1074,16 +1074,16 @@
                                 }
                             }
                         },
-                        "description": "Successful oauth request, return tokens and token information"
+                        "description": "Successful auth request, return tokens and token information"
                     },
                     "400": {
                         "description": "Request is missing required information or is incorrectly formatted"
                     },
                     "401": {
-                        "description": "Client and/or user credentials are incorrect"
+                        "description": "User credentials are incorrect"
                     }
                 },
-                "summary": "Oauth2 password authentication"
+                "summary": "Password authentication"
             }
         },
         "/api/auth/refresh": {
@@ -1114,7 +1114,7 @@
                         "description": "Request is missing required information or is incorrectly formatted"
                     },
                     "401": {
-                        "description": "Client credentials incorrect or refresh token expired!"
+                        "description": "Credentials incorrect or refresh token expired!"
                     }
                 },
                 "summary": "Auth token refresh"

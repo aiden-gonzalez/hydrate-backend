@@ -73,7 +73,7 @@ function connect () {
 }
 
 function get() {
-    return db;
+    //return db;
 }
 
 function bathroomRatings() {
@@ -100,6 +100,6 @@ function users() {
     return user;
 }
 
-function close() {
-    client.close();
+function closeClient() {
+    //client.close();
 }

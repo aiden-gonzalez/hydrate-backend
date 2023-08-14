@@ -12,14 +12,16 @@
     "type": "git",
     "url": "git+https://github.com/awesomeaiden/hydrate-backend.git"
   },
-  "author": "Aiden Gonzalez and Will Sztejnberg",
+  "author": "Aiden Gonzalez",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/awesomeaiden/hydrate-backend/issues"
   },
   "homepage": "https://github.com/awesomeaiden/hydrate-backend#readme",
   "dependencies": {
+    "dotenv": "^16.3.1",
     "express": "^4.18.1",
+    "express-openapi-validator": "^5.0.4",
     "express-validator": "^6.14.3",
     "mongoose": "^7.2.4"
   },
