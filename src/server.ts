@@ -18,7 +18,7 @@ server.use(
   OpenApiValidator.middleware({
     apiSpec: './hydRate.json',
     validateRequests: true, // (default)
-    validateResponses: false // false by default
+    validateResponses: true // false by default
   })
 );
 
