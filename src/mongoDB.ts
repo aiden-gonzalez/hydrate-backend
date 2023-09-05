@@ -1,10 +1,18 @@
-import mongoose = require("mongoose");
+import { Schema, model, connect } from "mongoose";
+import { paths, components } from "../schema";
 const mongoURL = process.env.MONGO_URL;
 
-mongoose.set("strictQuery", false);
+// TODO fix this with new import
+//mongoose.set("strictQuery", false);
 
-const bath = mongoose.model("Bath", new mongoose.Schema({
+// BathroomInfo
+type IBathroomInfo = components["schemas"]["BathroomInfo"];
+
+// Bathroom
+type IBathroom = components["schemas"]["Bathroom"];
+const bathroomSchema = new Schema<IBathroom>({
     id: String,
+    info:
     name: String,
     gender: {
         type: String,
@@ -14,7 +22,11 @@ const bath = mongoose.model("Bath", new mongoose.Schema({
     baby_changer: Boolean,
     longitude: Number,
     latitude: Number
+})
+const bath = mongoose.model("Bath", new mongoose.Schema({
+
 }));
+
 
 const bathRate = mongoose.model("BathRate", new mongoose.Schema({
     id: String,
