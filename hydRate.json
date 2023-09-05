@@ -33,7 +33,7 @@
                         "description": "Account successfully created"
                     },
                     "401": {
-                        "description": "Client credentials invalid!"
+                        "description": "Credentials invalid!"
                     }
                 },
                 "summary": "Create new user account"
@@ -138,6 +138,13 @@
                 ],
                 "responses": {
                     "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Fountain"
+                                }
+                            }
+                        },
                         "description": "Fountain successfully updated!"
                     },
                     "400": {
@@ -180,6 +187,13 @@
                                     "Location": {
                                         "value": "http://hydrate.com/api/fountains?id=XXXXX"
                                     }
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Fountain"
                                 }
                             }
                         },
@@ -268,12 +282,12 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Fountain"
+                                        "$ref": "#/components/schemas/Bathroom"
                                     }
                                 }
                             }
                         },
-                        "description": "Successful query.  Return array of fountains."
+                        "description": "Successful query.  Return array of bathrooms."
                     },
                     "400": {
                         "description": "Bad request"
@@ -314,6 +328,13 @@
                 ],
                 "responses": {
                     "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Bathroom"
+                                }
+                            }
+                        },
                         "description": "Bathroom successfully updated!"
                     },
                     "400": {
@@ -353,6 +374,13 @@
                                     "Location": {
                                         "value": "http://hydrate.com/api/bathrooms?id=XXXXX"
                                     }
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Bathroom"
                                 }
                             }
                         },
@@ -457,6 +485,13 @@
                 ],
                 "responses": {
                     "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BathroomRating"
+                                }
+                            }
+                        },
                         "description": "Bathroom rating successfully updated!"
                     },
                     "400": {
@@ -507,6 +542,13 @@
                                     "Location": {
                                         "value": "http://hydrate.com/api/bathrooms/ratings?id=XXXXX"
                                     }
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BathroomRating"
                                 }
                             }
                         },
@@ -611,6 +653,13 @@
                 ],
                 "responses": {
                     "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FountainRating"
+                                }
+                            }
+                        },
                         "description": "Fountain rating successfully updated!"
                     },
                     "400": {
@@ -661,6 +710,13 @@
                                     "Location": {
                                         "value": "http://hydrate.com/api/fountains/ratings?id=XXXXX"
                                     }
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FountainRating"
                                 }
                             }
                         },
@@ -768,6 +824,13 @@
                                     "Location": {
                                         "value": "http://hydrate.com/api/bathrooms/pictures?bathroom_id=XXX&offset=X"
                                     }
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Picture"
                                 }
                             }
                         },
@@ -909,6 +972,13 @@
                                     "Location": {
                                         "value": "http://hydrate.com/api/fountains/pictures?fountain_id=XXX&offset=X"
                                     }
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Picture"
                                 }
                             }
                         },
@@ -1074,16 +1144,16 @@
                                 }
                             }
                         },
-                        "description": "Successful oauth request, return tokens and token information"
+                        "description": "Successful auth request, return tokens and token information"
                     },
                     "400": {
                         "description": "Request is missing required information or is incorrectly formatted"
                     },
                     "401": {
-                        "description": "Client and/or user credentials are incorrect"
+                        "description": "User credentials are incorrect"
                     }
                 },
-                "summary": "Oauth2 password authentication"
+                "summary": "Password authentication"
             }
         },
         "/api/auth/refresh": {
@@ -1114,7 +1184,7 @@
                         "description": "Request is missing required information or is incorrectly formatted"
                     },
                     "401": {
-                        "description": "Client credentials incorrect or refresh token expired!"
+                        "description": "Credentials incorrect or refresh token expired!"
                     }
                 },
                 "summary": "Auth token refresh"
@@ -1296,9 +1366,9 @@
                     "user_id": "some text",
                     "details": {
                         "cleanliness": 3,
-                        "decor": 4,
-                        "drying": 2,
-                        "privacy": 4,
+                        "decor": 3,
+                        "drying": 3,
+                        "privacy": 2,
                         "washing": 5
                     }
                 }
@@ -1524,8 +1594,8 @@
                     "sanitary_products": true,
                     "baby_changer": true,
                     "location": {
-                        "longitude": 67.81,
-                        "latitude": 46.38
+                        "longitude": 32.05,
+                        "latitude": 13.47
                     }
                 }
             },
@@ -1554,8 +1624,8 @@
                         "sanitary_products": true,
                         "baby_changer": true,
                         "location": {
-                            "longitude": 4.21,
-                            "latitude": 27.87
+                            "longitude": 16.32,
+                            "latitude": 86.3
                         }
                     }
                 }
@@ -1593,7 +1663,7 @@
                     }
                 },
                 "example": {
-                    "cleanliness": 76,
+                    "cleanliness": 3,
                     "decor": 1,
                     "drying": 2,
                     "privacy": 3,
@@ -1659,7 +1729,7 @@
                     "access_token": "some text",
                     "refresh_token": "some text",
                     "token_type": "some text",
-                    "expires": 36000
+                    "expires": 39
                 }
             },
             "AuthRefreshRequest": {
