@@ -1,29 +1,29 @@
 export function getFountains() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 
 export function updateFountain() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function createFountain() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function getFountainPhotos() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function addFountainPhoto() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function deleteFountainPhoto() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 
 export function getFountainRatings() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function updateFountainRating() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function addFountainRating() {
-    return "get bathrooms";
+  return "get bathrooms";
 }

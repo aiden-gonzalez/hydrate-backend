@@ -45,11 +45,11 @@ server.use('/api/', signupRouter);
 
 // Base endpoint
 server.get('/', (req, res) => {
-    res.send('Server OK');
+  res.send('Server OK');
 });
 
 server.listen(port, () => {
-    return console.log(`Express is listening at http://localhost:${port}`);
+  return console.log(`Express is listening at http://localhost:${port}`);
 });
 
 module.exports = server;

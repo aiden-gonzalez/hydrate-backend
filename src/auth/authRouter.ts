@@ -4,8 +4,8 @@ const authRouter = express.Router();
 
 // auth
 authRouter.post(
-    '/auth',
-    authController.createToken
+  '/auth',
+  authController.createToken
 ); // login user and return key
 
 // auth/refresh

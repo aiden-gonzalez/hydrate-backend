@@ -1,7 +1,7 @@
 export function createToken() {
-    return "token";
+  return "token";
 }
 
 export function refreshToken() {
-    return "refreshed token";
+  return "refreshed token";
 }

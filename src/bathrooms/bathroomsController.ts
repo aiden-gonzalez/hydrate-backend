@@ -1,29 +1,29 @@
 export function getBathrooms() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 
 export function updateBathroom() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function createBathroom() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function getBathroomPhotos() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function addBathroomPhoto() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function deleteBathroomPhoto() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 
 export function getBathroomRatings() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function updateBathroomRating() {
-    return "get bathrooms";
+  return "get bathrooms";
 }
 export function addBathroomRating() {
-    return "get bathrooms";
+  return "get bathrooms";
 }

@@ -1,3 +1,3 @@
 export function createAccount() {
-    return "create account";
+  return "create account";
 }
