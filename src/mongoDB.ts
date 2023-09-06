@@ -1,53 +1,15 @@
 import { Schema, model, connect } from "mongoose";
 import { paths, components } from "../schema";
-import validator from 'validator';
+import * as regexes from "./utils/regex";
+import * as validators from "./utils/validation";
 const mongoURL = process.env.MONGO_URL;
-
-// THIS IS ALSO WHERE TYPES LIVE? MAYBE RENAME TO REFLECT THIS?
-// TODO fix this with new import
-//mongoose.set("strictQuery", false);
-
-// Auth Types
-type IAuthRefreshRequest = components["schemas"]["AuthRefreshRequest"];
-type IAuthRequest = components["schemas"]["AuthRequest"];
-type IAuthSuccessResponse = components["schemas"]["AuthSuccessResponse"];
-type IClientCredentials = components["schemas"]["ClientCredentials"];
-type ISignupRequest = components["schemas"]["SignupRequest"];
-
-// UUID Regex
-function getIdRegex(prefix : string) {
-  return new RegExp(`^${prefix}_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`);
-}
-const bathroomIdRegex = getIdRegex("bath");
-const bathroomRatingIdRegex = getIdRegex("bath_rate");
-const fountainIdRegex = getIdRegex("fount");
-const fountainRatingIdRegex = getIdRegex("fount_rate");
-const userIdRegex = getIdRegex("user");
-const pictureIdRegex = getIdRegex("pic");
-
-// URL Validator
-function urlValidator(url: string) {
-  return validator.isEmail(url);
-}
-
-// sha512Validator
-function sha512Validator(hex: string) {
-  return validator.isHash(hex, "sha512");
-}
-
-// Email Validator
-function emailValidator(email: string) {
-  return validator.isEmail(email);
-}
-
-// Entity ID Validator
-function entityIdValidator(entityId: string) {
-  return validator.matches(entityId, fountainIdRegex) || validator.matches(entityId, bathroomIdRegex);
-}
+import * as bathroomTypes from "./bathrooms/types";
+import * as fountainTypes from "./fountains/types";
+import * as profileTypes from "./profiles/types";
+import * as utilTypes from "./utils/types";
 
 // Location
-type ILocation = components["schemas"]["Location"];
-const locationSchema : Schema = new Schema<ILocation>({
+const locationSchema : Schema = new Schema<utilTypes.ILocation>({
   latitude: {
     type: Number,
     min: -90,
@@ -63,8 +25,7 @@ const locationSchema : Schema = new Schema<ILocation>({
 });
 
 // BathroomInfo
-type IBathroomInfo = components["schemas"]["BathroomInfo"];
-const bathroomInfoSchema : Schema = new Schema<IBathroomInfo>({
+const bathroomInfoSchema : Schema = new Schema<bathroomTypes.IBathroomInfo>({
   name: {
     type: String,
     required: false
@@ -89,11 +50,10 @@ const bathroomInfoSchema : Schema = new Schema<IBathroomInfo>({
 });
 
 // Bathroom
-type IBathroom = components["schemas"]["Bathroom"];
-const bathroomSchema = new Schema<IBathroom>({
+const bathroomSchema = new Schema<bathroomTypes.IBathroom>({
   id: {
     type: String,
-    match: bathroomIdRegex,
+    match: regexes.bathroomIdRegex,
     required: true
   },
   info: {
@@ -103,11 +63,10 @@ const bathroomSchema = new Schema<IBathroom>({
 }, {
   timestamps: true
 });
-const Bathroom = model<IBathroom>("Bathroom", bathroomSchema);
+const Bathroom = model<bathroomTypes.IBathroom>("Bathroom", bathroomSchema);
 
 // BathroomRatingDetails
-type IBathroomRatingDetails = components["schemas"]["BathroomRatingDetails"];
-const bathroomRatingDetailsSchema : Schema = new Schema<IBathroomRatingDetails>({
+const bathroomRatingDetailsSchema : Schema = new Schema<bathroomTypes.IBathroomRatingDetails>({
   cleanliness: {
     type: Number,
     min: 1,
@@ -141,21 +100,20 @@ const bathroomRatingDetailsSchema : Schema = new Schema<IBathroomRatingDetails>(
 });
 
 // BathroomRating
-type IBathroomRating = components["schemas"]["BathroomRating"];
-const bathroomRatingSchema : Schema = new Schema<IBathroomRating>({
+const bathroomRatingSchema : Schema = new Schema<bathroomTypes.IBathroomRating>({
   id: {
     type: String,
-    match: bathroomRatingIdRegex,
+    match: regexes.bathroomRatingIdRegex,
     required: true
   },
   bathroom_id: {
     type: String,
-    match: bathroomIdRegex,
+    match: regexes.bathroomIdRegex,
     required: true
   },
   user_id: {
     type: String,
-    match: userIdRegex,
+    match: regexes.userIdRegex,
     required: true
   },
   details: {
@@ -165,11 +123,10 @@ const bathroomRatingSchema : Schema = new Schema<IBathroomRating>({
 }, {
   timestamps: true
 });
-const BathroomRating = model<IBathroomRating>("BathroomRating", bathroomRatingSchema);
+const BathroomRating = model<bathroomTypes.IBathroomRating>("BathroomRating", bathroomRatingSchema);
 
 // FountainInfo
-type IFountainInfo = components["schemas"]["FountainInfo"];
-const fountainInfoSchema : Schema = new Schema<IFountainInfo>({
+const fountainInfoSchema : Schema = new Schema<fountainTypes.IFountainInfo>({
   name: {
     type: String,
     required: false
@@ -185,11 +142,10 @@ const fountainInfoSchema : Schema = new Schema<IFountainInfo>({
 });
 
 // Fountain
-type IFountain = components["schemas"]["Fountain"];
-const fountainSchema : Schema = new Schema<IFountain>({
+const fountainSchema : Schema = new Schema<fountainTypes.IFountain>({
   id: {
     type: String,
-    match: fountainIdRegex,
+    match: regexes.fountainIdRegex,
     required: true
   },
   info: {
@@ -199,11 +155,10 @@ const fountainSchema : Schema = new Schema<IFountain>({
 }, {
   timestamps: true
 });
-const Fountain = model<IFountain>("Fountain", fountainSchema);
+const Fountain = model<fountainTypes.IFountain>("Fountain", fountainSchema);
 
 // FountainRatingDetails
-type IFountainRatingDetails = components["schemas"]["FountainRatingDetails"];
-const fountainRatingDetailsSchema : Schema = new Schema<IFountainRatingDetails>({
+const fountainRatingDetailsSchema : Schema = new Schema<fountainTypes.IFountainRatingDetails>({
   pressure: {
     type: Number,
     min: 1,
@@ -225,21 +180,20 @@ const fountainRatingDetailsSchema : Schema = new Schema<IFountainRatingDetails>(
 });
 
 // FountainRating
-type IFountainRating = components["schemas"]["FountainRating"];
-const fountainRatingSchema : Schema = new Schema<IFountainRating>({
+const fountainRatingSchema : Schema = new Schema<fountainTypes.IFountainRating>({
   id: {
     type: String,
-    match: fountainRatingIdRegex,
+    match: regexes.fountainRatingIdRegex,
     required: true
   },
   fountain_id: {
     type: String,
-    match: fountainIdRegex,
+    match: regexes.fountainIdRegex,
     required: true
   },
   user_id: {
     type: String,
-    match: userIdRegex,
+    match: regexes.userIdRegex,
     required: true
   },
   details: {
@@ -249,15 +203,14 @@ const fountainRatingSchema : Schema = new Schema<IFountainRating>({
 }, {
   timestamps: true
 });
-const FountainRating = model<IFountainRating>("FountainRating", fountainRatingSchema);
+const FountainRating = model<fountainTypes.IFountainRating>("FountainRating", fountainRatingSchema);
 
 // HashedPassword
-type IHashedPassword = components["schemas"]["HashedPassword"];
-const hashedPasswordSchema : Schema = new Schema<IHashedPassword>({
+const hashedPasswordSchema : Schema = new Schema<utilTypes.IHashedPassword>({
   hash_pass: {
     type: String,
     validate: {
-      validator: sha512Validator,
+      validator: validators.sha512Validator,
       message: "hash_pass should be SHA512 expressed as 128 character hexadecimal string."
     },
     required: true
@@ -265,7 +218,7 @@ const hashedPasswordSchema : Schema = new Schema<IHashedPassword>({
   hash_salt: {
     type: String,
     validate: {
-      validator: sha512Validator,
+      validator: validators.sha512Validator,
       message: "hash_salt should be SHA512 expressed as 128 character hexadecimal string."
     },
     required: true
@@ -273,8 +226,7 @@ const hashedPasswordSchema : Schema = new Schema<IHashedPassword>({
 });
 
 // UserProfile
-type IUserProfile = components["schemas"]["UserProfile"];
-const userProfileSchema : Schema = new Schema<IUserProfile>({
+const userProfileSchema : Schema = new Schema<profileTypes.IUserProfile>({
   full_name: {
     type: String,
     required: true
@@ -282,7 +234,7 @@ const userProfileSchema : Schema = new Schema<IUserProfile>({
   picture_link: {
     type: String,
     validate: {
-      validator: urlValidator,
+      validator: validators.urlValidator,
       message: "picture_link should be valid URL."
     },
     required: false
@@ -290,11 +242,10 @@ const userProfileSchema : Schema = new Schema<IUserProfile>({
 });
 
 // User
-type IUser = components["schemas"]["User"];
-const userSchema : Schema = new Schema<IUser>({
+const userSchema : Schema = new Schema<utilTypes.IUser>({
   id: {
     type: String,
-    match: userIdRegex,
+    match: regexes.userIdRegex,
     required: true
   },
   username: {
@@ -304,7 +255,7 @@ const userSchema : Schema = new Schema<IUser>({
   email: {
     type: String,
     validate: {
-      validator: emailValidator,
+      validator: validators.emailValidator,
       message: "email must be valid email address."
     },
     required: true
@@ -320,20 +271,19 @@ const userSchema : Schema = new Schema<IUser>({
 }, {
   timestamps: true
 });
-const User = model<IUser>("User", userSchema);
+const User = model<utilTypes.IUser>("User", userSchema);
 
 // Picture
-type IPicture = components["schemas"]["Picture"];
-const pictureSchema : Schema = new Schema<IPicture>({
+const pictureSchema : Schema = new Schema<utilTypes.IPicture>({
   id: {
     type: String,
-    match: pictureIdRegex,
+    match: regexes.pictureIdRegex,
     required: true
   },
   entity_id: {
     type: String,
     validate: {
-      validator: entityIdValidator,
+      validator: validators.entityIdValidator,
       message: "entity_id must be valid bathroom or fountain ID."
     },
     required: true
@@ -341,13 +291,13 @@ const pictureSchema : Schema = new Schema<IPicture>({
   picture_link: {
     type: String,
     validate: {
-      validator: urlValidator,
+      validator: validators.urlValidator,
       message: "picture_link must be valid URL."
     },
     required: true
   }
 });
-const Picture = model<IPicture>("Picture", pictureSchema);
+const Picture = model<utilTypes.IPicture>("Picture", pictureSchema);
 
 async function main() {
   await connect(mongoURL);
