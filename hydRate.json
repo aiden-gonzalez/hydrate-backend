@@ -1198,7 +1198,6 @@
                 "required": [
                     "username",
                     "email",
-                    "created",
                     "hashed_password",
                     "profile",
                     "id"
@@ -1212,10 +1211,6 @@
                     "email": {
                         "description": "Email address of user",
                         "type": "string"
-                    },
-                    "created": {
-                        "description": "Timestamp of when user was created",
-                        "type": "number"
                     },
                     "hashed_password": {
                         "$ref": "#/components/schemas/HashedPassword",
@@ -1233,7 +1228,6 @@
                 "example": {
                     "username": "some text",
                     "email": "some text",
-                    "created": 15532523,
                     "hashed_password": {
                         "hash_pass": "some text",
                         "hash_salt": "some text"
@@ -1309,7 +1303,7 @@
                 "description": "",
                 "required": [
                     "id",
-                    "f_or_b_id",
+                    "entity_id",
                     "picture_link"
                 ],
                 "type": "object",
@@ -1318,19 +1312,19 @@
                         "description": "Unique ID of picture",
                         "type": "string"
                     },
-                    "f_or_b_id": {
-                        "description": "Fountain or bathroom ID picture is for",
-                        "type": "string"
-                    },
                     "picture_link": {
                         "description": "Link to picture",
+                        "type": "string"
+                    },
+                    "entity_id": {
+                        "description": "Fountain or bathroom ID picture is for",
                         "type": "string"
                     }
                 },
                 "example": {
                     "id": "some text",
-                    "f_or_b_id": "some text",
-                    "picture_link": "some text"
+                    "picture_link": "some text",
+                    "entity_id": "some text"
                 }
             },
             "BathroomRating": {
@@ -1572,7 +1566,7 @@
                     },
                     "gender": {
                         "description": "Gender/sex of bathroom",
-                        "pattern": "^((male)|(female)|(unisex))$",
+                        "pattern": "^((male)|(female)|(all-gender))$",
                         "type": "string"
                     },
                     "sanitary_products": {
@@ -1642,23 +1636,33 @@
                 "type": "object",
                 "properties": {
                     "cleanliness": {
-                        "description": "Cleanliness rating of bathroom (0-5)",
+                        "description": "Cleanliness rating of bathroom (1-5)",
+                        "maximum": 5,
+                        "minimum": 1,
                         "type": "integer"
                     },
                     "decor": {
-                        "description": "Decor rating of bathroom (0-5)",
+                        "description": "Decor rating of bathroom (1-5)",
+                        "maximum": 5,
+                        "minimum": 1,
                         "type": "integer"
                     },
                     "drying": {
-                        "description": "Drying rating of bathroom (0-5)",
+                        "description": "Drying rating of bathroom (1-5)",
+                        "maximum": 5,
+                        "minimum": 1,
                         "type": "integer"
                     },
                     "privacy": {
-                        "description": "Privacy rating of bathroom (0-5)",
+                        "description": "Privacy rating of bathroom (1-5)",
+                        "maximum": 5,
+                        "minimum": 1,
                         "type": "integer"
                     },
                     "washing": {
-                        "description": "Washing rating of bathroom (0-5)",
+                        "description": "Washing rating of bathroom (1-5)",
+                        "maximum": 5,
+                        "minimum": 1,
                         "type": "integer"
                     }
                 },
@@ -1680,15 +1684,21 @@
                 "type": "object",
                 "properties": {
                     "pressure": {
-                        "description": "Pressure rating for fountain (0-5)",
+                        "description": "Pressure rating for fountain (1-5)",
+                        "maximum": 5,
+                        "minimum": 1,
                         "type": "integer"
                     },
                     "taste": {
-                        "description": "Taste rating for fountain (0-5)",
+                        "description": "Taste rating for fountain (1-5)",
+                        "maximum": 5,
+                        "minimum": 1,
                         "type": "integer"
                     },
                     "temperature": {
-                        "description": "Temperature rating for fountain (0-5)",
+                        "description": "Temperature rating for fountain (1-5)",
+                        "maximum": 5,
+                        "minimum": 1,
                         "type": "integer"
                     }
                 },
