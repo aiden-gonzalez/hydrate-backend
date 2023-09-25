@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import mongoose from "mongoose";
 
 // Server port
 const port = process.env.PORT;
@@ -51,5 +52,12 @@ server.get('/', (req, res) => {
 server.listen(port, () => {
   return console.log(`Express is listening at http://localhost:${port}`);
 });
+
+// Connect to mongoDB
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(process.env.MONGO_URI);
+  console.log("Connected to mongoDB!");
+}
 
 module.exports = server;

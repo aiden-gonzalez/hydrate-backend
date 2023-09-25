@@ -1,8 +1,6 @@
-import { Schema, model, connect } from "mongoose";
-import { paths, components } from "../schema";
+import { Schema, model } from "mongoose";
 import * as regexes from "./utils/regex";
 import * as validators from "./utils/validation";
-const mongoURL = process.env.MONGO_URL;
 import * as bathroomTypes from "./bathrooms/types";
 import * as fountainTypes from "./fountains/types";
 import * as profileTypes from "./profiles/types";
@@ -63,7 +61,7 @@ const bathroomSchema = new Schema<bathroomTypes.IBathroom>({
 }, {
   timestamps: true
 });
-const Bathroom = model<bathroomTypes.IBathroom>("Bathroom", bathroomSchema);
+export const Bathroom = model<bathroomTypes.IBathroom>("Bathroom", bathroomSchema);
 
 // BathroomRatingDetails
 const bathroomRatingDetailsSchema : Schema = new Schema<bathroomTypes.IBathroomRatingDetails>({
@@ -123,7 +121,7 @@ const bathroomRatingSchema : Schema = new Schema<bathroomTypes.IBathroomRating>(
 }, {
   timestamps: true
 });
-const BathroomRating = model<bathroomTypes.IBathroomRating>("BathroomRating", bathroomRatingSchema);
+export const BathroomRating = model<bathroomTypes.IBathroomRating>("BathroomRating", bathroomRatingSchema);
 
 // FountainInfo
 const fountainInfoSchema : Schema = new Schema<fountainTypes.IFountainInfo>({
@@ -155,7 +153,7 @@ const fountainSchema : Schema = new Schema<fountainTypes.IFountain>({
 }, {
   timestamps: true
 });
-const Fountain = model<fountainTypes.IFountain>("Fountain", fountainSchema);
+export const Fountain = model<fountainTypes.IFountain>("Fountain", fountainSchema);
 
 // FountainRatingDetails
 const fountainRatingDetailsSchema : Schema = new Schema<fountainTypes.IFountainRatingDetails>({
@@ -203,7 +201,7 @@ const fountainRatingSchema : Schema = new Schema<fountainTypes.IFountainRating>(
 }, {
   timestamps: true
 });
-const FountainRating = model<fountainTypes.IFountainRating>("FountainRating", fountainRatingSchema);
+export const FountainRating = model<fountainTypes.IFountainRating>("FountainRating", fountainRatingSchema);
 
 // HashedPassword
 const hashedPasswordSchema : Schema = new Schema<utilTypes.IHashedPassword>({
@@ -271,7 +269,7 @@ const userSchema : Schema = new Schema<utilTypes.IUser>({
 }, {
   timestamps: true
 });
-const User = model<utilTypes.IUser>("User", userSchema);
+export const User = model<utilTypes.IUser>("User", userSchema);
 
 // Picture
 const pictureSchema : Schema = new Schema<utilTypes.IPicture>({
@@ -297,10 +295,4 @@ const pictureSchema : Schema = new Schema<utilTypes.IPicture>({
     required: true
   }
 });
-const Picture = model<utilTypes.IPicture>("Picture", pictureSchema);
-
-async function main() {
-  await connect(mongoURL);
-}
-
-main().catch(err => console.log(err));
+export const Picture = model<utilTypes.IPicture>("Picture", pictureSchema);

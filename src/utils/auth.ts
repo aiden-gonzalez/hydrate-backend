@@ -1,8 +1,14 @@
 import nodeCrypto from "crypto";
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
+import {IHashedPassword, IUser} from "./types";
 const keyLen = 64;
 const iterations = 100;
 const digest = "sha256";
+
+// expiresIn is an integer representing number of seconds until expiration
+export function generateToken (user : IUser, expiration : number) {
+  return jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: expiration });
+}
 
 export function authenticateToken (req, res, next) {
   const token = req.get("Authorization");
@@ -15,34 +21,21 @@ export function authenticateToken (req, res, next) {
   });
 }
 
-export function hashPassWithSalt (pass, salt) {
+export function hashPassWithSalt (password : string, salt : string) {
   return new Promise((resolve, reject) => {
-    nodeCrypto.pbkdf2(pass, salt, iterations, keyLen, digest, (err, key) => {
+    nodeCrypto.pbkdf2(password, salt, iterations, keyLen, digest, (err, key) => {
       if (err) {
         reject(err);
       }
-
-      resolve({
-        hash_salt: salt,
-        hash_pass: key.toString("base64")
-      });
+      resolve(key.toString("base64"));
     });
   })
 }
 
-export function hashPass (pass) {
-  const salt = nodeCrypto.randomBytes(keyLen).toString("base64");
-  return hashPassWithSalt(pass, salt);
-}
-
-export function isValidPass (actualHash, givenPassword) {
+export function isValidPass (password : string, actualPassword : IHashedPassword) {
   return new Promise((resolve, reject) => {
-    nodeCrypto.pbkdf2(givenPassword, actualHash.hash_salt, iterations, keyLen, digest, (err, hashedGivenPassword) => {
-      if (err) {
-        reject(err);
-      }
-
-      resolve(actualHash.hash_pass === hashedGivenPassword.toString("base64"));
-    });
+    hashPassWithSalt(password, actualPassword.hash_salt)
+      .then((passwordHash) => resolve(actualPassword.hash_pass === passwordHash))
+      .catch((err) => reject(err));
   });
 }

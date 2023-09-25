@@ -738,7 +738,6 @@ export interface components {
      * @example {
      *   "username": "some text",
      *   "email": "some text",
-     *   "created": 15532523,
      *   "hashed_password": {
      *     "hash_pass": "some text",
      *     "hash_salt": "some text"
@@ -755,8 +754,6 @@ export interface components {
       username: string;
       /** @description Email address of user */
       email: string;
-      /** @description Timestamp of when user was created */
-      created: number;
       /** @description Hash of user password for authentication */
       hashed_password: components["schemas"]["HashedPassword"];
       /** @description User profile */
@@ -801,17 +798,17 @@ export interface components {
     /**
      * @example {
      *   "id": "some text",
-     *   "f_or_b_id": "some text",
-     *   "picture_link": "some text"
+     *   "picture_link": "some text",
+     *   "entity_id": "some text"
      * }
      */
     Picture: {
       /** @description Unique ID of picture */
       id: string;
-      /** @description Fountain or bathroom ID picture is for */
-      f_or_b_id: string;
       /** @description Link to picture */
       picture_link: string;
+      /** @description Fountain or bathroom ID picture is for */
+      entity_id: string;
     };
     /**
      * @example {
@@ -1006,15 +1003,15 @@ export interface components {
      * }
      */
     BathroomRatingDetails: {
-      /** @description Cleanliness rating of bathroom (0-5) */
+      /** @description Cleanliness rating of bathroom (1-5) */
       cleanliness: number;
-      /** @description Decor rating of bathroom (0-5) */
+      /** @description Decor rating of bathroom (1-5) */
       decor: number;
-      /** @description Drying rating of bathroom (0-5) */
+      /** @description Drying rating of bathroom (1-5) */
       drying: number;
-      /** @description Privacy rating of bathroom (0-5) */
+      /** @description Privacy rating of bathroom (1-5) */
       privacy: number;
-      /** @description Washing rating of bathroom (0-5) */
+      /** @description Washing rating of bathroom (1-5) */
       washing: number;
     };
     /**
@@ -1026,11 +1023,11 @@ export interface components {
      * }
      */
     FountainRatingDetails: {
-      /** @description Pressure rating for fountain (0-5) */
+      /** @description Pressure rating for fountain (1-5) */
       pressure: number;
-      /** @description Taste rating for fountain (0-5) */
+      /** @description Taste rating for fountain (1-5) */
       taste: number;
-      /** @description Temperature rating for fountain (0-5) */
+      /** @description Temperature rating for fountain (1-5) */
       temperature: number;
     };
     /**
