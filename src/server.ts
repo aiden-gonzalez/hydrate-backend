@@ -54,10 +54,14 @@ server.listen(port, () => {
 });
 
 // Connect to mongoDB
-main().catch((err) => console.log(err));
 async function main() {
-  await mongoose.connect(process.env.MONGO_URI);
+  if (process.env.MONGO_ENV == "cloud") {
+    await mongoose.connect(process.env.MONGO_CLOUD_URI);
+  } else {
+    await mongoose.connect(process.env.MONGO_LOCAL_URI);
+  }
   console.log("Connected to mongoDB!");
 }
+main().catch((err) => console.log(err));
 
 module.exports = server;
