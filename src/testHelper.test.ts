@@ -14,6 +14,7 @@ describe("Connect to database and run tests", function () {
     });
     assert(mongoose.connection.db);
 
+    // Comment out to see the documents after testing
     beforeEach((done) => {
       dropAllCollections(mongoose.connection.db).then(() => {
         done();

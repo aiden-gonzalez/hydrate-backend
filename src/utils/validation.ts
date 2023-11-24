@@ -27,6 +27,10 @@ export function emailValidator(email: string) {
   return validator.isEmail(email);
 }
 
+export function jwtValidator(jwt: string) {
+  return validator.isJWT(jwt);
+}
+
 // Entity ID Validator
 export function entityIdValidator(entityId: string) {
   return validator.matches(entityId, fountainIdRegex) || validator.matches(entityId, bathroomIdRegex);
