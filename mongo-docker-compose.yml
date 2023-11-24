@@ -11,16 +11,17 @@ services:
     volumes: # optional to preserve database after container is deleted
       - ./database-data:/data/db
 
-  mongo-express:
-    image: mongo-express:1.0.0-20-alpine3.18
-    container_name: mongo-express
-    restart: unless-stopped
-    ports:
-      - 8081:8081
-    environment:
-      ME_CONFIG_BASICAUTH_USERNAME: aiden
-      ME_CONFIG_BASICAUTH_PASSWORD: awesome
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: password
-      ME_CONFIG_MONGODB_SERVER: mongodb
+# Disable mongo express, using compass instead
+#  mongo-express:
+#    image: mongo-express:1.0.0-20-alpine3.18
+#    container_name: mongo-express
+#    restart: unless-stopped
+#    ports:
+#      - 8081:8081
+#    environment:
+#      ME_CONFIG_BASICAUTH_USERNAME: aiden
+#      ME_CONFIG_BASICAUTH_PASSWORD: awesome
+#      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+#      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+#      ME_CONFIG_MONGODB_SERVER: mongodb
 

@@ -52,7 +52,8 @@ const bathroomSchema = new Schema<bathroomTypes.IBathroom>({
   id: {
     type: String,
     match: regexes.bathroomIdRegex,
-    required: true
+    required: true,
+    unique: true
   },
   info: {
     type: bathroomInfoSchema,
@@ -102,7 +103,8 @@ const bathroomRatingSchema : Schema = new Schema<bathroomTypes.IBathroomRating>(
   id: {
     type: String,
     match: regexes.bathroomRatingIdRegex,
-    required: true
+    required: true,
+    unique: true
   },
   bathroom_id: {
     type: String,
@@ -144,7 +146,8 @@ const fountainSchema : Schema = new Schema<fountainTypes.IFountain>({
   id: {
     type: String,
     match: regexes.fountainIdRegex,
-    required: true
+    required: true,
+    unique: true
   },
   info: {
     type: fountainInfoSchema,
@@ -182,7 +185,8 @@ const fountainRatingSchema : Schema = new Schema<fountainTypes.IFountainRating>(
   id: {
     type: String,
     match: regexes.fountainRatingIdRegex,
-    required: true
+    required: true,
+    unique: true
   },
   fountain_id: {
     type: String,
@@ -244,7 +248,8 @@ const userSchema : Schema = new Schema<utilTypes.IUser>({
   id: {
     type: String,
     match: regexes.userIdRegex,
-    required: true
+    required: true,
+    unique: true
   },
   username: {
     type: String,
@@ -276,7 +281,8 @@ const pictureSchema : Schema = new Schema<utilTypes.IPicture>({
   id: {
     type: String,
     match: regexes.pictureIdRegex,
-    required: true
+    required: true,
+    unique: true
   },
   entity_id: {
     type: String,

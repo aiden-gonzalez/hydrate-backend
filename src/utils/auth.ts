@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import {IHashedPassword, IUser} from "./types";
 const keyLen = 64;
 const iterations = 100;
-const digest = "sha256";
+const digest = "sha512";
 
 // expiresIn is an integer representing number of seconds until expiration
 export function generateToken (user : IUser, expiration : number) {
@@ -21,13 +21,27 @@ export function authenticateToken (req, res, next) {
   });
 }
 
-export function hashPassWithSalt (password : string, salt : string) {
+export function hashPass (password : string) : Promise<IHashedPassword> {
+  return new Promise((resolve, reject) => {
+    const salt = nodeCrypto.randomBytes(keyLen).toString('hex');
+    hashPassWithSalt(password, salt).then((result) => {
+      resolve({
+        hash_pass: result,
+        hash_salt: salt
+      });
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+export function hashPassWithSalt (password : string, salt : string): Promise<string> {
   return new Promise((resolve, reject) => {
     nodeCrypto.pbkdf2(password, salt, iterations, keyLen, digest, (err, key) => {
       if (err) {
         reject(err);
       }
-      resolve(key.toString("base64"));
+      resolve(key.toString("hex"));
     });
   })
 }

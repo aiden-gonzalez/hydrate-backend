@@ -14,7 +14,7 @@ export function checkValidation(req, res, next) {
 
 // URL Validator
 export function urlValidator(url: string) {
-  return validator.isEmail(url);
+  return validator.isURL(url);
 }
 
 // sha512Validator
