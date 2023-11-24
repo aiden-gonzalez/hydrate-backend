@@ -14,9 +14,9 @@ export function authenticateToken (req, res, next) {
   const token = req.get("Authorization");
   if (token == null) return res.sendStatus(401);
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, email) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, tokenUser) => {
     if (err) return res.sendStatus(403);
-    req.email = email;
+    req.tokenUser = tokenUser;
     next();
   });
 }

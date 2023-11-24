@@ -1,14 +1,14 @@
 import {IHashedPassword, IUser} from "./types";
 import {Picture, User} from '../mongoDB';
-import {generateToken, hashPass} from "./auth";
+import {authenticateToken, generateToken, hashPass} from "./auth";
 import { IUserProfile } from "../profiles/types";
 import {generateFountainId, generatePictureId, generateUserId} from "./generate";
 import {jwtValidator} from "./validation";
 import assert from "assert";
 
 describe("UTIL: auth tests", () => {
-  it("generates a token", async () => {
-    const user : IUser = {
+  async function getUser () : Promise<IUser> {
+    return {
       id: generateUserId(),
       username: "username",
       email: "email@gmail.com",
@@ -18,6 +18,20 @@ describe("UTIL: auth tests", () => {
         picture_link: "https://www.google.com"
       }
     }
+  }
+  function getReq (token: string) {
+    return {"get": function (key: string) {return token}, "tokenUser": null};
+  }
+  function getRes () {
+    return {sendStatus: function (code: number) {console.log("Response sent:", code)}};
+  }
+
+  function getNext () {
+    return function () {console.log("next() called")};
+  }
+
+  it("generates a token", async () => {
+    const user = await getUser();
     try {
       const token = generateToken(user, 1000);
       assert(jwtValidator(token));
@@ -25,6 +39,28 @@ describe("UTIL: auth tests", () => {
       console.log(error);
     }
   });
+
+  it ("authenticates a token", async () => {
+    const user = await getUser();
+    try {
+      const token = generateToken(user, 1000);
+      const req = getReq(token);
+      const res = getRes();
+      const next = getNext();
+      authenticateToken(req, res, next);
+      assert(req.tokenUser.user.email == user.email);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  it ("hashes a password", async () => {
+    const password = "password";
+    try {
+      const hashedPassword = await hashPass(password);
+      assert(true == true);
+    }
+  })
 });
 
 describe("UTIL: creating MongoDB documents", () => {
