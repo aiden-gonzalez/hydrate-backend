@@ -1,10 +1,58 @@
 import {IHashedPassword, IUser} from "./types";
 import {Picture, User} from '../mongoDB';
-import {authenticateToken, generateToken, hashPass} from "./auth";
+import {authenticateToken, generateToken, hashPass, isValidPass} from "./auth";
 import { IUserProfile } from "../profiles/types";
-import {generateFountainId, generatePictureId, generateUserId} from "./generate";
-import {jwtValidator} from "./validation";
+import {
+  generateBathroomId,
+  generateBathroomRatingId,
+  generateFountainId, generateFountainRatingId,
+  generatePictureId,
+  generateUserId
+} from "./generate";
+import {jwtValidator, regexValidator, sha512Validator, uuidValidator} from "./validation";
+import * as constants from "./constants";
 import assert from "assert";
+import {
+  bathroomIdRegex,
+  bathroomRatingIdRegex,
+  fountainIdRegex,
+  fountainRatingIdRegex,
+  pictureIdRegex,
+  userIdRegex
+} from "./regex";
+
+describe("UTIL: generation and validation tests", () => {
+  function testId(id: string, prefix: string, regex: RegExp) {
+    assert(id.slice(0, prefix.length) == prefix);
+    assert(id.slice(prefix.length, prefix.length + 1) == "_");
+    assert(uuidValidator(id.slice(prefix.length + 1)));
+    assert(regexValidator(id, regex));
+  }
+
+  it("generates a valid user id", () => {
+    testId(generateUserId(), constants.USER_ID_PREFIX, userIdRegex);
+  });
+
+  it("generates a valid bathroom id", () => {
+    testId(generateBathroomId(), constants.BATHROOM_ID_PREFIX, bathroomIdRegex);
+  });
+
+  it("generates a valid bathroom rating id", () => {
+    testId(generateBathroomRatingId(), constants.BATHROOM_RATING_ID_PREFIX, bathroomRatingIdRegex);
+  });
+
+  it("generates a valid fountain id", () => {
+    testId(generateFountainId(), constants.FOUNTAIN_ID_PREFIX, fountainIdRegex);
+  });
+
+  it("generates a valid fountain rating id", () => {
+    testId(generateFountainRatingId(), constants.FOUNTAIN_RATING_ID_PREFIX, fountainRatingIdRegex);
+  });
+
+  it("generates a valid picture id", () => {
+    testId(generatePictureId(), constants.PICTURE_ID_PREFIX, pictureIdRegex);
+  });
+});
 
 describe("UTIL: auth tests", () => {
   async function getUser () : Promise<IUser> {
@@ -58,7 +106,19 @@ describe("UTIL: auth tests", () => {
     const password = "password";
     try {
       const hashedPassword = await hashPass(password);
-      assert(true == true);
+      assert(sha512Validator(hashedPassword.hash_pass));
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  it("validates a password", async () => {
+    const password = "password";
+    try {
+      const hashedPassword = await hashPass(password);
+      assert(isValidPass(password, hashedPassword));
+    } catch (error) {
+      console.log(error);
     }
   })
 });

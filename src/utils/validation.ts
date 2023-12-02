@@ -31,6 +31,14 @@ export function jwtValidator(jwt: string) {
   return validator.isJWT(jwt);
 }
 
+export function uuidValidator(uuid: string) {
+  return validator.isUUID(uuid);
+}
+
+export function regexValidator(testString: string, regex: RegExp) {
+  return validator.matches(testString, regex);
+}
+
 // Entity ID Validator
 export function entityIdValidator(entityId: string) {
   return validator.matches(entityId, fountainIdRegex) || validator.matches(entityId, bathroomIdRegex);
