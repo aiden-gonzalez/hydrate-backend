@@ -7,12 +7,13 @@ authRouter.post(
   '/auth',
   authController.validateUser,
   authController.validatePassword,
-  authController.createTokens
+  authController.generateTokens
 ); // login user and return new access token and refresh token
 
 // auth/refresh
 authRouter.post('/auth/refresh',
-  authController.refreshTokens
+  authController.validateRefresh,
+  authController.generateTokens
 ); // take refresh token and grant new access token and refresh token
 
 export default authRouter;

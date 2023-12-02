@@ -1,6 +1,6 @@
 import {IHashedPassword, IUser} from "./types";
 import {Picture, User} from '../mongoDB';
-import {authenticateToken, generateToken, hashPass, isValidPass} from "./auth";
+import {authenticateRequest, generateToken, hashPass, isValidPass} from "./auth";
 import { IUserProfile } from "../profiles/types";
 import {
   generateBathroomId,
@@ -95,7 +95,7 @@ describe("UTIL: auth tests", () => {
       const req = getReq(token);
       const res = getRes();
       const next = getNext();
-      authenticateToken(req, res, next);
+      authenticateRequest(req, res, next);
       assert(req.tokenUser.user.email == user.email);
     } catch (error) {
       console.log(error);

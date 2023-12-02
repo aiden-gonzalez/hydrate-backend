@@ -1,7 +1,8 @@
-import {generateToken, isValidPass} from "../utils/auth";
+import {generateToken, isValidPass, validateToken} from "../utils/auth";
 import { User } from "../mongoDB";
-import { IAuthRequest, IAuthSuccessResponse } from "./types";
+import {IAuthRefreshRequest, IAuthRequest, IAuthSuccessResponse} from "./types";
 import { IUser } from "../utils/types";
+import * as constants from "../utils/constants";
 
 export async function validateUser(req, res, next) {
   // Get auth info
@@ -10,7 +11,7 @@ export async function validateUser(req, res, next) {
   // Find user in database
   const knownUser = await User.findOne({ email: authRequest.user_credentials.email }).exec();
   if (knownUser === null) {
-    res.status("401").send("Invalid credentials");
+    res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
   } else {
     req.user = knownUser;
     next();
@@ -24,28 +25,36 @@ export function validatePassword(req, res, next) {
 
   // Check password
   if (!isValidPass(authRequest.user_credentials.password, user.hashed_password)) {
-    res.status("401").send("Invalid credentials");
+    res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
   }
   next();
 }
 
-export function createTokens(req, res) {
+export function generateTokens(req, res) {
   // Get validated user from request
   let user : IUser = req.user;
 
   // Create tokens
-  let access_expiration = 5400;
-  let refresh_expiration = 604800;
   let response : IAuthSuccessResponse = {
-    access_token: generateToken(user, access_expiration), // expires in 90 minutes
-    refresh_token: generateToken(user, refresh_expiration), // expires in 1 week
-    token_type: "Bearer",
-    expires: access_expiration
+    access_token: generateToken(user, constants.JWT_ACCESS_EXPIRATION),
+    refresh_token: generateToken(user, constants.JWT_REFRESH_EXPIRATION),
+    token_type: constants.JWT_TYPE,
+    expires: constants.JWT_ACCESS_EXPIRATION
   }
 
-  res.status("200").send(response);
+  res.status(constants.HTTP_OK).send(response);
 }
 
-export function refreshTokens(req, res) {
-  return "refreshed token";
+export function validateRefresh(req, res, next) {
+  // Get refresh token from request
+  let refreshRequest : IAuthRefreshRequest = req.json();
+
+  // Validate token
+  validateToken(refreshRequest.refresh_token).then((user: IUser) => {
+    req.user = user;
+    next();
+  }).catch((error) => {
+    console.log(error);
+    res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
+  });
 }
