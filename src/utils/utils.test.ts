@@ -75,7 +75,7 @@ describe("UTIL: auth tests", () => {
   }
 
   function getNext () {
-    return function () {console.log("next() called")};
+    return function () {};
   }
 
   it("generates a token", async () => {
