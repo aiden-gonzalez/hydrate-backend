@@ -6,7 +6,7 @@ import * as constants from "../utils/constants";
 
 export async function validateUser(req, res, next) {
   // Get auth info
-  let authRequest : IAuthRequest = req.json();
+  const authRequest : IAuthRequest = req.json();
 
   // Find user in database
   const knownUser = await User.findOne({ email: authRequest.user_credentials.email }).exec();
@@ -20,8 +20,8 @@ export async function validateUser(req, res, next) {
 
 export function validatePassword(req, res, next) {
   // Get auth info and validated user from request
-  let authRequest : IAuthRequest = req.json();
-  let user : IUser = req.user;
+  const authRequest : IAuthRequest = req.json();
+  const user : IUser = req.user;
 
   // Check password
   if (!isValidPass(authRequest.user_credentials.password, user.hashed_password)) {
@@ -32,10 +32,10 @@ export function validatePassword(req, res, next) {
 
 export function generateTokens(req, res) {
   // Get validated user from request
-  let user : IUser = req.user;
+  const user : IUser = req.user;
 
   // Create tokens
-  let response : IAuthSuccessResponse = {
+  const response : IAuthSuccessResponse = {
     access_token: generateToken(user, constants.JWT_ACCESS_EXPIRATION),
     refresh_token: generateToken(user, constants.JWT_REFRESH_EXPIRATION),
     token_type: constants.JWT_TYPE,
@@ -47,7 +47,7 @@ export function generateTokens(req, res) {
 
 export function validateRefresh(req, res, next) {
   // Get refresh token from request
-  let refreshRequest : IAuthRefreshRequest = req.json();
+  const refreshRequest : IAuthRefreshRequest = req.json();
 
   // Validate token
   validateToken(refreshRequest.refresh_token).then((user: IUser) => {

@@ -32,7 +32,7 @@ describe("Connect to database and run tests", function () {
 async function dropAllCollections(db) {
   try {
     const collections = await db.collections()
-    for (let collection of collections) {
+    for (const collection of collections) {
       await collection.drop();
     }
   } catch (error) {
