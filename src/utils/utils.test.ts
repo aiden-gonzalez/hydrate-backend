@@ -1,7 +1,5 @@
-import {IHashedPassword, IUser} from "./types";
 import {Picture, User} from '../mongoDB';
 import {authenticateRequest, generateToken, hashPass, isValidPass} from "./auth";
-import { IUserProfile } from "../profiles/types";
 import {
   generateBathroomId,
   generateBathroomRatingId,
@@ -20,6 +18,7 @@ import {
   pictureIdRegex,
   userIdRegex
 } from "./regex";
+import {getNextMock, getPicture, getReqMock, getResMock, getUser} from "../testHelper.test";
 
 describe("UTIL: generation and validation tests", () => {
   function testId(id: string, prefix: string, regex: RegExp) {
@@ -55,107 +54,53 @@ describe("UTIL: generation and validation tests", () => {
 });
 
 describe("UTIL: auth tests", () => {
-  async function getUser () : Promise<IUser> {
-    return {
-      id: generateUserId(),
-      username: "username",
-      email: "email@gmail.com",
-      hashed_password: await hashPass("password"),
-      profile: {
-        full_name: "Aiden Gonzalez",
-        picture_link: "https://www.google.com"
-      }
-    }
-  }
-  function getReq (token: string) {
-    return {"get": function (key: string) {return token}, "tokenUser": null};
-  }
-  function getRes () {
-    return {sendStatus: function (code: number) {console.log("Response sent:", code)}};
-  }
-
-  function getNext () {
-    return function () {return null;};
-  }
-
   it("generates a token", async () => {
     const user = await getUser();
-    try {
-      const token = generateToken(user, 1000);
-      assert(jwtValidator(token));
-    } catch (error) {
-      console.log(error);
-    }
+    const token = generateToken(user, constants.JWT_ACCESS_EXPIRATION);
+    assert(jwtValidator(token));
   });
 
   it ("authenticates a token", async () => {
     const user = await getUser();
-    try {
-      const token = generateToken(user, 1000);
-      const req = getReq(token);
-      const res = getRes();
-      const next = getNext();
-      authenticateRequest(req, res, next);
-      assert(req.tokenUser.user.email == user.email);
-    } catch (error) {
-      console.log(error);
-    }
+    const token = generateToken(user, constants.JWT_ACCESS_EXPIRATION);
+    const req = getReqMock(token);
+    const res = getResMock();
+    const next = getNextMock();
+    authenticateRequest(req, res, next);
+    assert(req.user != null && req.user.email == user.email);
   });
 
   it ("hashes a password", async () => {
     const password = "password";
-    try {
-      const hashedPassword = await hashPass(password);
-      assert(sha512Validator(hashedPassword.hash_pass));
-    } catch (error) {
-      console.log(error);
-    }
+    const hashedPassword = await hashPass(password);
+    assert(sha512Validator(hashedPassword.hash_pass));
   });
 
   it("validates a password", async () => {
     const password = "password";
-    try {
-      const hashedPassword = await hashPass(password);
-      assert(isValidPass(password, hashedPassword));
-    } catch (error) {
-      console.log(error);
-    }
+    const hashedPassword = await hashPass(password);
+    assert(isValidPass(password, hashedPassword));
   })
 });
 
 describe("UTIL: creating MongoDB documents", () => {
   it("creates a new User", async () => {
-    const hashedPassword : IHashedPassword = await hashPass("password");
-    const profile : IUserProfile = {
-      full_name: "Aiden Gonzalez",
-      picture_link: "https://www.google.com"
-    }
-    const newUser = new User({
-      id: generateUserId(),
-      username: "aidengonzalez",
-      email: "aidenlgonzalez2@gmail.com",
-      hashed_password: hashedPassword,
-      profile: profile
-    });
+    const newUser = new User(await getUser());
     try {
       await newUser.save();
     } catch (error) {
       console.log(error.message);
+      throw(error.message);
     }
   });
 
   it("creates a new Picture", async () => {
-    const newPicture = new Picture({
-      id: generatePictureId(),
-      entity_id: generateFountainId(),
-      picture_link: "https://www.google.com"
-    });
+    const newPicture = new Picture(getPicture());
     try {
       await newPicture.save();
     } catch (error) {
       console.log(error.message);
+      throw(error.message);
     }
-  })
+  });
 });
-
-

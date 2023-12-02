@@ -1,6 +1,10 @@
 import 'dotenv/config';
 import mongoose from "mongoose";
 import assert from "assert";
+import {IPicture, IUser} from "./utils/types";
+import {generateFountainId, generatePictureId, generateUserId} from "./utils/generate";
+import {hashPass} from "./utils/auth";
+import * as constants from "./utils/constants";
 
 // Tell mongoose to use es6 Promise implementation
 mongoose.Promise = global.Promise;
@@ -38,4 +42,62 @@ async function dropAllCollections(db) {
   } catch (error) {
     console.log(error);
   }
+}
+
+// TESTING HELPER FUNCTIONS
+
+export async function getUser () : Promise<IUser> {
+  return {
+    id: generateUserId(),
+    username: "username",
+    email: "email@gmail.com",
+    hashed_password: await hashPass("password"),
+    profile: {
+      full_name: "Aiden Gonzalez",
+      picture_link: "https://www.google.com"
+    }
+  }
+}
+
+export function getPicture () : IPicture {
+  return {
+    id: generatePictureId(),
+    entity_id: generateFountainId(),
+    picture_link: "https://www.google.com"
+  }
+}
+
+export function getReqMock (token : string = null, json : any = null) {
+  return {
+    "get": function (key : string) {
+      if (key == constants.HTTP_AUTHORIZATION_HEADER) {
+        return token;
+      }
+      return null;
+    },
+    "user": null,
+    "json": function () {
+      return json;
+    }
+  };
+}
+export function getResMock () {
+  return {
+    "sentStatus": null,
+    "status": function (code : number) {
+      this["sentStatus"] = code;
+      return this;
+    },
+    "message": null,
+    "send": function (message : any) {
+      this["message"] = message;
+      return this;
+    }
+  };
+}
+
+export function getNextMock () {
+  const next = function () {return null;};
+  next["called"] = false;
+  return next;
 }
