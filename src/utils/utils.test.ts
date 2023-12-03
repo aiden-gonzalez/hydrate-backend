@@ -19,6 +19,7 @@ import {
   userIdRegex
 } from "./regex";
 import {getNextMock, getPicture, getReqMock, getResMock, getUser} from "../testHelper.test";
+import {IUser} from "./types";
 
 describe("UTIL: generation and validation tests", () => {
   function testId(id: string, prefix: string, regex: RegExp) {
@@ -60,14 +61,23 @@ describe("UTIL: auth tests", () => {
     assert(jwtValidator(token));
   });
 
-  it ("authenticates a token", async () => {
-    const user = await getUser();
-    const token = generateToken(user, constants.JWT_ACCESS_EXPIRATION);
-    const req = getReqMock(token);
-    const res = getResMock();
-    const next = getNextMock();
-    authenticateRequest(req, res, next);
-    assert(req.user != null && req.user.email == user.email);
+  it ("authenticates a token",  (done) => {
+    getUser().then((user : IUser) => {
+      const token = generateToken(user, constants.JWT_ACCESS_EXPIRATION);
+      const req = getReqMock(token);
+      const res = getResMock();
+      const next = getNextMock(() => {
+        try {
+          assert(req.user !== null)
+          assert(req.user.id === user.id);
+          assert(req.user.email === user.email);
+          done();
+        } catch (error) {
+          done(error);
+        }
+      });
+      authenticateRequest(req, res, next);
+    });
   });
 
   it ("hashes a password", async () => {

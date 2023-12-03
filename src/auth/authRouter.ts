@@ -5,15 +5,13 @@ const authRouter = express.Router();
 // auth
 authRouter.post(
   '/auth',
-  authController.validateUser,
-  authController.validatePassword,
-  authController.generateTokens
+  authController.findUser,
+  authController.validatePassword
 ); // login user and return new access token and refresh token
 
 // auth/refresh
 authRouter.post('/auth/refresh',
-  authController.validateRefresh,
-  authController.generateTokens
+  authController.validateRefresh
 ); // take refresh token and grant new access token and refresh token
 
 export default authRouter;

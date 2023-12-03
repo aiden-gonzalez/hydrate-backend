@@ -96,8 +96,6 @@ export function getResMock () {
   };
 }
 
-export function getNextMock () {
-  const next = function () {return null;};
-  next["called"] = false;
-  return next;
+export function getNextMock (callback : any = () => {return null}) {
+  return function () {callback()};
 }

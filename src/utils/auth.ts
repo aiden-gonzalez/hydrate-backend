@@ -14,7 +14,7 @@ export function validateToken(token: string) : Promise<IUser> {
       if (err) {
         reject(err);
       }
-      resolve(tokenUser);
+      resolve(tokenUser.user);
     });
   });
 }
