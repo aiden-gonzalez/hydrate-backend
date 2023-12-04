@@ -5,8 +5,8 @@
   "main": "src/server.ts",
   "scripts": {
     "build": "tsc",
-    "test": "tsc && docker compose -f mongo-docker-compose.yml up -d && mocha --recursive --exit",
-    "start_local": "tsc && docker compose -f mongo-docker-compose.yml up -d && export MONGO_ENV=local && node dist/server.js",
+    "test": "tsc && sudo docker compose -f mongo-docker-compose.yml up -d && mocha --recursive --exit",
+    "start_local": "tsc && sudo docker compose -f mongo-docker-compose.yml up -d && export MONGO_ENV=local && node dist/server.js",
     "start_cloud": "tsc && export MONGO_ENV=cloud && node dist/server.js",
     "lint": "eslint .",
     "lint_fix": "eslint --fix .",

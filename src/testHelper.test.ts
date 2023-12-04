@@ -11,7 +11,7 @@ mongoose.Promise = global.Promise;
 
 describe("Connect to database and run tests", function () {
   it("Should connect to database", async () => {
-    await mongoose.connect("mongodb://root:password@127.0.0.1:27017/hydrate?authSource=admin");
+    await mongoose.connect(process.env.MONGO_TEST_URI);
     console.log("Connected to local MongoDB");
     mongoose.connection.on("error", (error) => {
       console.warn("Error: ", error);
