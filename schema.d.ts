@@ -16,7 +16,9 @@ export interface paths {
       responses: {
         /** @description Account successfully created */
         200: {
-          content: never;
+          content: {
+            "application/json": components["schemas"]["User"];
+          };
         };
         /** @description Credentials invalid! */
         401: {
@@ -676,32 +678,6 @@ export interface paths {
       };
     };
   };
-  "/api/auth": {
-    /** Password authentication */
-    post: {
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["AuthRequest"];
-        };
-      };
-      responses: {
-        /** @description Successful auth request, return tokens and token information */
-        200: {
-          content: {
-            "application/json": components["schemas"]["AuthSuccessResponse"];
-          };
-        };
-        /** @description Request is missing required information or is incorrectly formatted */
-        400: {
-          content: never;
-        };
-        /** @description User credentials are incorrect */
-        401: {
-          content: never;
-        };
-      };
-    };
-  };
   "/api/auth/refresh": {
     /** Auth token refresh */
     post: {
@@ -722,6 +698,32 @@ export interface paths {
           content: never;
         };
         /** @description Credentials incorrect or refresh token expired! */
+        401: {
+          content: never;
+        };
+      };
+    };
+  };
+  "/api/auth": {
+    /** Password authentication */
+    post: {
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["AuthRequest"];
+        };
+      };
+      responses: {
+        /** @description Successful auth request, return tokens and token information */
+        200: {
+          content: {
+            "application/json": components["schemas"]["AuthSuccessResponse"];
+          };
+        };
+        /** @description Request is missing required information or is incorrectly formatted */
+        400: {
+          content: never;
+        };
+        /** @description User credentials are incorrect */
         401: {
           content: never;
         };
@@ -848,19 +850,6 @@ export interface components {
       password: string;
     };
     /**
-     * @description Secret credentials of trusted client
-     * @example {
-     *   "client_id": "some text",
-     *   "client_secret": "some text"
-     * }
-     */
-    ClientCredentials: {
-      /** @description ID of client application */
-      client_id: string;
-      /** @description Secret of client application */
-      client_secret: string;
-    };
-    /**
      * @description SHA256 hashed password (with salt)
      * @example {
      *   "hash_pass": "some text",
@@ -893,10 +882,6 @@ export interface components {
      *   "user_credentials": {
      *     "email": "some text",
      *     "password": "some text"
-     *   },
-     *   "client_credentials": {
-     *     "client_id": "some text",
-     *     "client_secret": "some text"
      *   }
      * }
      */
@@ -905,8 +890,6 @@ export interface components {
       username: string;
       /** @description Set of new credentials for new user */
       user_credentials: components["schemas"]["UserCredentials"];
-      /** @description Set of client credentials */
-      client_credentials: components["schemas"]["ClientCredentials"];
     };
     /**
      * @description Basic fountain information

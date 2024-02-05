@@ -19,17 +19,17 @@ describe("Connect to database and run tests", function () {
     assert(mongoose.connection.db);
 
     // Comment out to see the documents after testing
-    // beforeEach((done) => {
-    //   dropAllCollections(mongoose.connection.db).then(() => {
-    //     done();
-    //   });
-    // });
-    //
-    // afterEach((done) => {
-    //   dropAllCollections(mongoose.connection.db).then(() => {
-    //     done();
-    //   });
-    // });
+    beforeEach((done) => {
+      dropAllCollections(mongoose.connection.db).then(() => {
+        done();
+      });
+    });
+
+    afterEach((done) => {
+      dropAllCollections(mongoose.connection.db).then(() => {
+        done();
+      });
+    });
   });
 });
 

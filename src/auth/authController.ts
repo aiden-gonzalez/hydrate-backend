@@ -11,10 +11,10 @@ export async function findUser (req, res, next) {
   // Find user in database
   const dbUser = await User.findOne({ email: authRequest.user_credentials.email }).exec();
   if (dbUser === null) {
-    res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
+    return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
   } else {
     req.user = dbUserToIUser(dbUser);
-    next();
+    return next();
   }
 }
 
@@ -26,10 +26,10 @@ export async function validatePassword (req, res) {
   // Check password
   const passwordValid = await isValidPass(authRequest.user_credentials.password, user.hashed_password);
   if (!passwordValid) {
-    res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
+    return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
   } else {
     // Send tokens
-    res.status(constants.HTTP_OK).send(getAuthSuccessResponse(user));
+    return res.status(constants.HTTP_OK).send(getAuthSuccessResponse(user));
   }
 }
 
@@ -40,9 +40,9 @@ export function validateRefresh(req, res) {
   // Validate token
   validateToken(refreshRequest.refresh_token).then((user: IUser) => {
     // Send new tokens
-    res.status(constants.HTTP_OK).send(getAuthSuccessResponse(user));
+    return res.status(constants.HTTP_OK).send(getAuthSuccessResponse(user));
   }).catch((error) => {
-    res.status(constants.HTTP_UNAUTHORIZED).send(error);
+    return res.status(constants.HTTP_UNAUTHORIZED).send(error);
   });
 }
 

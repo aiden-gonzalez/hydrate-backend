@@ -30,6 +30,13 @@
                 },
                 "responses": {
                     "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
                         "description": "Account successfully created"
                     },
                     "401": {
@@ -1122,40 +1129,6 @@
                 "summary": "Update user profile by user ID"
             }
         },
-        "/api/auth": {
-            "summary": "Primary endpoint for password authentication scheme",
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AuthRequest"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AuthSuccessResponse"
-                                }
-                            }
-                        },
-                        "description": "Successful auth request, return tokens and token information"
-                    },
-                    "400": {
-                        "description": "Request is missing required information or is incorrectly formatted"
-                    },
-                    "401": {
-                        "description": "User credentials are incorrect"
-                    }
-                },
-                "summary": "Password authentication"
-            }
-        },
         "/api/auth/refresh": {
             "summary": "For using refresh token to obtain new access token",
             "post": {
@@ -1188,6 +1161,40 @@
                     }
                 },
                 "summary": "Auth token refresh"
+            }
+        },
+        "/api/auth": {
+            "summary": "Primary endpoint for password authentication scheme",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthSuccessResponse"
+                                }
+                            }
+                        },
+                        "description": "Successful auth request, return tokens and token information"
+                    },
+                    "400": {
+                        "description": "Request is missing required information or is incorrectly formatted"
+                    },
+                    "401": {
+                        "description": "User credentials are incorrect"
+                    }
+                },
+                "summary": "Password authentication"
             }
         }
     },
@@ -1389,28 +1396,6 @@
                     "password": "some text"
                 }
             },
-            "ClientCredentials": {
-                "description": "Secret credentials of trusted client",
-                "required": [
-                    "client_id",
-                    "client_secret"
-                ],
-                "type": "object",
-                "properties": {
-                    "client_id": {
-                        "description": "ID of client application",
-                        "type": "string"
-                    },
-                    "client_secret": {
-                        "description": "Secret of client application",
-                        "type": "string"
-                    }
-                },
-                "example": {
-                    "client_id": "some text",
-                    "client_secret": "some text"
-                }
-            },
             "HashedPassword": {
                 "description": "SHA256 hashed password (with salt)",
                 "required": [
@@ -1459,8 +1444,7 @@
                 "description": "Information needed for signup request",
                 "required": [
                     "user_credentials",
-                    "username",
-                    "client_credentials"
+                    "username"
                 ],
                 "type": "object",
                 "properties": {
@@ -1471,10 +1455,6 @@
                     "user_credentials": {
                         "$ref": "#/components/schemas/UserCredentials",
                         "description": "Set of new credentials for new user"
-                    },
-                    "client_credentials": {
-                        "$ref": "#/components/schemas/ClientCredentials",
-                        "description": "Set of client credentials"
                     }
                 },
                 "example": {
@@ -1482,10 +1462,6 @@
                     "user_credentials": {
                         "email": "some text",
                         "password": "some text"
-                    },
-                    "client_credentials": {
-                        "client_id": "some text",
-                        "client_secret": "some text"
                     }
                 }
             },

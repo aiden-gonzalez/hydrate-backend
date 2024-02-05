@@ -231,7 +231,7 @@ const hashedPasswordSchema : Schema = new Schema<utilTypes.IHashedPassword>({
 const userProfileSchema : Schema = new Schema<profileTypes.IUserProfile>({
   full_name: {
     type: String,
-    required: true
+    required: false
   },
   picture_link: {
     type: String,
