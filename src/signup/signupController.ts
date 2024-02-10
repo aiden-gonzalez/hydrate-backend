@@ -15,8 +15,8 @@ export async function createAccount(req, res) {
   // Get signup info
   const signupRequest : ISignupRequest = req.json();
 
-  // Check if user already exists
-  const dbUser = await User.findOne({ email: signupRequest.user_credentials.email }).exec();
+  // Check if user already exists (based on username)
+  const dbUser = await User.findOne({username: signupRequest.username}).exec();
   if (dbUser !== null) {
     return res.status(HTTP_FORBIDDEN).send(ERROR_USER_ALREADY_EXISTS);
   }

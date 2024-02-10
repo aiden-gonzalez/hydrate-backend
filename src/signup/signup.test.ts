@@ -22,8 +22,9 @@ describe("SIGNUP: registering a new user", () => {
     await createAccount(req, res);
     // Should have worked
     assert(res.sentStatus == constants.HTTP_OK);
-    const newUser = await User.findOne({ email: signupRequest.user_credentials.email }).exec();
+    const newUser = await User.findOne({ username: signupRequest.username }).exec();
     assert(newUser !== null);
+    assert(newUser.username == signupRequest.username);
     assert(newUser.email == signupRequest.user_credentials.email);
   });
 
@@ -32,7 +33,7 @@ describe("SIGNUP: registering a new user", () => {
 
     // Create user before create signup
     const newUser = await getUser();
-    newUser.email = signupRequest.user_credentials.email;
+    newUser.username = signupRequest.username;
     const newUserDocument = new User(newUser);
     await newUserDocument.save();
 
