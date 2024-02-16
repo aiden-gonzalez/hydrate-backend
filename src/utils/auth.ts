@@ -27,7 +27,7 @@ export function authenticateRequest (req, res, next) {
     req.user = tokenUser;
     next();
   }).catch((error) => {
-    res.sendStatus(constants.HTTP_UNAUTHORIZED).send(error);
+    return res.sendStatus(constants.HTTP_UNAUTHORIZED).send(error);
   });
 }
 

@@ -10,6 +10,8 @@ export const HTTP_UNAUTHORIZED_MESSAGE  = "Invalid credentials";
 
 // Other error messages
 export const ERROR_USER_ALREADY_EXISTS = "User with that username already exists";
+export const ERROR_USER_NOT_FOUND = "User not found";
+export const ERROR_INTERNAL = "Internal error";
 
 // HTTP headers
 export const HTTP_AUTHORIZATION_HEADER  = "Authorization";

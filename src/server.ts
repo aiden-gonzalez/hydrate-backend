@@ -26,7 +26,7 @@ server.use(
 // Error handling middleware
 server.use((err, req, res, next) => {
   // format error
-  res.status(err.status || 500).json({
+  return res.status(err.status || 500).json({
     message: err.message,
     errors: err.errors
   });
@@ -46,7 +46,7 @@ server.use('/api/', signupRouter);
 
 // Base endpoint
 server.get('/', (req, res) => {
-  res.send('Server OK');
+  return res.send('Server OK');
 });
 
 server.listen(port, () => {

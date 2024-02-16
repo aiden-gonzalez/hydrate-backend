@@ -4,7 +4,12 @@ const profilesRouter = express.Router();
 
 
 // profiles
-profilesRouter.get('/profiles', profilesController.getProfile);
-profilesRouter.put('/profiles', profilesController.updateProfile);
+profilesRouter.get('/profiles/:username',
+  profilesController.getUserMiddleware,
+  profilesController.getProfileFromUser
+); // get profile by username
+profilesRouter.put('/profiles/:username',
+  profilesController.updateProfile
+); // update profile by username
 
 export default profilesRouter;

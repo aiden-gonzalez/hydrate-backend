@@ -1041,94 +1041,6 @@
                 "summary": "Delete a fountain picture"
             }
         },
-        "/api/profiles": {
-            "summary": "Endpoint for getting and updating profiles",
-            "get": {
-                "parameters": [
-                    {
-                        "name": "username",
-                        "description": "Username of user to fetch profile for",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserProfile"
-                                }
-                            }
-                        },
-                        "description": "Successfully fetched user profile"
-                    },
-                    "400": {
-                        "description": "Malformed request (missing username?)"
-                    },
-                    "403": {
-                        "description": "Authorization/authentication failed (access token invalid, or maybe not allowed to view this profile?)"
-                    },
-                    "404": {
-                        "description": "User with provided username not found!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Get a profile by username"
-            },
-            "put": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UserProfile"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of user whose profile to update",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully updated user profile!"
-                    },
-                    "400": {
-                        "description": "Malformed request!"
-                    },
-                    "401": {
-                        "description": "Authorization/authentication failed!"
-                    },
-                    "404": {
-                        "description": "Could not find user with ID"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Update user profile by user ID"
-            }
-        },
         "/api/auth/refresh": {
             "summary": "For using refresh token to obtain new access token",
             "post": {
@@ -1196,6 +1108,94 @@
                 },
                 "summary": "Password authentication"
             }
+        },
+        "/api/profiles/{username}": {
+            "summary": "Endpoint for getting and updating profiles",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserProfile"
+                                }
+                            }
+                        },
+                        "description": "Successfully fetched user profile"
+                    },
+                    "400": {
+                        "description": "Malformed request (missing username?)"
+                    },
+                    "403": {
+                        "description": "Authorization/authentication failed (access token invalid, or maybe not allowed to view this profile?)"
+                    },
+                    "404": {
+                        "description": "User with provided username not found!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get a profile by username"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserProfile"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserProfile"
+                                }
+                            }
+                        },
+                        "description": "Successfully updated user profile!"
+                    },
+                    "400": {
+                        "description": "Malformed request!"
+                    },
+                    "401": {
+                        "description": "Authorization/authentication failed!"
+                    },
+                    "404": {
+                        "description": "Could not find user with ID"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Update user profile by username"
+            },
+            "parameters": [
+                {
+                    "examples": {
+                        "username": {
+                            "value": "gonzo123"
+                        }
+                    },
+                    "name": "username",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
         }
     },
     "components": {

@@ -1,9 +1,8 @@
-import {getNextMock, getReqMock, getResMock, getUser} from "../testHelper.test";
+import {getReqMock, getResMock, getUser} from "../testHelper.test";
 import assert from "assert";
 import * as constants from "../utils/constants";
 import {User} from "../mongoDB";
 import {ISignupRequest} from "./types";
-import {IUser} from "../utils/types";
 import {createAccount} from "../signup/signupController";
 
 describe("SIGNUP: registering a new user", () => {

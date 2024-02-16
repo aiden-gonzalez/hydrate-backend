@@ -1,19 +1,19 @@
 import {generateToken, isValidPass, validateToken} from "../utils/auth";
-import { User } from "../mongoDB";
 import {IAuthRefreshRequest, IAuthRequest, IAuthSuccessResponse} from "./types";
-import {dbUserToIUser, IUser} from "../utils/types";
+import { IUser } from "../utils/types";
 import * as constants from "../utils/constants";
+import database = require('../utils/database');
 
 export async function findUser (req, res, next) {
   // Get auth info
   const authRequest : IAuthRequest = req.json();
 
   // Find user in database
-  const dbUser = await User.findOne({ email: authRequest.user_credentials.email }).exec();
-  if (dbUser === null) {
+  const user = await database.fetchUserByEmail(authRequest.user_credentials.email);
+  if (user === null) {
     return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
   } else {
-    req.user = dbUserToIUser(dbUser);
+    req.user = user;
     return next();
   }
 }
