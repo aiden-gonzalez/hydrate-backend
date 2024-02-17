@@ -5,7 +5,7 @@ const authRouter = express.Router();
 // auth
 authRouter.post(
   '/auth',
-  authController.findUser,
+  authController.findUserMiddleware,
   authController.validatePassword
 ); // login user and return new access token and refresh token
 

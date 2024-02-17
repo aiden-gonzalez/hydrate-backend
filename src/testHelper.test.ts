@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import assert from "assert";
 import {IPicture, IUser} from "./utils/types";
 import {generateFountainId, generatePictureId, generateUserId} from "./utils/generate";
-import {hashPass} from "./utils/auth";
+import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
 
 // Tell mongoose to use es6 Promise implementation
@@ -46,6 +46,10 @@ async function dropAllCollections(db) {
 
 // TESTING HELPER FUNCTIONS
 
+export function getToken (user: IUser) : string {
+  return generateToken(user, constants.JWT_ACCESS_EXPIRATION);
+}
+
 export async function getUser () : Promise<IUser> {
   return {
     id: generateUserId(),
@@ -75,12 +79,22 @@ export function getReqMock (token : string = null, json : any = null) {
       }
       return null;
     },
+    "params": null,
     "user": null,
     "json": function () {
       return json;
     }
   };
 }
+
+export function getAuthedReqMockForUser (user : IUser, json : any = null) {
+  return getReqMock(getToken(user), json);
+}
+
+export async function getAuthedReqMock (json : any = null) {
+  return getAuthedReqMockForUser(await getUser(), json);
+}
+
 export function getResMock () {
   return {
     "sentStatus": null,

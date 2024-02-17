@@ -21,7 +21,7 @@ export function validateToken(token: string) : Promise<IUser> {
 
 export function authenticateRequest (req, res, next) {
   const token = req.get("Authorization");
-  if (token == null) return res.sendStatus(constants.HTTP_UNAUTHORIZED);
+  if (token == null) return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
 
   validateToken(token).then((tokenUser) => {
     req.user = tokenUser;

@@ -1,9 +1,9 @@
 import {getNextMock, getReqMock, getResMock, getUser} from "../testHelper.test";
-import {findUser, validatePassword} from "./authController";
+import {findUserMiddleware, validatePassword} from "./authController";
 import assert from "assert";
 import * as constants from "../utils/constants";
 import {User} from "../mongoDB";
-import {IAuthRefreshRequest, IAuthRequest} from "./types";
+import {IAuthRequest} from "./types";
 import {IUser} from "../utils/types";
 
 describe("AUTH: logging in user", () => {
@@ -22,7 +22,7 @@ describe("AUTH: logging in user", () => {
     const req = getReqMock(null, authRequest);
 
     // Don't create user before attempting to log in
-    await findUser(req, res, next);
+    await findUserMiddleware(req, res, next);
     // Login should have failed
     assert(res.sentStatus == constants.HTTP_UNAUTHORIZED);
     assert(res.message == constants.HTTP_UNAUTHORIZED_MESSAGE);
@@ -35,7 +35,7 @@ describe("AUTH: logging in user", () => {
     // Create user before login attempt
     const userModel = new User(user);
     await userModel.save();
-    await findUser(req, res, next);
+    await findUserMiddleware(req, res, next);
     // User should have been found
     assert(req.user !== null);
     assert(req.user.id === user.id);

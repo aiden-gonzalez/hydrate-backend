@@ -7,11 +7,12 @@ export const HTTP_INTERNAL_ERROR = 500;
 
 // HTTP status messages
 export const HTTP_UNAUTHORIZED_MESSAGE  = "Invalid credentials";
+export const HTTP_FORBIDDEN_MESSAGE = "Not permitted to perform that action";
+export const HTTP_NOT_FOUND_MESSAGE = "Resource not found";
+export const HTTP_INTERNAL_ERROR_MESSAGE = "Internal error";
 
 // Other error messages
 export const ERROR_USER_ALREADY_EXISTS = "User with that username already exists";
-export const ERROR_USER_NOT_FOUND = "User not found";
-export const ERROR_INTERNAL = "Internal error";
 
 // HTTP headers
 export const HTTP_AUTHORIZATION_HEADER  = "Authorization";

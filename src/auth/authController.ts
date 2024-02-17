@@ -4,7 +4,7 @@ import { IUser } from "../utils/types";
 import * as constants from "../utils/constants";
 import database = require('../utils/database');
 
-export async function findUser (req, res, next) {
+export async function findUserMiddleware (req, res, next) {
   // Get auth info
   const authRequest : IAuthRequest = req.json();
 
@@ -13,7 +13,7 @@ export async function findUser (req, res, next) {
   if (user === null) {
     return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
   } else {
-    req.user = user;
+    req.dbUser = user;
     return next();
   }
 }
@@ -21,7 +21,7 @@ export async function findUser (req, res, next) {
 export async function validatePassword (req, res) {
   // Get auth info and user from request
   const authRequest : IAuthRequest = req.json();
-  const user : IUser = req.user;
+  const user : IUser = req.dbUser;
 
   // Check password
   const passwordValid = await isValidPass(authRequest.user_credentials.password, user.hashed_password);
