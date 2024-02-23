@@ -1,7 +1,8 @@
-import {getAuthedReqMockForUser, getReqMock, getResMock, getUser} from "../testHelper.test";
+import {getAuthedReqMockForUser, getNextMock, getReqMock, getResMock, getUser} from "../testHelper.test";
 import assert from "assert";
 import * as constants from "../utils/constants";
 import {getProfileForUser, updateProfile} from "./profilesController";
+import {authenticateRequest} from '../utils/auth';
 import * as database from "../utils/database";
 
 describe("PROFILES: getting and updating profiles", async () => {
@@ -14,8 +15,9 @@ describe("PROFILES: getting and updating profiles", async () => {
     req.params = {
       username: user.username
     };
+    const next = getNextMock();
 
-    await getProfileForUser(req, res);
+    authenticateRequest(req, res, next);
     // Should have failed with unauthorized
     assert(res.sentStatus == constants.HTTP_UNAUTHORIZED);
     assert(res.message == constants.HTTP_UNAUTHORIZED_MESSAGE);
