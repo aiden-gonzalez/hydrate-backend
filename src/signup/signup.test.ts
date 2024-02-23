@@ -1,9 +1,9 @@
 import {getReqMock, getResMock, getUser} from "../testHelper.test";
-import assert from "assert";
 import * as constants from "../utils/constants";
 import {User} from "../mongoDB";
 import {ISignupRequest} from "./types";
 import {createAccount} from "../signup/signupController";
+import {expect} from "chai";
 
 describe("SIGNUP: registering a new user", () => {
   const signupRequest : ISignupRequest = {
@@ -18,13 +18,15 @@ describe("SIGNUP: registering a new user", () => {
   it("registers a new user", async () => {
     const req = getReqMock(null, signupRequest);
 
+    // Try to create an account
     await createAccount(req, res);
+
     // Should have worked
-    assert(res.sentStatus == constants.HTTP_OK);
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
     const newUser = await User.findOne({ username: signupRequest.username }).exec();
-    assert(newUser !== null);
-    assert(newUser.username == signupRequest.username);
-    assert(newUser.email == signupRequest.user_credentials.email);
+    expect(newUser).to.not.equal(null);
+    expect(newUser.username).to.equal(signupRequest.username);
+    expect(newUser.email).to.equal(signupRequest.user_credentials.email);
   });
 
   it("fails to register an existing user", async () => {
@@ -39,6 +41,6 @@ describe("SIGNUP: registering a new user", () => {
     // Now try to sign up
     await createAccount(req, res);
     // Should have been a 403 error
-    assert(res.sentStatus == constants.HTTP_FORBIDDEN);
+    expect(res.sentStatus).to.equal(constants.HTTP_FORBIDDEN);
   });
 });

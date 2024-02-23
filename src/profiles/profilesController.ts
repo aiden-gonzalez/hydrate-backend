@@ -1,7 +1,15 @@
-import { IUserProfile } from "./types";
-import { IUser } from "../utils/types";
-import database = require('../utils/database');
-import { HTTP_INTERNAL_ERROR, HTTP_INTERNAL_ERROR_MESSAGE, HTTP_NOT_FOUND, HTTP_NOT_FOUND_MESSAGE, HTTP_OK, HTTP_FORBIDDEN, HTTP_FORBIDDEN_MESSAGE } from "../utils/constants";
+import {IUserProfile} from "./types";
+import {IUser} from "../utils/types";
+import * as database from "../utils/database";
+import {
+  HTTP_FORBIDDEN,
+  HTTP_FORBIDDEN_MESSAGE,
+  HTTP_INTERNAL_ERROR,
+  HTTP_INTERNAL_ERROR_MESSAGE,
+  HTTP_NOT_FOUND,
+  HTTP_NOT_FOUND_MESSAGE,
+  HTTP_OK
+} from "../utils/constants";
 
 export async function getUserMiddleware(req, res, next) {
   const username = req.params.username;
@@ -10,7 +18,7 @@ export async function getUserMiddleware(req, res, next) {
     return res.status(HTTP_NOT_FOUND).send(HTTP_NOT_FOUND_MESSAGE);
   }
   req.dbUser = user;
-  next();
+  return next();
 }
 
 export function permissionCheck(req, res, next) {
@@ -20,7 +28,7 @@ export function permissionCheck(req, res, next) {
   if (!authedUser || authedUser.username != requestedUsername) {
     return res.status(HTTP_FORBIDDEN).send(HTTP_FORBIDDEN_MESSAGE);
   }
-  next();
+  return next();
 }
 
 export function getProfileForUser(req, res) {

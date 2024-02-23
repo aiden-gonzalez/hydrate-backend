@@ -1,5 +1,6 @@
-import bathroomsController = require('./bathroomsController');
+import * as bathroomsController from "./bathroomsController";
 import express from "express";
+
 const bathroomsRouter = express.Router();
 
 // bathrooms

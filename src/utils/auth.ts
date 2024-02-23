@@ -23,11 +23,13 @@ export function authenticateRequest (req, res, next) {
   const token = req.get("Authorization");
   if (token == null) return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
 
-  validateToken(token).then((tokenUser) => {
-    req.user = tokenUser;
-    next();
-  }).catch((error) => {
-    return res.sendStatus(constants.HTTP_UNAUTHORIZED).send(error);
+  return new Promise((resolve) => {
+    validateToken(token).then((tokenUser) => {
+      req.user = tokenUser;
+      resolve(next());
+    }).catch((error) => {
+      resolve(res.sendStatus(constants.HTTP_UNAUTHORIZED).send(error));
+    });
   });
 }
 

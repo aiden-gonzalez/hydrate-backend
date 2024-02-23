@@ -1,5 +1,6 @@
-import fountainsController = require('./fountainsController');
+import * as fountainsController from "./fountainsController";
 import express from "express";
+
 const fountainsRouter = express.Router();
 
 // fountains

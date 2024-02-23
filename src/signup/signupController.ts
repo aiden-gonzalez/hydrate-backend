@@ -34,9 +34,11 @@ export async function createAccount(req, res) {
     hashed_password: await hashPass(signupRequest.user_credentials.password)
   } as IUser;
 
-  database.createUser(newUser).then((createdUser) => {
-    return res.status(HTTP_OK).send(createdUser);
-  }).catch((error) => {
-    return res.status(HTTP_INTERNAL_ERROR).send(error);
+  return new Promise((resolve) => {
+    database.createUser(newUser).then((createdUser) => {
+      resolve(res.status(HTTP_OK).send(createdUser));
+    }).catch((error) => {
+      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
+    });
   });
 }

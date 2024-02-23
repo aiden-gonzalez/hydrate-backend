@@ -1,6 +1,7 @@
-import profilesController = require('./profilesController');
+import * as profilesController from "./profilesController";
 import express from "express";
-import { authenticateRequest } from '../utils/auth';
+import {authenticateRequest} from '../utils/auth';
+
 const profilesRouter = express.Router();
 
 

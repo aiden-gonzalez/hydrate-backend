@@ -1,6 +1,15 @@
 import 'dotenv/config';
 import express from 'express';
 import mongoose from "mongoose";
+import * as BodyParser from "body-parser";
+
+// Routers
+import bathroomsRouter from "./bathrooms/bathroomsRouter";
+import fountainsRouter from './fountains/fountainsRouter'
+import authRouter from './auth/authRouter';
+import profilesRouter from './profiles/profilesRouter';
+import signupRouter from './signup/signupRouter';
+import OpenApiValidator from "express-openapi-validator";
 
 // Server port
 const port = process.env.PORT;
@@ -9,12 +18,9 @@ const port = process.env.PORT;
 const server = express();
 
 // Body parser middleware
-import  BodyParser = require('body-parser');
 server.use(BodyParser.json());
 server.use(BodyParser.urlencoded({ extended: true }));
-
-// Spec validator middleware (using to validate requests)
-import OpenApiValidator = require('express-openapi-validator');
+// Setup validator middleware (using to validate requests)
 server.use(
   OpenApiValidator.middleware({
     apiSpec: './hydRate.json',
@@ -32,12 +38,6 @@ server.use((err, req, res, next) => {
   });
 });
 
-// Routers
-import bathroomsRouter from "./bathrooms/bathroomsRouter";
-import fountainsRouter from './fountains/fountainsRouter'
-import authRouter from './auth/authRouter';
-import profilesRouter from './profiles/profilesRouter';
-import signupRouter from './signup/signupRouter';
 server.use('/api/', bathroomsRouter);
 server.use('/api/', fountainsRouter);
 server.use('/api/', authRouter);

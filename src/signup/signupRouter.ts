@@ -1,5 +1,6 @@
-import signupController = require('./signupController');
+import * as signupController from "./signupController";
 import express from "express";
+
 const signupRouter = express.Router();
 
 // /signup

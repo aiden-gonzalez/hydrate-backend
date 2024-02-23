@@ -1,10 +1,10 @@
-import authController = require('./authController');
+import * as authController from "./authController";
 import express from "express";
+
 const authRouter = express.Router();
 
 // auth
-authRouter.post(
-  '/auth',
+authRouter.post('/auth',
   authController.findUserMiddleware,
   authController.validatePassword
 ); // login user and return new access token and refresh token

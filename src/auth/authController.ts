@@ -1,8 +1,8 @@
 import {generateToken, isValidPass, validateToken} from "../utils/auth";
 import {IAuthRefreshRequest, IAuthRequest, IAuthSuccessResponse} from "./types";
-import { IUser } from "../utils/types";
+import {IUser} from "../utils/types";
 import * as constants from "../utils/constants";
-import database = require('../utils/database');
+import * as database from "../utils/database";
 
 export async function findUserMiddleware (req, res, next) {
   // Get auth info
