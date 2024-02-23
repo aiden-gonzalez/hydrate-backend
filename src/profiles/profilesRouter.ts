@@ -13,7 +13,7 @@ profilesRouter.get('/profiles/:username',
 ); // get profile by username
 profilesRouter.put('/profiles/:username',
   authenticateRequest, // authenticate request
-  profilesController.permissionCheck, // ensure user is allowed to update profile
+  profilesController.profilePermissionCheck, // ensure user is allowed to update profile
   profilesController.getUserMiddleware, // get user from db by username
   profilesController.updateProfile // update and return user
 ); // update profile by username

@@ -6,7 +6,7 @@ import {
   simulateRouter
 } from "../testHelper.test";
 import * as constants from "../utils/constants";
-import {getProfileForUser, getUserMiddleware, permissionCheck, updateProfile} from "./profilesController";
+import {getProfileForUser, getUserMiddleware, profilePermissionCheck, updateProfile} from "./profilesController";
 import {authenticateRequest} from '../utils/auth';
 import * as database from "../utils/database";
 import {IUserProfile} from "./types";
@@ -14,7 +14,7 @@ import {expect} from "chai";
 
 describe("PROFILES: getting and updating profiles", () => {
   const getProfileFuncs = [authenticateRequest, getUserMiddleware, getProfileForUser];
-  const updateProfileFuncs = [authenticateRequest, getUserMiddleware, permissionCheck, updateProfile];
+  const updateProfileFuncs = [authenticateRequest, getUserMiddleware, profilePermissionCheck, updateProfile];
 
   it("can't get a user profile without authentication", async () => {
     const user = await getUser();

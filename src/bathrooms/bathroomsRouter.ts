@@ -1,11 +1,18 @@
 import * as bathroomsController from "./bathroomsController";
 import express from "express";
+import {authenticateRequest} from "../utils/auth";
 
 const bathroomsRouter = express.Router();
 
 // bathrooms
-bathroomsRouter.get('/bathrooms', bathroomsController.getBathrooms);
-bathroomsRouter.put('/bathrooms', bathroomsController.updateBathroom);
+bathroomsRouter.get('/bathrooms',
+  authenticateRequest, // authenticate request
+  bathroomsController.getBathrooms // get bathrooms
+); // Get bathrooms
+bathroomsRouter.put('/bathrooms',
+  authenticateRequest,
+  bathroomsController.updateBathroom
+);
 bathroomsRouter.post('/bathrooms', bathroomsController.createBathroom);
 
 // bathrooms/pictures

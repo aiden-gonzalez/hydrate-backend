@@ -21,7 +21,7 @@ export async function getUserMiddleware(req, res, next) {
   return next();
 }
 
-export function permissionCheck(req, res, next) {
+export function profilePermissionCheck(req, res, next) {
   const authedUser : IUser = req.user;
   const requestedUsername : string = req.params.username;
 
