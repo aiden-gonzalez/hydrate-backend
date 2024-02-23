@@ -9,7 +9,6 @@ import {
 } from "./generate";
 import {jwtValidator, regexValidator, sha512Validator, uuidValidator} from "./validation";
 import * as constants from "./constants";
-import assert from "assert";
 import {
   bathroomIdRegex,
   bathroomRatingIdRegex,
@@ -18,15 +17,16 @@ import {
   pictureIdRegex,
   userIdRegex
 } from "./regex";
-import {getNextMock, getPicture, getReqMock, getResMock, getUser} from "../testHelper.test";
+import {getPicture, getReqMock, getResMock, getUser} from "../testHelper.test";
 import {IUser} from "./types";
+import {expect} from "chai";
 
 describe("UTIL: generation and validation tests", () => {
   function testId(id: string, prefix: string, regex: RegExp) {
-    assert(id.slice(0, prefix.length) == prefix);
-    assert(id.slice(prefix.length, prefix.length + 1) == "_");
-    assert(uuidValidator(id.slice(prefix.length + 1)));
-    assert(regexValidator(id, regex));
+    expect(id.slice(0, prefix.length)).to.equal(prefix);
+    expect(id.slice(prefix.length, prefix.length + 1)).to.equal("_");
+    expect(uuidValidator(id.slice(prefix.length + 1)));
+    expect(regexValidator(id, regex));
   }
 
   it("generates a valid user id", () => {
@@ -58,38 +58,34 @@ describe("UTIL: auth tests", () => {
   it("generates a token", async () => {
     const user = await getUser();
     const token = generateToken(user, constants.JWT_ACCESS_EXPIRATION);
-    assert(jwtValidator(token));
+    expect(jwtValidator(token));
   });
 
-  it ("authenticates a token",  (done) => {
-    getUser().then((user : IUser) => {
-      const token = generateToken(user, constants.JWT_ACCESS_EXPIRATION);
-      const req = getReqMock(token);
-      const res = getResMock();
-      const next = getNextMock(() => {
-        try {
-          assert(req.user !== null)
-          assert(req.user.id === user.id);
-          assert(req.user.email === user.email);
-          done();
-        } catch (error) {
-          done(error);
-        }
-      });
-      authenticateRequest(req, res, next);
-    });
+  it ("authenticates a token", async () => {
+    const user : IUser = await getUser();
+    const token = generateToken(user, constants.JWT_ACCESS_EXPIRATION);
+    const req = getReqMock(token);
+    const res = getResMock();
+
+    // Try to authenticate token
+    await authenticateRequest(req, res, () => {});
+
+    // Should have worked
+    expect(req.user).to.not.equal(null);
+    expect(req.user.id).to.equal(user.id);
+    expect(req.user.email).to.equal(user.email);
   });
 
   it ("hashes a password", async () => {
     const password = "password";
     const hashedPassword = await hashPass(password);
-    assert(sha512Validator(hashedPassword.hash_pass));
+    expect(sha512Validator(hashedPassword.hash_pass));
   });
 
   it("validates a password", async () => {
     const password = "password";
     const hashedPassword = await hashPass(password);
-    assert(isValidPass(password, hashedPassword));
+    expect(isValidPass(password, hashedPassword));
   })
 });
 
@@ -99,7 +95,6 @@ describe("UTIL: creating MongoDB documents", () => {
     try {
       await newUser.save();
     } catch (error) {
-      console.log(error.message);
       throw(error.message);
     }
   });
@@ -109,7 +104,6 @@ describe("UTIL: creating MongoDB documents", () => {
     try {
       await newPicture.save();
     } catch (error) {
-      console.log(error.message);
       throw(error.message);
     }
   });

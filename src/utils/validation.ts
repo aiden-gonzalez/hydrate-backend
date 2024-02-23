@@ -8,7 +8,7 @@ export function checkValidation(req, res, next) {
   if (!errors.isEmpty()) {
     return res.status(400).json({ validation_errors: errors.array() });
   } else {
-    next();
+    return next();
   }
 }
 

@@ -1,10 +1,10 @@
 import 'dotenv/config';
 import mongoose from "mongoose";
-import assert from "assert";
 import {IPicture, IUser} from "./utils/types";
 import {generateFountainId, generatePictureId, generateUserId} from "./utils/generate";
 import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
+import {expect} from "chai";
 
 // Tell mongoose to use es6 Promise implementation
 mongoose.Promise = global.Promise;
@@ -16,7 +16,7 @@ describe("Connect to database and run tests", function () {
     mongoose.connection.on("error", (error) => {
       console.warn("Error: ", error);
     });
-    assert(mongoose.connection.db);
+    expect(mongoose.connection.db);
 
     // Comment out to see the documents after testing
     beforeEach((done) => {
@@ -50,10 +50,10 @@ export function getToken (user: IUser) : string {
   return generateToken(user, constants.JWT_ACCESS_EXPIRATION);
 }
 
-export async function getUser () : Promise<IUser> {
+export async function getUser (username  = "username") : Promise<IUser> {
   return {
     id: generateUserId(),
-    username: "username",
+    username: username,
     email: "email@gmail.com",
     hashed_password: await hashPass("password"),
     profile: {
@@ -81,6 +81,7 @@ export function getReqMock (token : string = null, json : any = null) {
     },
     "params": null,
     "user": null,
+    "dbUser": null,
     "json": function () {
       return json;
     }
@@ -97,19 +98,38 @@ export async function getAuthedReqMock (json : any = null) {
 
 export function getResMock () {
   return {
-    "sentStatus": null,
-    "status": function (code : number) {
-      this["sentStatus"] = code;
+    "json": function (message : any) {
+      this["message"] = message;
       return this;
     },
     "message": null,
     "send": function (message : any) {
       this["message"] = message;
       return this;
+    },
+    "sentStatus": null,
+    "status": function (code : number) {
+      this["sentStatus"] = code;
+      return this;
     }
   };
 }
 
-export function getNextMock (callback : any = () => {return null}) {
-  return function () {callback()};
+export function getNextMock () {
+  return () => {};
+}
+
+export async function simulateRouter(req, res, funcs : { (req : any, res : any, next? : any): void; } [] = [() => {}]) {
+  let returnVal = undefined;
+  for (let i = 0; i < funcs.length; i++) {
+    // if this is the last func
+    if (i == funcs.length - 1) {
+      returnVal = await funcs[i](req, res);
+    } else {
+      returnVal = await funcs[i](req, res, () => {})
+    }
+    if (returnVal != undefined) {
+      return;
+    }
+  }
 }
