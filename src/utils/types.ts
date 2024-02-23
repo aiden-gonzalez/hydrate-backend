@@ -4,6 +4,9 @@ export type IHashedPassword = components["schemas"]["HashedPassword"];
 export type ILocation = components["schemas"]["Location"];
 export type IUser = components["schemas"]["User"];
 export function dbUserToIUser (dbUser) : IUser {
+  if (dbUser === null) {
+    return null;
+  }
   return {
     id: dbUser.id,
     username: dbUser.username,

@@ -43,7 +43,7 @@ describe("PROFILES: getting and updating profiles", async () => {
     const res = getResMock();
 
     // First create user in database
-    database.createUser(user);
+    await database.createUser(user);
     // Now try to get the user profile
     await getProfileForUser(req, res);
     // Should have succeeded
