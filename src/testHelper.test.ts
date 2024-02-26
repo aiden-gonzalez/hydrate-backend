@@ -71,7 +71,7 @@ export function getPicture () : IPicture {
   }
 }
 
-export function getReqMock (token : string = null, json : any = null) {
+export function getReqMock (token : string = null, body : any = null) {
   return {
     "get": function (key : string) {
       if (key == constants.HTTP_AUTHORIZATION_HEADER) {
@@ -82,18 +82,16 @@ export function getReqMock (token : string = null, json : any = null) {
     "params": null,
     "user": null,
     "dbUser": null,
-    "json": function () {
-      return json;
-    }
+    "body": body
   };
 }
 
-export function getAuthedReqMockForUser (user : IUser, json : any = null) {
-  return getReqMock(getToken(user), json);
+export function getAuthedReqMockForUser (user : IUser, body : any = null) {
+  return getReqMock(getToken(user), body);
 }
 
-export async function getAuthedReqMock (json : any = null) {
-  return getAuthedReqMockForUser(await getUser(), json);
+export async function getAuthedReqMock (body : any = null) {
+  return getAuthedReqMockForUser(await getUser(), body);
 }
 
 export function getResMock () {
