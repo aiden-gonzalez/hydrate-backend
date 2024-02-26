@@ -47,17 +47,9 @@
             }
         },
         "/api/fountains": {
-            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) fountains",
+            "summary": "Primary endpoint for retrieving (GET) and adding (POST) fountains",
             "get": {
                 "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of fountain to fetch.\nOverrides all other query parameters!",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query"
-                    },
                     {
                         "name": "longitude",
                         "description": "Longitude to fetch fountains around.\nIf provided, must also provide latitude!",
@@ -119,55 +111,7 @@
                         ]
                     }
                 ],
-                "summary": "Get a group of fountains (query) or a certain fountain (by ID)"
-            },
-            "put": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/FountainInfo"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of fountain to update",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Fountain"
-                                }
-                            }
-                        },
-                        "description": "Fountain successfully updated!"
-                    },
-                    "400": {
-                        "description": "Malformed request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Update fountain info for a particular fountain"
+                "summary": "Get a group of fountains (query)"
             },
             "post": {
                 "requestBody": {
@@ -205,768 +149,6 @@
                     }
                 ],
                 "summary": "Add a fountain"
-            }
-        },
-        "/api/bathrooms": {
-            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) bathrooms",
-            "get": {
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of bathroom to fetch.\nOverrides all other query parameters!",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "longitude",
-                        "description": "Longitude to fetch bathrooms around.\nIf provided, must also provide latitude!",
-                        "schema": {
-                            "type": "number"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "latitude",
-                        "description": "Latitude to fetch bathrooms around.\nIf provided, must provide longitude!",
-                        "schema": {
-                            "type": "number"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "radius",
-                        "description": "Radius to fetch bathrooms within",
-                        "schema": {
-                            "type": "number"
-                        },
-                        "in": "query",
-                        "required": false
-                    },
-                    {
-                        "name": "baby_changer",
-                        "description": "Filter bathrooms by baby_changer property",
-                        "schema": {
-                            "type": "boolean"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "gender",
-                        "description": "Filter bathrooms by gender property",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": false
-                    },
-                    {
-                        "name": "sanitary_products",
-                        "description": "Filter bathrooms by sanitary_products property",
-                        "schema": {
-                            "type": "boolean"
-                        },
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Bathroom"
-                                    }
-                                }
-                            }
-                        },
-                        "description": "Successful query.  Return array of bathrooms."
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Get a group of bathrooms (query) or a certain bathroom (by ID)"
-            },
-            "put": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/BathroomInfo"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of bathroom to update",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Bathroom"
-                                }
-                            }
-                        },
-                        "description": "Bathroom successfully updated!"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Update bathroom info for a particular bathroom"
-            },
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/BathroomInfo"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Bathroom"
-                                }
-                            }
-                        },
-                        "description": "Successfully added bathroom!"
-                    },
-                    "400": {
-                        "description": "Malformed request! Missing some information or not in right format."
-                    },
-                    "401": {
-                        "description": "Access token incorrect / insufficient / expired!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Add a bathroom"
-            }
-        },
-        "/api/bathrooms/ratings": {
-            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) bathroom ratings",
-            "get": {
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of bathroom to fetch ratings for",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "name": "page_size",
-                        "description": "Optional pagination: Size of pages to fetch (number of ratings per page)",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "page_offset",
-                        "description": "Optional pagination: Offset of page to fetch (default is 0, max is 100)",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/BathroomRating"
-                                    }
-                                }
-                            }
-                        },
-                        "description": "Successful query.  Return array of bathroom ratings."
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Get ratings for a particular bathroom"
-            },
-            "put": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/BathroomRatingDetails"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of bathroom rating to update",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BathroomRating"
-                                }
-                            }
-                        },
-                        "description": "Bathroom rating successfully updated!"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Update bathroom rating"
-            },
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/BathroomRatingDetails"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "parameters": [
-                    {
-                        "name": "bathroom_id",
-                        "description": "ID of bathroom to add rating to",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BathroomRating"
-                                }
-                            }
-                        },
-                        "description": "Successfully added bathroom rating!"
-                    },
-                    "400": {
-                        "description": "Malformed request! Missing some information or not in right format."
-                    },
-                    "401": {
-                        "description": "Access token incorrect / insufficient / expired!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Add a bathroom rating"
-            }
-        },
-        "/api/fountains/ratings": {
-            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) fountain ratings",
-            "get": {
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of fountain to fetch ratings for",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "name": "page_size",
-                        "description": "Optional pagination: Size of pages to fetch (number of ratings per page)",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "page_offset",
-                        "description": "Optional pagination: Offset of page to fetch (default is 0, max is 100)",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/FountainRating"
-                                    }
-                                }
-                            }
-                        },
-                        "description": "Successful query.  Return array of fountain ratings."
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Get ratings for a particular fountain"
-            },
-            "put": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/FountainRatingDetails"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of fountain rating to update",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/FountainRating"
-                                }
-                            }
-                        },
-                        "description": "Fountain rating successfully updated!"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Update fountain rating"
-            },
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/FountainRatingDetails"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "parameters": [
-                    {
-                        "name": "fountain_id",
-                        "description": "ID of fountain to add rating to",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/FountainRating"
-                                }
-                            }
-                        },
-                        "description": "Successfully added fountain rating!"
-                    },
-                    "400": {
-                        "description": "Malformed request! Missing some information or not in right format."
-                    },
-                    "401": {
-                        "description": "Access token incorrect / insufficient / expired!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Add a fountain rating"
-            }
-        },
-        "/api/bathrooms/pictures": {
-            "summary": "Add, retrieve, and delete bathroom pictures",
-            "get": {
-                "parameters": [
-                    {
-                        "name": "offset",
-                        "description": "Offset of photo to fetch (first picture is 0)",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "bathroom_id",
-                        "description": "ID of bathroom to fetch pictures for",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Picture"
-                                }
-                            }
-                        },
-                        "description": "Successful photo link request"
-                    },
-                    "400": {
-                        "description": "Malformed request (may be missing required parameters)"
-                    },
-                    "401": {
-                        "description": "Authentication/authorization failed"
-                    },
-                    "404": {
-                        "description": "Picture of bathroom with provided offset does not exist!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Get bathroom photos",
-                "description": "Fetches all if no offset provided.  Otherwise fetches just that photo."
-            },
-            "post": {
-                "requestBody": {
-                    "description": "Picture link",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "parameters": [
-                    {
-                        "name": "bathroom_id",
-                        "description": "ID of bathroom to add photo for",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Picture"
-                                }
-                            }
-                        },
-                        "description": "Successfully added picture!"
-                    },
-                    "400": {
-                        "description": "Malformed request"
-                    },
-                    "401": {
-                        "description": "Authentication/authorization failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Add bathroom picture (link only, file hosting will have to be handled separately)"
-            },
-            "delete": {
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of picture to remove",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully removed picture!"
-                    },
-                    "400": {
-                        "description": "Malformed request (missing ID?)"
-                    },
-                    "403": {
-                        "description": "Authorization/authentication failed!"
-                    },
-                    "404": {
-                        "description": "Picture with provided ID not found!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Delete a bathroom picture"
-            }
-        },
-        "/api/fountains/pictures": {
-            "summary": "Add, retrieve, and delete fountain pictures",
-            "get": {
-                "parameters": [
-                    {
-                        "name": "offset",
-                        "description": "Offset of photo to fetch (first picture is 0)",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "fountain_id",
-                        "description": "ID of fountain to fetch pictures for",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Picture"
-                                }
-                            }
-                        },
-                        "description": "Successful photo link request"
-                    },
-                    "400": {
-                        "description": "Malformed request (may be missing required parameters)"
-                    },
-                    "401": {
-                        "description": "Authentication/authorization failed"
-                    },
-                    "404": {
-                        "description": "Picture of fountain with provided offset does not exist!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Get fountain photos",
-                "description": "Fetches all if no offset provided.  Otherwise fetches just that photo."
-            },
-            "post": {
-                "requestBody": {
-                    "description": "Picture link",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "parameters": [
-                    {
-                        "name": "fountain_id",
-                        "description": "ID of fountain to add photo for",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Picture"
-                                }
-                            }
-                        },
-                        "description": "Successfully added picture!"
-                    },
-                    "400": {
-                        "description": "Malformed request"
-                    },
-                    "401": {
-                        "description": "Authentication/authorization failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Add fountain picture (link only, file hosting will have to be handled separately)"
-            },
-            "delete": {
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "ID of picture to remove",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully removed picture!"
-                    },
-                    "400": {
-                        "description": "Malformed request (missing ID?)"
-                    },
-                    "403": {
-                        "description": "Authorization/authentication failed!"
-                    },
-                    "404": {
-                        "description": "Picture with provided ID not found!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": [
-                        ]
-                    }
-                ],
-                "summary": "Delete a fountain picture"
             }
         },
         "/api/auth/refresh": {
@@ -1117,6 +299,910 @@
                         }
                     },
                     "name": "username",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/api/bathrooms": {
+            "summary": "Primary endpoint for retrieving (GET) and adding (POST) bathrooms",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "longitude",
+                        "description": "Longitude to fetch bathrooms around.\nIf provided, must also provide latitude!",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "latitude",
+                        "description": "Latitude to fetch bathrooms around.\nIf provided, must provide longitude!",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "radius",
+                        "description": "Radius to fetch bathrooms within",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query",
+                        "required": false
+                    },
+                    {
+                        "name": "baby_changer",
+                        "description": "Filter bathrooms by baby_changer property",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "gender",
+                        "description": "Filter bathrooms by gender property",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": false
+                    },
+                    {
+                        "name": "sanitary_products",
+                        "description": "Filter bathrooms by sanitary_products property",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Bathroom"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successful query.  Return array of bathrooms."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get a group of bathrooms (query)"
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BathroomInfo"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Bathroom"
+                                }
+                            }
+                        },
+                        "description": "Successfully added bathroom!"
+                    },
+                    "400": {
+                        "description": "Malformed request! Missing some information or not in right format."
+                    },
+                    "401": {
+                        "description": "Access token incorrect / insufficient / expired!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Create (add) a bathroom"
+            }
+        },
+        "/api/bathrooms/{id}/ratings": {
+            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) bathroom ratings",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "page_size",
+                        "description": "Optional pagination: Size of pages to fetch (number of ratings per page)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "page_offset",
+                        "description": "Optional pagination: Offset of page to fetch (default is 0, max is 100)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BathroomRating"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successful query.  Return array of bathroom ratings."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get ratings for a particular bathroom"
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BathroomRatingDetails"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BathroomRating"
+                                }
+                            }
+                        },
+                        "description": "Successfully added bathroom rating!"
+                    },
+                    "400": {
+                        "description": "Malformed request! Missing some information or not in right format."
+                    },
+                    "401": {
+                        "description": "Access token incorrect / insufficient / expired!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Add a bathroom rating"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/api/bathrooms/{id}/ratings/{ratingId}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BathroomRating"
+                                }
+                            }
+                        },
+                        "description": "Successful request, return rating"
+                    }
+                },
+                "summary": "Get a particular rating for a particular bathroom"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BathroomRatingDetails"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BathroomRating"
+                                }
+                            }
+                        },
+                        "description": "Bathroom rating successfully updated!"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Update bathroom rating"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "ratingId",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/api/bathrooms/{id}": {
+            "summary": "Primary endpoint for retrieving (GET) and updating (PUT) a bathroom.",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Bathroom"
+                                }
+                            }
+                        },
+                        "description": "Successful request, return bathroom."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Insufficient auth"
+                    }
+                },
+                "summary": "Get bathroom"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BathroomInfo"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Bathroom"
+                                }
+                            }
+                        },
+                        "description": "Bathroom successfully updated!"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Update bathroom info for a particular bathroom"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/api/bathrooms/{id}/pictures": {
+            "summary": "Add, retrieve, and delete bathroom pictures",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "offset",
+                        "description": "Offset of photo to fetch (first picture is 0)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Picture"
+                                }
+                            }
+                        },
+                        "description": "Successful photo link request"
+                    },
+                    "400": {
+                        "description": "Malformed request (may be missing required parameters)"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    },
+                    "404": {
+                        "description": "Picture of bathroom with provided offset does not exist!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get bathroom photos",
+                "description": "Fetches all if no offset provided.  Otherwise fetches just that photo."
+            },
+            "post": {
+                "requestBody": {
+                    "description": "Picture link",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Picture"
+                                }
+                            }
+                        },
+                        "description": "Successfully added picture!"
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Add bathroom picture (link only, file hosting will have to be handled separately)"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/api/bathrooms/{id}/pictures/{pictureId}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Picture"
+                                }
+                            }
+                        },
+                        "description": "Successful request, return picture"
+                    }
+                },
+                "summary": "Get a particular picture for a particular bathroom"
+            },
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "Successfully removed picture!"
+                    },
+                    "400": {
+                        "description": "Malformed request (missing ID?)"
+                    },
+                    "403": {
+                        "description": "Authorization/authentication failed!"
+                    },
+                    "404": {
+                        "description": "Picture with provided ID not found!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Delete a bathroom picture"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "pictureId",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/api/fountains/{id}/pictures": {
+            "summary": "Add, retrieve, and delete fountain pictures",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "offset",
+                        "description": "Offset of photo to fetch (first picture is 0)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Picture"
+                                }
+                            }
+                        },
+                        "description": "Successful photo link request"
+                    },
+                    "400": {
+                        "description": "Malformed request (may be missing required parameters)"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    },
+                    "404": {
+                        "description": "Picture of fountain with provided offset does not exist!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get fountain photos",
+                "description": "Fetches all if no offset provided.  Otherwise fetches just that photo."
+            },
+            "post": {
+                "requestBody": {
+                    "description": "Picture link",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Picture"
+                                }
+                            }
+                        },
+                        "description": "Successfully added picture!"
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Add fountain picture (link only, file hosting will have to be handled separately)"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/api/fountains/{id}/pictures/{pictureId}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Picture"
+                                }
+                            }
+                        },
+                        "description": "Successful request, return picture"
+                    }
+                },
+                "summary": "Get a particular picture for a particular fountain"
+            },
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "Successfully removed picture!"
+                    },
+                    "400": {
+                        "description": "Malformed request (missing ID?)"
+                    },
+                    "403": {
+                        "description": "Authorization/authentication failed!"
+                    },
+                    "404": {
+                        "description": "Picture with provided ID not found!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Delete a fountain picture"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "pictureId",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/api/fountains/{id}/ratings": {
+            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) fountain ratings",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "page_size",
+                        "description": "Optional pagination: Size of pages to fetch (number of ratings per page)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "page_offset",
+                        "description": "Optional pagination: Offset of page to fetch (default is 0, max is 100)",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/FountainRating"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successful query.  Return array of fountain ratings."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Get ratings for a particular fountain"
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FountainRatingDetails"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FountainRating"
+                                }
+                            }
+                        },
+                        "description": "Successfully added fountain rating!"
+                    },
+                    "400": {
+                        "description": "Malformed request! Missing some information or not in right format."
+                    },
+                    "401": {
+                        "description": "Access token incorrect / insufficient / expired!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Add a fountain rating"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/api/fountains/{id}/ratings/{ratingId}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FountainRating"
+                                }
+                            }
+                        },
+                        "description": "Successful request, return fountain rating"
+                    }
+                },
+                "summary": "Get a particular rating for a particular fountain"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FountainRatingDetails"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FountainRating"
+                                }
+                            }
+                        },
+                        "description": "Fountain rating successfully updated!"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Update fountain rating"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "ratingId",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/api/fountains/{id}": {
+            "summary": "Primary endpoint for retrieving (GET) and updating (PUT) a fountain.",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Fountain"
+                                }
+                            }
+                        },
+                        "description": "Successful request, return fountain."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Insufficient auth"
+                    }
+                },
+                "summary": "Get fountain"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FountainInfo"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Fountain"
+                                }
+                            }
+                        },
+                        "description": "Fountain successfully updated!"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": [
+                        ]
+                    }
+                ],
+                "summary": "Update fountain info for a particular fountain"
+            },
+            "parameters": [
+                {
+                    "name": "id",
                     "schema": {
                         "type": "string"
                     },

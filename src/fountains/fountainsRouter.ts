@@ -1,21 +1,67 @@
 import * as fountainsController from "./fountainsController";
 import express from "express";
+import {authenticateRequest} from "../utils/auth";
 
 const fountainsRouter = express.Router();
 
 // fountains
-fountainsRouter.get('/fountains', fountainsController.getFountains);
-fountainsRouter.put('/fountains', fountainsController.updateFountain);
-fountainsRouter.post('/fountains', fountainsController.createFountain);
+fountainsRouter.get('/fountains',
+  authenticateRequest, // authenticate request
+  fountainsController.getFountains // get fountains
+); // Get fountains
+fountainsRouter.post('/fountains',
+  authenticateRequest, // authenticate request
+  fountainsController.createFountain // create new fountain
+); // Create fountain
 
-// fountains/pictures
-fountainsRouter.get('/fountains/pictures', fountainsController.getFountainPhotos);
-fountainsRouter.post('/fountains/pictures', fountainsController.addFountainPhoto);
-fountainsRouter.delete('/fountains/pictures', fountainsController.deleteFountainPhoto);
+// fountain/:id
+fountainsRouter.put('/fountains/:id',
+  authenticateRequest, // authenticate request
+  fountainsController.getFountain // get fountain
+); // Get fountain
+fountainsRouter.put('/fountains/:id',
+  authenticateRequest, // authenticate request
+  fountainsController.updateFountain // update fountain
+); // Update fountain
 
-// fountains/ratings
-fountainsRouter.get('/fountains/ratings', fountainsController.getFountainRatings);
-fountainsRouter.put('/fountains/ratings', fountainsController.updateFountainRating);
-fountainsRouter.post('/fountains/ratings', fountainsController.addFountainRating);
+// fountains/:id/pictures
+fountainsRouter.get('/fountains/:id/pictures',
+  authenticateRequest, // authenticate request
+  fountainsController.getFountainPhotos // get fountain photos
+); // Get photos for fountain
+fountainsRouter.post('/fountains/:id/pictures',
+  authenticateRequest, // authenticate request
+  fountainsController.addFountainPhoto // create new fountain photo
+); // Create photo for fountain
+
+// fountains/:id/pictures/:pictureId
+fountainsRouter.get('/fountains/:id/pictures/:pictureId',
+  authenticateRequest, // authenticate request
+  fountainsController.getFountainPhoto // get fountain photo
+); // Get photo for fountain
+fountainsRouter.delete('/fountains/:id/pictures/:pictureId',
+  authenticateRequest, // authenticate request
+  fountainsController.deleteFountainPhoto // delete fountain photo
+); // Delete photo for fountain
+
+// fountains/:id/ratings
+fountainsRouter.get('/fountains/:id/ratings',
+  authenticateRequest, // authenticate request
+  fountainsController.getFountainRatings // get fountain ratings
+); // Get fountain ratings
+fountainsRouter.post('/fountains/:id/ratings',
+  authenticateRequest, // authenticate request
+  fountainsController.addFountainRating // create new fountain rating
+);
+
+// fountains/:id/ratings/:ratingId
+fountainsRouter.get('/fountains/:id/ratings/:ratingId',
+  authenticateRequest, // authenticate request
+  fountainsController.getFountainRating // get fountain rating
+); // Get fountain rating
+fountainsRouter.put('/fountains/:id/ratings/:ratingId',
+  authenticateRequest, // authenticate request
+  fountainsController.updateFountainRating // update fountain rating by id
+); // Update fountain rating
 
 export default fountainsRouter;
