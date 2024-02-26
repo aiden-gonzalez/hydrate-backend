@@ -12,10 +12,10 @@ export async function findUserMiddleware (req, res, next) {
   const user = await database.fetchUserByEmail(authRequest.user_credentials.email);
   if (user === null) {
     return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
-  } else {
-    req.dbUser = user;
-    return next();
   }
+
+  req.dbUser = user;
+  return next();
 }
 
 export async function validatePassword (req, res) {
@@ -27,10 +27,10 @@ export async function validatePassword (req, res) {
   const passwordValid = await isValidPass(authRequest.user_credentials.password, user.hashed_password);
   if (!passwordValid) {
     return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
-  } else {
-    // Send tokens
-    return res.status(constants.HTTP_OK).send(getAuthSuccessResponse(user));
   }
+
+  // Send tokens
+  return res.status(constants.HTTP_OK).send(getAuthSuccessResponse(user));
 }
 
 export function validateRefresh(req, res) {

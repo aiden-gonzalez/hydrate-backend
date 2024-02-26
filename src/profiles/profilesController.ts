@@ -41,9 +41,12 @@ export function getProfileForUser(req, res) {
 export async function updateProfile(req, res) {
   const username : string = req.params.username;
   const newProfile : IUserProfile = req.body;
-  const updatedUserProfile = await database.updateUserProfileByUsername(username, newProfile);
-  if (updatedUserProfile) {
-    return res.status(HTTP_OK).json(updatedUserProfile);
-  }
-  return res.status(HTTP_INTERNAL_ERROR).send(HTTP_INTERNAL_ERROR_MESSAGE);
+
+  return new Promise((resolve) => {
+    database.updateUserProfileByUsername(username, newProfile).then((updatedUserProfile) => {
+      resolve(res.status(HTTP_OK).json(updatedUserProfile));
+    }).catch((error) => {
+      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
+    });
+  });
 }

@@ -1,47 +1,60 @@
-export function getFountains() {
+import {IFountainInfo} from "./types";
+import * as database from "../utils/database";
+import {HTTP_INTERNAL_ERROR, HTTP_OK} from "../utils/constants";
+
+export function getFountains(req, res) {
   return "get fountains";
 }
 
-export function createFountain() {
+export function createFountain(req, res) {
+  // Get fountain info from request
+  const fountainInfo : IFountainInfo = req.body;
+
+  return new Promise((resolve) => {
+    database.createFountain(fountainInfo).then((createdFountain) => {
+      resolve(res.status(HTTP_OK).json(createdFountain));
+    }).catch((error) => {
+      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
+    });
+  });
+}
+
+export function getFountain(req, res) {
   return "get fountains";
 }
 
-export function getFountain() {
+export function updateFountain(req, res) {
   return "get fountains";
 }
 
-export function updateFountain() {
+export function getFountainPhotos(req, res) {
   return "get fountains";
 }
 
-export function getFountainPhotos() {
+export function addFountainPhoto(req, res) {
   return "get fountains";
 }
 
-export function addFountainPhoto() {
-  return "get fountains";
-}
-
-export function getFountainPhoto() {
+export function getFountainPhoto(req, res) {
   return "get fountain photo";
 }
 
-export function deleteFountainPhoto() {
+export function deleteFountainPhoto(req, res) {
   return "get fountains";
 }
 
-export function getFountainRatings() {
+export function getFountainRatings(req, res) {
   return "get fountains";
 }
 
-export function addFountainRating() {
+export function addFountainRating(req, res) {
   return "get fountains";
 }
 
-export function getFountainRating() {
+export function getFountainRating(req, res) {
   return "get fountains";
 }
 
-export function updateFountainRating() {
+export function updateFountainRating(req, res) {
   return "get fountains";
 }
