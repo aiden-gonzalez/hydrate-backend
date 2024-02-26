@@ -2,7 +2,7 @@ import {Fountain, User} from "../mongoDB";
 import { IUserProfile } from "../profiles/types";
 import { IUser } from "./types";
 import {Model} from "mongoose";
-import {IFountain, IFountainInfo} from "../fountains/types";
+import {IFountain, IFountainInfo, IFountainQueryParams} from "../fountains/types";
 import {generateFountainId} from "./generate";
 
 // FOUNTAIN
@@ -12,6 +12,22 @@ export function createFountain(fountainInfo : IFountainInfo) : Promise<IFountain
     info: fountainInfo
   }
   return createEntity<IFountain>(Fountain, fountain);
+}
+
+// TODO make function return Promise<Array<IFountain>>
+// TODO figure out how to use geoNear and aggregate query to find fountains near a location
+// TODO it will probably involve adding a location index to the Fountains table
+export function queryFountains(queryParams : IFountainQueryParams) : any {
+  const mongoQuery = {info: {}};
+  if (queryParams.bottle_filler) mongoQuery.info["bottle_filler"] = queryParams.bottle_filler;
+  if (queryParams.)
+
+  return queryEntities<IFountain>(Fountain, {
+    info: {
+      bottle_filler: queryParams.bottle_filler,
+
+    }
+  });
 }
 
 // USER
@@ -58,6 +74,17 @@ function fetchEntity<Type>(entityModel : Model<Type>, query : any) : Promise<Typ
     }).catch((error) => {
       reject(error);
     });
+  });
+}
+
+function queryEntities<Type>(entityModel : Model<Type>, query : any) : Promise<Type> {
+  return new Promise((resolve, reject) => {
+    entityModel.find(query).exec().then((dbEntities) => {
+      console.log(dbEntities);
+      resolve(null);
+    }).catch((error) => {
+      reject(error);
+    })
   });
 }
 
