@@ -40,7 +40,7 @@ export function getProfileForUser(req, res) {
 
 export async function updateProfile(req, res) {
   const username : string = req.params.username;
-  const newProfile : IUserProfile = req.json();
+  const newProfile : IUserProfile = req.body;
   const updatedUserProfile = await database.updateUserProfileByUsername(username, newProfile);
   if (updatedUserProfile) {
     return res.status(HTTP_OK).json(updatedUserProfile);

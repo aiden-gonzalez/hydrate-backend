@@ -14,7 +14,7 @@ import * as database from "../utils/database";
 
 export async function createAccount(req, res) {
   // Get signup info
-  const signupRequest : ISignupRequest = req.json();
+  const signupRequest : ISignupRequest = req.body;
 
   // Check if user already exists (based on username)
   const dbUser = await database.fetchUserByUsername(signupRequest.username);

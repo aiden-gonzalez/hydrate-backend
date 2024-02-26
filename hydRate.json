@@ -185,18 +185,6 @@
                         "description": "Malformed request! Missing some information or not in right format."
                     },
                     "201": {
-                        "headers": {
-                            "Location": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "examples": {
-                                    "Location": {
-                                        "value": "http://hydrate.com/api/fountains?id=XXXXX"
-                                    }
-                                }
-                            }
-                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -372,18 +360,6 @@
                 },
                 "responses": {
                     "201": {
-                        "headers": {
-                            "Location": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "examples": {
-                                    "Location": {
-                                        "value": "http://hydrate.com/api/bathrooms?id=XXXXX"
-                                    }
-                                }
-                            }
-                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -540,18 +516,6 @@
                 ],
                 "responses": {
                     "201": {
-                        "headers": {
-                            "Location": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "examples": {
-                                    "Location": {
-                                        "value": "http://hydrate.com/api/bathrooms/ratings?id=XXXXX"
-                                    }
-                                }
-                            }
-                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -708,18 +672,6 @@
                 ],
                 "responses": {
                     "201": {
-                        "headers": {
-                            "Location": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "examples": {
-                                    "Location": {
-                                        "value": "http://hydrate.com/api/fountains/ratings?id=XXXXX"
-                                    }
-                                }
-                            }
-                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -822,18 +774,6 @@
                 ],
                 "responses": {
                     "201": {
-                        "headers": {
-                            "Location": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "examples": {
-                                    "Location": {
-                                        "value": "http://hydrate.com/api/bathrooms/pictures?bathroom_id=XXX&offset=X"
-                                    }
-                                }
-                            }
-                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -970,18 +910,6 @@
                 ],
                 "responses": {
                     "201": {
-                        "headers": {
-                            "Location": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "examples": {
-                                    "Location": {
-                                        "value": "http://hydrate.com/api/fountains/pictures?fountain_id=XXX&offset=X"
-                                    }
-                                }
-                            }
-                        },
                         "content": {
                             "application/json": {
                                 "schema": {

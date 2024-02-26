@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import mongoose from "mongoose";
 import * as BodyParser from "body-parser";
+import * as OpenApiValidator from "express-openapi-validator";
 
 // Routers
 import bathroomsRouter from "./bathrooms/bathroomsRouter";
@@ -9,7 +10,6 @@ import fountainsRouter from './fountains/fountainsRouter'
 import authRouter from './auth/authRouter';
 import profilesRouter from './profiles/profilesRouter';
 import signupRouter from './signup/signupRouter';
-import OpenApiValidator from "express-openapi-validator";
 
 // Server port
 const port = process.env.PORT;

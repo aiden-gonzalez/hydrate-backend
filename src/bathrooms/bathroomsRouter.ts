@@ -10,19 +10,40 @@ bathroomsRouter.get('/bathrooms',
   bathroomsController.getBathrooms // get bathrooms
 ); // Get bathrooms
 bathroomsRouter.put('/bathrooms',
-  authenticateRequest,
-  bathroomsController.updateBathroom
+  authenticateRequest, // authenticate request
+  bathroomsController.updateBathroom // update bathroom by id
 );
-bathroomsRouter.post('/bathrooms', bathroomsController.createBathroom);
+bathroomsRouter.post('/bathrooms',
+  authenticateRequest, // authenticate request
+  bathroomsController.createBathroom // create new bathroom
+);
 
 // bathrooms/pictures
-bathroomsRouter.get('/bathrooms/pictures', bathroomsController.getBathroomPhotos);
-bathroomsRouter.post('/bathrooms/pictures', bathroomsController.addBathroomPhoto);
-bathroomsRouter.delete('/bathrooms/pictures', bathroomsController.deleteBathroomPhoto);
+bathroomsRouter.get('/bathrooms/pictures',
+  authenticateRequest, // authenticate request
+  bathroomsController.getBathroomPhotos // get bathroom photos
+);
+bathroomsRouter.post('/bathrooms/pictures',
+  authenticateRequest, // authenticate request
+  bathroomsController.addBathroomPhoto // create new bathroom photo
+);
+bathroomsRouter.delete('/bathrooms/pictures',
+  authenticateRequest, // authenticate request
+  bathroomsController.deleteBathroomPhoto // delete bathroom photo
+);
 
 // bathrooms/ratings
-bathroomsRouter.get('/bathrooms/ratings', bathroomsController.getBathroomRatings);
-bathroomsRouter.put('/bathrooms/ratings', bathroomsController.updateBathroomRating);
-bathroomsRouter.post('/bathrooms/ratings', bathroomsController.addBathroomRating);
+bathroomsRouter.get('/bathrooms/ratings',
+  authenticateRequest, // authenticate request
+  bathroomsController.getBathroomRatings // get bathroom ratings
+);
+bathroomsRouter.put('/bathrooms/ratings',
+  authenticateRequest, // authenticate request
+  bathroomsController.updateBathroomRating // update bathroom rating by id
+);
+bathroomsRouter.post('/bathrooms/ratings',
+  authenticateRequest, // authenticate request
+  bathroomsController.addBathroomRating // create new bathroom rating
+);
 
 export default bathroomsRouter;

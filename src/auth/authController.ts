@@ -6,7 +6,7 @@ import * as database from "../utils/database";
 
 export async function findUserMiddleware (req, res, next) {
   // Get auth info
-  const authRequest : IAuthRequest = req.json();
+  const authRequest : IAuthRequest = req.body;
 
   // Find user in database
   const user = await database.fetchUserByEmail(authRequest.user_credentials.email);
@@ -20,7 +20,7 @@ export async function findUserMiddleware (req, res, next) {
 
 export async function validatePassword (req, res) {
   // Get auth info and user from request
-  const authRequest : IAuthRequest = req.json();
+  const authRequest : IAuthRequest = req.body;
   const user : IUser = req.dbUser;
 
   // Check password
@@ -35,7 +35,7 @@ export async function validatePassword (req, res) {
 
 export function validateRefresh(req, res) {
   // Get refresh token from request
-  const refreshRequest : IAuthRefreshRequest = req.json();
+  const refreshRequest : IAuthRefreshRequest = req.body;
 
   // Validate token
   validateToken(refreshRequest.refresh_token).then((user: IUser) => {
