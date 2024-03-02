@@ -128,7 +128,12 @@ const bathroomRatingSchema : Schema = new Schema<bathroomTypes.IBathroomRating>(
 export const BathroomRating = model<bathroomTypes.IBathroomRating>("BathroomRating", bathroomRatingSchema);
 
 // FountainInfo
-const fountainInfoSchema : Schema = new Schema<fountainTypes.IFountainInfo>({
+export type IDbFountainInfo = {
+  name: string,
+  bottle_filler: boolean,
+  location: IDbLocation
+}
+const fountainInfoSchema : Schema = new Schema<IDbFountainInfo>({
   name: {
     type: String,
     required: false
@@ -145,7 +150,11 @@ const fountainInfoSchema : Schema = new Schema<fountainTypes.IFountainInfo>({
 });
 
 // Fountain
-const fountainSchema : Schema = new Schema<fountainTypes.IFountain>({
+export type IDbFountain = {
+  id: string,
+  info: IDbFountainInfo
+}
+const fountainSchema : Schema = new Schema<IDbFountain>({
   id: {
     type: String,
     match: regexes.fountainIdRegex,
@@ -159,7 +168,7 @@ const fountainSchema : Schema = new Schema<fountainTypes.IFountain>({
 }, {
   timestamps: true
 });
-export const Fountain = model<fountainTypes.IFountain>("Fountain", fountainSchema);
+export const Fountain = model<IDbFountain>("Fountain", fountainSchema);
 
 // FountainRatingDetails
 const fountainRatingDetailsSchema : Schema = new Schema<fountainTypes.IFountainRatingDetails>({

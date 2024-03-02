@@ -1,17 +1,16 @@
-import {Fountain, FountainRating, User, Picture} from "../mongoDB";
+import {Fountain, FountainRating, User, Picture, IDbFountain} from "../mongoDB";
 import { IUserProfile } from "../profiles/types";
 import { IPicture, IUser } from "./types";
 import {Model} from "mongoose";
-import {IFountain, IFountainInfo, IFountainQueryParams, IFountainRating} from "../fountains/types";
-import {generateFountainId, generatePictureId} from "./generate";
+import {IFountain, IFountainQueryParams, IFountainRating, iDbFountainToIFountain, iFountainToIDbFountain} from "../fountains/types";
 
 // FOUNTAIN
-export function createFountain(fountain : IFountain) : Promise<IFountain> {
-  return createEntity<IFountain>(Fountain, fountain);
+export async function createFountain(fountain : IFountain) : Promise<IFountain> {
+  return iDbFountainToIFountain(await createEntity<IDbFountain>(Fountain, iFountainToIDbFountain(fountain)));
 }
 
 // TODO make function return Promise<Array<IFountain>>
-export function queryFountains(queryParams : IFountainQueryParams) : any {
+export async function queryFountains(queryParams : IFountainQueryParams) : Promise<Array<IFountain>> {
   const mongoQuery = {};
   if (queryParams.bottle_filler) mongoQuery["info"]["bottle_filler"] = queryParams.bottle_filler;
   if (queryParams.latitude && queryParams.longitude) {
@@ -28,11 +27,11 @@ export function queryFountains(queryParams : IFountainQueryParams) : any {
     }
   }
 
-  return queryEntities<IFountain>(Fountain, mongoQuery);
+  return (await queryEntities<IDbFountain>(Fountain, mongoQuery)).forEach((dbFountain) => iDbFountainToIFountain(dbFountain));
 }
 
-export function getFountain(fountainId : string) : Promise<IFountain> {
-  return fetchEntity<IFountain>(Fountain, { id: fountainId });
+export async function getFountain(fountainId : string) : Promise<IFountain> {
+  return iDbFountainToIFountain(await fetchEntity<IDbFountain>(Fountain, { id: fountainId }));
 }
 
 // FOUNTAIN RATING
@@ -119,7 +118,7 @@ function fetchEntity<Type>(entityModel : Model<Type>, query : any) : Promise<Typ
 }
 
 // TODO finish this function
-function queryEntities<Type>(entityModel : Model<Type>, query : any) : Promise<Type> {
+function queryEntities<Type>(entityModel : Model<Type>, query : any) : Promise<Type[]> {
   return new Promise((resolve, reject) => {
     entityModel.find(query).exec().then((dbEntities) => {
       console.log(dbEntities);

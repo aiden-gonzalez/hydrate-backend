@@ -1,6 +1,6 @@
 import {IFountain, IFountainInfo, IFountainQueryParams, IFountainRating, IFountainRatingDetails} from "./types";
 import * as database from "../utils/database";
-import {HTTP_INTERNAL_ERROR, HTTP_OK} from "../utils/constants";
+import {HTTP_FORBIDDEN, HTTP_FORBIDDEN_MESSAGE, HTTP_INTERNAL_ERROR, HTTP_OK} from "../utils/constants";
 import { IPicture } from "../utils/types";
 import { generateFountainId, generateFountainRatingId, generatePictureId } from "../utils/generate";
 
@@ -12,13 +12,21 @@ import { generateFountainId, generateFountainRatingId, generatePictureId } from 
 
 // Also consider refactoring to get rid of all the duplicated code once you figure that out
 
-export function picturePermissionCheck(req, res, next) {
-  // TODO implement picturePermissionCheck
-  return next();
-}
+export async function ratingPermissionCheck(req, res, next) {
+  // Get path parameter
+  const ratingId = req.params.ratingId;
+  // Get authenticated user id
+  const userId = req.user.id;
 
-export function ratingPermissionCheck(req, res, next) {
-  // TODO implement ratingPermissionCheck
+  // Get rating from database
+  const rating = await database.getFountainRating(ratingId);
+  
+  // Check if user owns rating
+  if (!rating.user_id == userId) {
+    return res.status(HTTP_FORBIDDEN).send(HTTP_FORBIDDEN_MESSAGE);
+  }
+
+  // User owns the rating, carry on
   return next();
 }
 
@@ -101,7 +109,7 @@ export function getFountainPictures(req, res) {
   });
 }
 
-export function addFountainPictures(req, res) {
+export function addFountainPicture(req, res) {
   // Get path parameter
   const fountainId = req.params.id;
   // Get picture info from request

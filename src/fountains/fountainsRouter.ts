@@ -31,7 +31,7 @@ fountainsRouter.get('/fountains/:id/pictures',
 ); // Get pictures for fountain
 fountainsRouter.post('/fountains/:id/pictures',
   authenticateRequest, // authenticate request
-  fountainsController.addFountainPictures // create new fountain picture
+  fountainsController.addFountainPicture // create new fountain picture
 ); // Create picture for fountain
 
 // fountains/:id/pictures/:pictureId
@@ -41,7 +41,6 @@ fountainsRouter.get('/fountains/:id/pictures/:pictureId',
 ); // Get picture for fountain
 fountainsRouter.delete('/fountains/:id/pictures/:pictureId',
   authenticateRequest, // authenticate request
-  fountainsController.picturePermissionCheck, // make sure user is allowed to delete this picture
   fountainsController.deleteFountainPicture // delete fountain picture
 ); // Delete picture for fountain
 

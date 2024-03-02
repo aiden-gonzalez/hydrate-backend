@@ -3,7 +3,7 @@ import { IDbLocation } from "../mongoDB";
 
 export type IHashedPassword = components["schemas"]["HashedPassword"];
 export type ILocation = components["schemas"]["Location"];
-export function dbLocationToILocation (dbLocation) : ILocation {
+export function iDbLocationToILocation (dbLocation : IDbLocation) : ILocation {
   if (dbLocation === null) {
     return null;
   }
