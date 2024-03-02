@@ -14,19 +14,19 @@ export function updateBathroom() {
   return "get bathrooms";
 }
 
-export function getBathroomPhotos() {
+export function getBathroomPictures() {
   return "get bathrooms";
 }
 
-export function addBathroomPhoto() {
+export function addBathroomPicture() {
   return "get bathrooms";
 }
 
-export function getBathroomPhoto() {
-  return "get bathroom photo";
+export function getBathroomPicture() {
+  return "get bathroom picture";
 }
 
-export function deleteBathroomPhoto() {
+export function deleteBathroomPicture() {
   return "get bathrooms";
 }
 

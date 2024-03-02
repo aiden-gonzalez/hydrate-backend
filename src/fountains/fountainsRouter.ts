@@ -27,22 +27,23 @@ fountainsRouter.put('/fountains/:id',
 // fountains/:id/pictures
 fountainsRouter.get('/fountains/:id/pictures',
   authenticateRequest, // authenticate request
-  fountainsController.getFountainPhotos // get fountain photos
-); // Get photos for fountain
+  fountainsController.getFountainPictures // get fountain pictures
+); // Get pictures for fountain
 fountainsRouter.post('/fountains/:id/pictures',
   authenticateRequest, // authenticate request
-  fountainsController.addFountainPhoto // create new fountain photo
-); // Create photo for fountain
+  fountainsController.addFountainPictures // create new fountain picture
+); // Create picture for fountain
 
 // fountains/:id/pictures/:pictureId
 fountainsRouter.get('/fountains/:id/pictures/:pictureId',
   authenticateRequest, // authenticate request
-  fountainsController.getFountainPhoto // get fountain photo
-); // Get photo for fountain
+  fountainsController.getFountainPicture // get fountain picture
+); // Get picture for fountain
 fountainsRouter.delete('/fountains/:id/pictures/:pictureId',
   authenticateRequest, // authenticate request
-  fountainsController.deleteFountainPhoto // delete fountain photo
-); // Delete photo for fountain
+  fountainsController.picturePermissionCheck, // make sure user is allowed to delete this picture
+  fountainsController.deleteFountainPicture // delete fountain picture
+); // Delete picture for fountain
 
 // fountains/:id/ratings
 fountainsRouter.get('/fountains/:id/ratings',
@@ -61,6 +62,7 @@ fountainsRouter.get('/fountains/:id/ratings/:ratingId',
 ); // Get fountain rating
 fountainsRouter.put('/fountains/:id/ratings/:ratingId',
   authenticateRequest, // authenticate request
+  fountainsController.ratingPermissionCheck, // make sure user is allowed to update this rating
   fountainsController.updateFountainRating // update fountain rating by id
 ); // Update fountain rating
 

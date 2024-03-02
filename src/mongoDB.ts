@@ -7,17 +7,18 @@ import * as profileTypes from "./profiles/types";
 import * as utilTypes from "./utils/types";
 
 // Location
-const locationSchema : Schema = new Schema<utilTypes.ILocation>({
-  latitude: {
-    type: Number,
-    min: -90,
-    max: 90,
+export type IDbLocation = {
+  type: string;
+  coordinates: [number, number];
+};
+const dbLocationSchema : Schema = new Schema<IDbLocation>({
+  type: {
+    type: String,
+    enum: ['Point'],
     required: true
   },
-  longitude: {
-    type: Number,
-    min: -90,
-    max: 90,
+  coordinates: {
+    type: [Number, Number],
     required: true
   }
 });
@@ -34,7 +35,8 @@ const bathroomInfoSchema : Schema = new Schema<bathroomTypes.IBathroomInfo>({
     required: true
   },
   location: {
-    type: locationSchema,
+    type: dbLocationSchema,
+    index: '2dsphere',
     required: true
   },
   baby_changer: {
@@ -132,7 +134,8 @@ const fountainInfoSchema : Schema = new Schema<fountainTypes.IFountainInfo>({
     required: false
   },
   location: {
-    type: locationSchema,
+    type: dbLocationSchema,
+    index: '2dsphere',
     required: true
   },
   bottle_filler: {

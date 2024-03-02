@@ -27,22 +27,22 @@ bathroomsRouter.put('/bathrooms/:id',
 // bathrooms/:id/pictures
 bathroomsRouter.get('/bathrooms/:id/pictures',
   authenticateRequest, // authenticate request
-  bathroomsController.getBathroomPhotos // get bathroom photos
-); // Get photos for bathroom
+  bathroomsController.getBathroomPictures // get bathroom pictures
+); // Get pictures for bathroom
 bathroomsRouter.post('/bathrooms/:id/pictures',
   authenticateRequest, // authenticate request
-  bathroomsController.addBathroomPhoto // create new bathroom photo
-); // Create photo for bathroom
+  bathroomsController.addBathroomPicture // create new bathroom picture
+); // Create picture for bathroom
 
 // bathrooms/:id/pictures/:pictureId
 bathroomsRouter.get('/bathrooms/:id/pictures/:pictureId',
   authenticateRequest, // authenticate request
-  bathroomsController.getBathroomPhoto // get bathroom photo
-); // Get photo for bathroom
+  bathroomsController.getBathroomPicture // get bathroom picture
+); // Get picture for bathroom
 bathroomsRouter.delete('/bathrooms/:id/pictures/:pictureId',
   authenticateRequest, // authenticate request
-  bathroomsController.deleteBathroomPhoto // delete bathroom photo
-); // Delete photo for bathroom
+  bathroomsController.deleteBathroomPicture // delete bathroom picture
+); // Delete picture for bathroom
 
 // bathrooms/:id/ratings
 bathroomsRouter.get('/bathrooms/:id/ratings',
