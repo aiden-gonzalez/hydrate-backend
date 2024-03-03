@@ -18,7 +18,7 @@ const dbLocationSchema : Schema = new Schema<IDbLocation>({
     required: true
   },
   coordinates: {
-    type: [Number, Number],
+    type: [Number],
     required: true
   }
 });

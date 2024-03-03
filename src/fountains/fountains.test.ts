@@ -20,7 +20,7 @@ import {
 import { IFountain } from "./types";
 import * as database from "../utils/database";
 import { generateFountainId } from "../utils/generate";
-import { IUser } from "../utils/types";
+import { ILocation, IUser } from "../utils/types";
 
 describe("FOUNTAINS: CRUD of all kinds", () => {
   const getFountainsFuncs = [authenticateRequest, getFountains];
@@ -93,6 +93,12 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     });
   }
 
+  function calcFountainDistance(fountain : IFountain, point : ILocation) {
+    const latDistance = fountain.info.location.latitude - point.latitude;
+    const longDistance = fountain.info.location.longitude - point.longitude;
+    return Math.sqrt((latDistance * latDistance) + (longDistance * longDistance))
+  }
+
   it("can't get fountains without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
@@ -120,4 +126,50 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
     expectFountainsEqual(res.message, createdFountains);
   });
+
+  it("gets all fountains with bottle fillers", async () => {
+    const user : IUser = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Set up query
+    req.query = {
+      bottle_filler: true
+    };
+
+    // Try to get all fountains with bottle fillers
+    await simulateRouter(req, res, getFountainsFuncs);
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expectFountainsEqual(res.message, createdFountains.filter((fountain) => fountain.info.bottle_filler));
+  });
+
+  it ("gets all fontains at within 10 of (5, 5)", async () => {
+    const user : IUser = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Set up query
+    req.query = {
+      latitude: 5,
+      longitude: 5,
+      radius: 10
+    }
+
+    // Try to get all fountains within 10 of (5, 5)
+    await simulateRouter(req, res, getFountainsFuncs);
+
+    console.log(res);
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expectFountainsEqual(res.message, createdFountains.filter((fountain) => calcFountainDistance(fountain, {longitude: 5, latitude: 5} as ILocation) < 10))
+  })
 });

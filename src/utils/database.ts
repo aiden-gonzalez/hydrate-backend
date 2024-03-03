@@ -11,10 +11,12 @@ export async function createFountain(fountain : IFountain) : Promise<IFountain> 
 
 
 export async function queryFountains(queryParams : IFountainQueryParams) : Promise<Array<IFountain>> {
-  const mongoQuery = {};
-  if (queryParams.bottle_filler) mongoQuery["info"]["bottle_filler"] = queryParams.bottle_filler;
+  let mongoQuery = {};
+  if (queryParams.bottle_filler) {
+    mongoQuery["info.bottle_filler"] = queryParams.bottle_filler;
+  }
   if (queryParams.latitude && queryParams.longitude) {
-    mongoQuery["info"]["location"] = {
+    mongoQuery["info.location"] = {
       $near: {
         $geometry: {
           type: "Point",
@@ -23,9 +25,11 @@ export async function queryFountains(queryParams : IFountainQueryParams) : Promi
       }
     };
     if (queryParams.radius) {
-      mongoQuery["info"]["location"]["$near"]["$maxDistance"] = queryParams.radius;
+      mongoQuery["info.location"]["$near"]["$maxDistance"] = queryParams.radius;
     }
   }
+
+  console.log(mongoQuery);
 
   return (await queryEntities<IDbFountain>(Fountain, mongoQuery)).map((dbFountain : IDbFountain) => iDbFountainToIFountain(dbFountain));
 }
