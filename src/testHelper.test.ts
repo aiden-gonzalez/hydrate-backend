@@ -80,6 +80,7 @@ export function getReqMock (token : string = null, body : any = null) {
       return null;
     },
     "params": null,
+    "query": null,
     "user": null,
     "dbUser": null,
     "body": body

@@ -20,7 +20,7 @@ import {
 import { IFountain } from "./types";
 import * as database from "../utils/database";
 import { generateFountainId } from "../utils/generate";
-import { IUser, iLocationToIDbLocation } from "../utils/types";
+import { IUser } from "../utils/types";
 
 describe("FOUNTAINS: CRUD of all kinds", () => {
   const getFountainsFuncs = [authenticateRequest, getFountains];
@@ -36,7 +36,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
   // const getFountainRatingFuncs = [authenticateRequest, getFountainRating];
   // const updateFountainRatingFuncs = [authenticateRequest, ratingPermissionCheck, updateFountainRating];
 
-  async function createFountains(user: IUser) {
+  async function createFountains() {
     // Create fountains
     const fountainOne : IFountain = {
       id: generateFountainId(),
@@ -79,6 +79,20 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     return [createdFountainOne, createdFountainTwo, createdFountainThree];
   }
 
+  function expectFountainsEqual(fountainsA, fountainsB) {
+    expect(fountainsA).to.deep.equal(fountainsB);
+    expect(fountainsA).to.satisfy((fountains) => {
+      let fountInd = 0;
+      return fountains.every((fountain) => {
+        if (fountainsB[fountInd].info.location.latitude == fountain.info.location.latitude && fountainsB[fountInd].info.location.latitude == fountain.info.location.latitude) {
+          fountInd += 1;
+          return true;
+        }
+        return false;
+      });
+    });
+  }
+
   it("can't get fountains without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
@@ -92,18 +106,18 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
   });
 
   it("gets all fountains with authentication", async () => {
-    const user = await getUser();
+    const user : IUser = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains(user);
+    const createdFountains = await createFountains();
 
     // Try to get all fountains
     await simulateRouter(req, res, getFountainsFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expect(res.json).to.deep.equal(createdFountains);
-  })
+    expectFountainsEqual(res.message, createdFountains);
+  });
 });

@@ -9,7 +9,7 @@ export async function createFountain(fountain : IFountain) : Promise<IFountain> 
   return iDbFountainToIFountain(await createEntity<IDbFountain>(Fountain, iFountainToIDbFountain(fountain)));
 }
 
-// TODO make function return Promise<Array<IFountain>>
+
 export async function queryFountains(queryParams : IFountainQueryParams) : Promise<Array<IFountain>> {
   const mongoQuery = {};
   if (queryParams.bottle_filler) mongoQuery["info"]["bottle_filler"] = queryParams.bottle_filler;
@@ -27,7 +27,7 @@ export async function queryFountains(queryParams : IFountainQueryParams) : Promi
     }
   }
 
-  return (await queryEntities<IDbFountain>(Fountain, mongoQuery)).forEach((dbFountain) => iDbFountainToIFountain(dbFountain));
+  return (await queryEntities<IDbFountain>(Fountain, mongoQuery)).map((dbFountain : IDbFountain) => iDbFountainToIFountain(dbFountain));
 }
 
 export async function getFountain(fountainId : string) : Promise<IFountain> {
@@ -35,8 +35,7 @@ export async function getFountain(fountainId : string) : Promise<IFountain> {
 }
 
 // FOUNTAIN RATING
-// TODO make return type Promise<IFountainRating[]>
-export function getFountainRatings(fountainId : string) : any {
+export function getFountainRatings(fountainId : string) : Promise<IFountainRating[]> {
   return queryEntities<IFountainRating>(FountainRating, { fountain_id: fountainId });
 }
 
@@ -121,8 +120,7 @@ function fetchEntity<Type>(entityModel : Model<Type>, query : any) : Promise<Typ
 function queryEntities<Type>(entityModel : Model<Type>, query : any) : Promise<Type[]> {
   return new Promise((resolve, reject) => {
     entityModel.find(query).exec().then((dbEntities) => {
-      console.log(dbEntities);
-      resolve(null);
+      resolve(dbEntities.map((entity) => getCleanObject(entity)));
     }).catch((error) => {
       reject(error);
     })

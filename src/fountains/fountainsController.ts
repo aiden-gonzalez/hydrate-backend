@@ -33,10 +33,10 @@ export async function ratingPermissionCheck(req, res, next) {
 export function getFountains(req, res) {
   // Get filter query params
   const queryParams = {
-    bottle_filler: req.query.bottle_filler,
-    latitude: req.query.latitude,
-    longitude: req.query.longitude,
-    radius: req.query.radius
+    bottle_filler: req.query?.bottle_filler,
+    latitude: req.query?.latitude,
+    longitude: req.query?.longitude,
+    radius: req.query?.radius
   } as IFountainQueryParams;
 
   // Execute query
