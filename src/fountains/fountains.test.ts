@@ -1,15 +1,22 @@
 import {authenticateRequest} from "../utils/auth";
-import {getAuthedReqMockForUser, getReqMock, getResMock, getUser, simulateRouter} from "../testHelper.test";
+import {
+  getAuthedReqMockForUser,
+  getFountain, getPicture,
+  getReqMock,
+  getResMock,
+  getUser,
+  simulateRouter
+} from "../testHelper.test";
 import {expect} from "chai";
 import * as constants from "../utils/constants";
 import {
   //ratingPermissionCheck,
   getFountains,
-  // createFountain,
-  // getFountain,
-  // updateFountain,
-  // getFountainPictures,
-  // addFountainPicture,
+  createFountain,
+  getFountainById,
+  updateFountain,
+  getFountainPictures,
+  addFountainPicture,
   // getFountainPicture,
   // deleteFountainPicture,
   // getFountainRatings,
@@ -19,24 +26,26 @@ import {
 } from "./fountainsController";
 import { IFountain } from "./types";
 import * as database from "../utils/database";
-import { generateFountainId } from "../utils/generate";
-import { ILocation, IUser } from "../utils/types";
+import {generateFountainId, generatePictureId} from "../utils/generate";
+import {ILocation, IPicture, IUser} from "../utils/types";
 import {Fountain} from "../mongoDB";
 import {calculateDistance} from "../utils/calculation";
 
 describe("FOUNTAINS: CRUD of all kinds", () => {
   const getFountainsFuncs = [authenticateRequest, getFountains];
-  // const createFountainFuncs = [authenticateRequest, createFountain];
-  // const getFountainFuncs = [authenticateRequest, getFountain];
-  // const updateFountainFuncs = [authenticateRequest, updateFountain];
-  // const getFountainPicturesFuncs = [authenticateRequest, getFountainPictures];
-  // const addFountainPictureFuncs = [authenticateRequest, addFountainPicture];
+  const createFountainFuncs = [authenticateRequest, createFountain];
+  const getFountainFuncs = [authenticateRequest, getFountainById];
+  const updateFountainFuncs = [authenticateRequest, updateFountain];
+  const getFountainPicturesFuncs = [authenticateRequest, getFountainPictures];
+  const addFountainPictureFuncs = [authenticateRequest, addFountainPicture];
   // const getFountainPictureFuncs = [authenticateRequest, getFountainPicture];
   // const deleteFountainPictureFuncs = [authenticateRequest, deleteFountainPicture];
   // const getFountainRatingsFuncs = [authenticateRequest, getFountainRatings];
   // const addFountainRatingFuncs = [authenticateRequest, addFountainRating];
   // const getFountainRatingFuncs = [authenticateRequest, getFountainRating];
   // const updateFountainRatingFuncs = [authenticateRequest, ratingPermissionCheck, updateFountainRating];
+
+  // TODO add more unhappy paths? Malformed data, bad responses?
 
   async function createFountains() {
     // Create fountains
@@ -81,13 +90,63 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     return [createdFountainOne, createdFountainTwo, createdFountainThree];
   }
 
-  function expectFountainsEqual(fountainsA, fountainsB) {
-    expect(fountainsA).to.deep.equal(fountainsB);
-    expect(fountainsA.length).to.equal(fountainsB.length);
-    for (let i = 0; i < fountainsA.length; i++) {
-      expect(fountainsA[i]).to.deep.equal(fountainsB.find((fountain) => fountain.id === fountainsA[i].id));
+  async function createPictures(entityId : string) {
+    // Create pictures
+    const pictureOne : IPicture = {
+      id: generatePictureId(),
+      picture_link: "https://www.google.com",
+      entity_id: entityId
+    };
+    const pictureTwo : IPicture = {
+      id: generatePictureId(),
+      picture_link: "https://www.facebook.com",
+      entity_id: entityId
+    };
+    const pictureThree : IPicture = {
+      id: generatePictureId(),
+      picture_link: "https://www.mail.google.com",
+      entity_id: entityId
+    };
+
+    const createdPictureOne = await database.createPicture(pictureOne);
+    const createdPictureTwo = await database.createPicture(pictureTwo);
+    const createdPictureThree = await database.createPicture(pictureThree);
+
+    return [createdPictureOne, createdPictureTwo, createdPictureThree];
+  }
+
+  function expectEntitiesEqual(entitiesA, entitiesB) {
+    expect(entitiesA).to.deep.equal(entitiesB);
+    expect(entitiesA.length).to.equal(entitiesB.length);
+    for (let i = 0; i < entitiesA.length; i++) {
+      expect(entitiesA[i]).to.deep.equal(entitiesB.find((fountain) => fountain.id === entitiesA[i].id));
     }
   }
+
+  it("can't create a fountain without authentication", async () => {
+    const req = getReqMock(null, getFountain().info);
+    const res = getResMock();
+
+    // Try to create fountain
+    await simulateRouter(req, res, createFountainFuncs);
+
+    // Should have failed with unauthorized
+    expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
+    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
+  });
+
+  it("Creates a fountain with authentication", async () => {
+    const fountainToCreate = getFountain();
+    const req = getAuthedReqMockForUser(await getUser(), fountainToCreate.info);
+    const res = getResMock();
+
+    // Try to create fountain
+    await simulateRouter(req, res, createFountainFuncs);
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_CREATED);
+    expect(fountainToCreate.info).to.deep.equal(res.message.info);
+  });
 
   it("can't get fountains without authentication", async () => {
     const req = getReqMock();
@@ -114,7 +173,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectFountainsEqual(res.message, createdFountains);
+    expectEntitiesEqual(res.message, createdFountains);
   });
 
   it("gets all fountains with bottle fillers", async () => {
@@ -135,7 +194,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectFountainsEqual(res.message, createdFountains.filter((fountain) => fountain.info.bottle_filler));
+    expectEntitiesEqual(res.message, createdFountains.filter((fountain) => fountain.info.bottle_filler));
   });
 
   it ("gets all fountains within a certain radius of a point", async () => {
@@ -161,6 +220,207 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectFountainsEqual(res.message, createdFountains.filter((fountain) => calculateDistance(fountain.info.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40))
-  })
+    expectEntitiesEqual(res.message, createdFountains.filter((fountain) => calculateDistance(fountain.info.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40));
+  });
+
+  it ("can't get a particular fountain without authentication", async () => {
+    const req = getReqMock();
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Specify an ID in request
+    req.params = {
+      id: createdFountains[0].id
+    };
+
+    // Try to get fountain
+    await simulateRouter(req, res, getFountainFuncs);
+
+    // Should have failed with unauthorized
+    expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
+    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
+  });
+
+  it ("gets a particular fountain", async () => {
+    const user : IUser = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Specify an ID in request
+    req.params = {
+      id: createdFountains[0].id
+    };
+
+    // Try to get fountain
+    await simulateRouter(req, res, getFountainFuncs);
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expect(createdFountains[0]).to.deep.equal(res.message);
+  });
+
+  it ("can't update a fountain without authentication", async () => {
+    const req = getReqMock();
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Specify fountain updates in request
+    createdFountains[0].info = createdFountains[1].info;
+    req.params = {
+      id: createdFountains[0].id
+    };
+    req.body = createdFountains[0].info;
+
+    // Try to update fountain
+    await simulateRouter(req, res, updateFountainFuncs);
+
+    // Should have failed with unauthorized
+    expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
+    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
+  });
+
+  it ("updates a fountain", async () => {
+    const user : IUser = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Specify fountain updates in request
+    createdFountains[0].info = createdFountains[1].info;
+    req.params = {
+      id: createdFountains[0].id
+    };
+    req.body = createdFountains[0].info;
+
+    // Try to update fountain
+    await simulateRouter(req, res, updateFountainFuncs);
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expect(createdFountains[0]).to.deep.equal(res.message);
+  });
+
+  it("Can't create a fountain picture without authentication", async () => {
+    const req = getReqMock();
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Set up picture to create
+    req.params = {
+      id: createdFountains[0].id
+    };
+    req.body = "https://www.google.com"; // picture link
+
+    // Try to create fountain picture
+    await simulateRouter(req, res, addFountainPictureFuncs);
+
+    // Should have failed with unauthorized
+    expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
+    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
+  });
+
+  it("Can't create a fountain picture with invalid URL", async () => {
+    const user : IUser = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Set up picture to create
+    req.params = {
+      id: createdFountains[0].id
+    };
+    req.body = "not a url"; // invalid picture link
+
+    // Try to create fountain picture
+    await simulateRouter(req, res, addFountainPictureFuncs);
+
+    // Should have failed with 400
+    expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
+    expect(res.message).to.satisfy((message) => message.startsWith("Picture validation failed"));
+  });
+
+  it("Creates a fountain picture", async () => {
+    const user : IUser = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Set up picture to create
+    req.params = {
+      id: createdFountains[0].id
+    };
+    const pictureToCreate = getPicture();
+    pictureToCreate.entity_id = createdFountains[0].id;
+    req.body = pictureToCreate.picture_link; // valid picture link
+
+    // Try to create fountain picture
+    await simulateRouter(req, res, addFountainPictureFuncs);
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    pictureToCreate.id = res.message.id;
+    expect(pictureToCreate).to.deep.equal(res.message);
+  });
+
+  it("Can't get fountain pictures without authentication", async () => {
+    const req = getReqMock();
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Add pictures
+    await createPictures(createdFountains[0].id);
+
+    // Set up request
+    req.params = {
+      id: createdFountains[0].id
+    };
+
+    // Try to get pictures
+    await simulateRouter(req, res, getFountainPicturesFuncs);
+
+    // Should have failed with unauthorized
+    expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
+    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
+  });
+
+  it("Gets fountain pictures", async () => {
+    const user = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Add pictures
+    const createdPictures = await createPictures(createdFountains[0].id);
+
+    // Set up request
+    req.params = {
+      id: createdFountains[0].id
+    };
+
+    // Try to get pictures
+    await simulateRouter(req, res, getFountainPicturesFuncs);
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expectEntitiesEqual(res.message, createdPictures);
+  });
 });

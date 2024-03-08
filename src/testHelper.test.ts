@@ -1,10 +1,11 @@
 import 'dotenv/config';
 import mongoose from "mongoose";
-import {IPicture, IUser} from "./utils/types";
+import {ILocation, IPicture, IUser} from "./utils/types";
 import {generateFountainId, generatePictureId, generateUserId} from "./utils/generate";
 import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
 import {expect} from "chai";
+import {IFountain, IFountainInfo} from "./fountains/types";
 
 // Tell mongoose to use es6 Promise implementation
 mongoose.Promise = global.Promise;
@@ -61,7 +62,25 @@ export async function getUser (username  = "username") : Promise<IUser> {
       full_name: "Aiden Gonzalez",
       picture_link: "https://www.google.com"
     }
-  }
+  } as IUser;
+}
+
+export function getLocation (latitude  = 40.4237, longitude  = -86.9212) : ILocation {
+  return {
+    latitude: latitude,
+    longitude: longitude
+  } as ILocation;
+}
+
+export function getFountain (name  = "fountain name", bottle_filler  = false, location : ILocation = getLocation()) : IFountain {
+  return {
+    id: generateFountainId(),
+    info: {
+      name: name,
+      bottle_filler: bottle_filler,
+      location: location
+    } as IFountainInfo
+  } as IFountain;
 }
 
 export function getPicture () : IPicture {

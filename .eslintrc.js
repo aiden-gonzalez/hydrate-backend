@@ -20,6 +20,7 @@ module.exports = {
   "rules": {
     "indent": ["error", 2],
     "no-empty-function": "warn",
-    "@typescript-eslint/no-empty-function": "warn"
+    "@typescript-eslint/no-empty-function": "warn",
+    "no-prototype-builtins": "warn"
   }
 }

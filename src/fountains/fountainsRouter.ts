@@ -17,7 +17,7 @@ fountainsRouter.post('/fountains',
 // fountain/:id
 fountainsRouter.put('/fountains/:id',
   authenticateRequest, // authenticate request
-  fountainsController.getFountain // get fountain
+  fountainsController.getFountainById // get fountain
 ); // Get fountain
 fountainsRouter.put('/fountains/:id',
   authenticateRequest, // authenticate request

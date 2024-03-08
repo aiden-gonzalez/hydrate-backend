@@ -1,6 +1,13 @@
 import {IFountain, IFountainInfo, IFountainQueryParams, IFountainRating, IFountainRatingDetails} from "./types";
 import * as database from "../utils/database";
-import {HTTP_FORBIDDEN, HTTP_FORBIDDEN_MESSAGE, HTTP_INTERNAL_ERROR, HTTP_OK} from "../utils/constants";
+import {
+  HTTP_BAD_REQUEST,
+  HTTP_CREATED,
+  HTTP_FORBIDDEN,
+  HTTP_FORBIDDEN_MESSAGE,
+  HTTP_INTERNAL_ERROR,
+  HTTP_OK
+} from "../utils/constants";
 import { IPicture } from "../utils/types";
 import { generateFountainId, generateFountainRatingId, generatePictureId } from "../utils/generate";
 
@@ -45,8 +52,8 @@ export function getFountains(req, res) {
       resolve(res.status(HTTP_OK).json(fountains))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
-  })
+    });
+  });
 }
 
 export function createFountain(req, res) {
@@ -60,14 +67,14 @@ export function createFountain(req, res) {
   }
   return new Promise((resolve) => {
     database.createFountain(newFountain).then((createdFountain) => {
-      resolve(res.status(HTTP_OK).json(createdFountain));
+      resolve(res.status(HTTP_CREATED).json(createdFountain));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
     });
   });
 }
 
-export function getFountain(req, res) {
+export function getFountainById(req, res) {
   // Get path parameter
   const fountainId = req.params.id;
 
@@ -85,9 +92,12 @@ export function updateFountain(req, res) {
   // Get path parameter
   const fountainId = req.params.id;
 
+  // Get fountain info
+  const fountainInfo : IFountainInfo = req.body;
+
   // Update fountain
   return new Promise((resolve) => {
-    database.getFountain(fountainId).then((fountain) => {
+    database.updateFountainById(fountainId, fountainInfo).then((fountain) => {
       resolve(res.status(HTTP_OK).json(fountain))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -125,7 +135,11 @@ export function addFountainPicture(req, res) {
     database.createPicture(newPicture).then((createdPicture) => {
       resolve(res.status(HTTP_OK).json(createdPicture))
     }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
+      if (error.message && error.stack && error.stack.startsWith("ValidationError")) {
+        resolve(res.status(HTTP_BAD_REQUEST).send(error.message));
+      } else {
+        resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
+      }
     })
   });
 }
@@ -136,7 +150,7 @@ export function getFountainPicture(req, res) {
 
   // Get fountain picture
   return new Promise((resolve) => {
-    database.getPicture(pictureId).then((fountainPicture) => {
+    database.getPictureById(pictureId).then((fountainPicture) => {
       resolve(res.status(HTTP_OK).json(fountainPicture))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
