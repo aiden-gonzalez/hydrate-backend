@@ -11,6 +11,7 @@ mongoose.Promise = global.Promise;
 
 describe("Connect to database and run tests", function () {
   it("Should connect to database", async () => {
+    // mongoose.set('debug', true); // uncomment this to get mongoose debug messages
     await mongoose.connect(process.env.MONGO_TEST_URI);
     console.log("Connected to local MongoDB");
     mongoose.connection.on("error", (error) => {

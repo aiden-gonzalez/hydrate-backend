@@ -21,6 +21,8 @@ import { IFountain } from "./types";
 import * as database from "../utils/database";
 import { generateFountainId } from "../utils/generate";
 import { ILocation, IUser } from "../utils/types";
+import {Fountain} from "../mongoDB";
+import {calculateDistance} from "../utils/calculation";
 
 describe("FOUNTAINS: CRUD of all kinds", () => {
   const getFountainsFuncs = [authenticateRequest, getFountains];
@@ -44,8 +46,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
         name: "Fountain One",
         bottle_filler: true,
         location: {
-          latitude: 0,
-          longitude: 0
+          latitude: 40.42476607308126,
+          longitude: -86.9114030295504
         }
       }
     };
@@ -55,8 +57,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
         name: "Fountain Two",
         bottle_filler: false,
         location: {
-          latitude: 5,
-          longitude: 5
+          latitude: 40.42486535509428,
+          longitude: -86.91207343967577
         }
       }
     };
@@ -66,8 +68,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
         name: "Fountain Three",
         bottle_filler: true,
         location: {
-          latitude: 20,
-          longitude: 20
+          latitude: 40.425193836261464,
+          longitude: -86.9112570893454
         }
       }
     };
@@ -81,22 +83,10 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
   function expectFountainsEqual(fountainsA, fountainsB) {
     expect(fountainsA).to.deep.equal(fountainsB);
-    expect(fountainsA).to.satisfy((fountains) => {
-      let fountInd = 0;
-      return fountains.every((fountain) => {
-        if (fountainsB[fountInd].info.location.latitude == fountain.info.location.latitude && fountainsB[fountInd].info.location.latitude == fountain.info.location.latitude) {
-          fountInd += 1;
-          return true;
-        }
-        return false;
-      });
-    });
-  }
-
-  function calcFountainDistance(fountain : IFountain, point : ILocation) {
-    const latDistance = fountain.info.location.latitude - point.latitude;
-    const longDistance = fountain.info.location.longitude - point.longitude;
-    return Math.sqrt((latDistance * latDistance) + (longDistance * longDistance))
+    expect(fountainsA.length).to.equal(fountainsB.length);
+    for (let i = 0; i < fountainsA.length; i++) {
+      expect(fountainsA[i]).to.deep.equal(fountainsB.find((fountain) => fountain.id === fountainsA[i].id));
+    }
   }
 
   it("can't get fountains without authentication", async () => {
@@ -148,7 +138,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expectFountainsEqual(res.message, createdFountains.filter((fountain) => fountain.info.bottle_filler));
   });
 
-  it ("gets all fontains at within 10 of (5, 5)", async () => {
+  it ("gets all fountains within a certain radius of a point", async () => {
     const user : IUser = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
@@ -158,18 +148,19 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Set up query
     req.query = {
-      latitude: 5,
-      longitude: 5,
-      radius: 10
+      latitude: 40.42492454100864,
+      longitude: -86.91155253041734,
+      radius: 40 // in meters
     }
 
-    // Try to get all fountains within 10 of (5, 5)
-    await simulateRouter(req, res, getFountainsFuncs);
+    // ensure index on fountain location (needed for testing since collections get rapidly dropped)
+    await Fountain.ensureIndexes();
 
-    console.log(res);
+    // Try to get all fountains within 50 meters of (5, 5)
+    await simulateRouter(req, res, getFountainsFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectFountainsEqual(res.message, createdFountains.filter((fountain) => calcFountainDistance(fountain, {longitude: 5, latitude: 5} as ILocation) < 10))
+    expectFountainsEqual(res.message, createdFountains.filter((fountain) => calculateDistance(fountain.info.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40))
   })
 });

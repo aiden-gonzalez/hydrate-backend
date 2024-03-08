@@ -29,8 +29,6 @@ export async function queryFountains(queryParams : IFountainQueryParams) : Promi
     }
   }
 
-  console.log(mongoQuery);
-
   return (await queryEntities<IDbFountain>(Fountain, mongoQuery)).map((dbFountain : IDbFountain) => iDbFountainToIFountain(dbFountain));
 }
 

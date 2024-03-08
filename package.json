@@ -5,7 +5,7 @@
   "main": "src/server.ts",
   "scripts": {
     "build": "tsc",
-    "test": "tsc && sudo docker compose -f mongo-docker-compose.yml up -d && mocha --recursive --exit",
+    "test": "tsc && sudo docker compose -f mongo-docker-compose.yml up -d && export NODE_ENV=test && mocha --recursive --exit",
     "local": "tsc && sudo docker compose -f mongo-docker-compose.yml up -d && export MONGO_ENV=local && node dist/server.js",
     "cloud": "tsc && export MONGO_ENV=cloud && node dist/server.js",
     "lint": "eslint .",
@@ -37,6 +37,7 @@
     "@types/express": "^4.17.13",
     "@types/mocha": "^10.0.6",
     "@types/uuid": "^9.0.7",
+    "@types/mongoose": "^5.11.97",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
     "chai": "^4.4.1",
