@@ -56,12 +56,12 @@ export function getFountainRating(ratingId : string) : Promise<IFountainRating> 
   return fetchEntity<IFountainRating>(FountainRating, { id: ratingId });
 }
 
-export function createFountainRating(fountainRating: IFountainRating) : Promise<IFountainRating> {
-  return createEntity<IFountainRating>(FountainRating, fountainRating);
+export async function createFountainRating(fountainRating: IFountainRating) : Promise<IFountainRating> {
+  return cleanFountainRatingDetails(await createEntity<IFountainRating>(FountainRating, fountainRating))
 }
 
-export function updateFountainRatingById(ratingId : string, ratingDetails : IFountainRatingDetails) : Promise<IFountainRating> {
-  return updateEntity<IFountainRating>(FountainRating, { id: ratingId }, {details: ratingDetails});
+export async function updateFountainRatingById(ratingId : string, ratingDetails : IFountainRatingDetails) : Promise<IFountainRating> {
+  return cleanFountainRatingDetails(await updateEntity<IFountainRating>(FountainRating, { id: ratingId }, {details: ratingDetails}));
 }
 
 // USER
@@ -176,6 +176,16 @@ function cleanUserProfile(user : any) : IUser {
     delete user.profile._id;
   }
   return user;
+}
+
+// Removes fountain rating details mongo ID
+function cleanFountainRatingDetails(fountainRating : any) : IFountainRating {
+  if (fountainRating === null) return null;
+
+  if (fountainRating.details && fountainRating.details.hasOwnProperty('_id')) {
+    delete fountainRating.details._id;
+  }
+  return fountainRating;
 }
 
 // Returns an object with the top-level mongo ID removed

@@ -5,7 +5,7 @@ import {generateFountainId, generatePictureId, generateUserId} from "./utils/gen
 import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
 import {expect} from "chai";
-import {IFountain, IFountainInfo} from "./fountains/types";
+import {IFountain, IFountainInfo, IFountainRatingDetails} from "./fountains/types";
 
 // Tell mongoose to use es6 Promise implementation
 mongoose.Promise = global.Promise;
@@ -81,6 +81,14 @@ export function getFountain (name  = "fountain name", bottle_filler  = false, lo
       location: location
     } as IFountainInfo
   } as IFountain;
+}
+
+export function getFountainRatingDetails (pressure = 3, taste = 3, temperature = 3) : IFountainRatingDetails {
+  return {
+    pressure: pressure,
+    taste: taste,
+    temperature: temperature
+  } as IFountainRatingDetails;
 }
 
 export function getPicture () : IPicture {

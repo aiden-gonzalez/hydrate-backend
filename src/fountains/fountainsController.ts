@@ -145,7 +145,11 @@ export function addFountainPicture(req, res) {
 }
 
 export function getFountainPicture(req, res) {
-  // Get path parameter
+  // Get path parameters
+  // TODO fountainID is not considered here. This means that any fountainId could be passed in
+  // and the picture would still be fetched if it exists. Depending on how potential future
+  // fountains permission logic is implemented, this could be a vulnerability.
+  // const fountainId = req.params.id;
   const pictureId = req.params.pictureId;
 
   // Get fountain picture
@@ -159,7 +163,12 @@ export function getFountainPicture(req, res) {
 }
 
 export function deleteFountainPicture(req, res) {
-  // Get path parameter
+  // Get path parameters
+  // TODO do we care if the picture doesn't actually belong to the fountain which is specified?
+  // Currently we don't check that the picture belongs to the fountain before deleting it.
+  // We don't check the fountainId at all.
+  // TODO we also don't check who created the picture. There is no ownership here. Anyone can moderate anything.
+  // const fountainId = req.params.id;
   const pictureId = req.params.pictureId;
 
   // Delete fountain picture
@@ -187,6 +196,9 @@ export function getFountainRatings(req, res) {
 }
 
 export function addFountainRating(req, res) {
+  // TODO we can create a rating for fountains and users that don't exist, can't we?
+  // this is probably not a good thing :(
+  // TODO one user can add unlimited ratings for the same fountain. Also not good :(
   // Get path parameter
   const fountainId = req.params.id;
   // Get rating details from request
@@ -205,13 +217,19 @@ export function addFountainRating(req, res) {
     database.createFountainRating(newRating).then((createdRating) => {
       resolve(res.status(HTTP_OK).json(createdRating))
     }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
+      if (error.message && error.stack && error.stack.startsWith("ValidationError")) {
+        resolve(res.status(HTTP_BAD_REQUEST).send(error.message));
+      } else {
+        resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
+      }
+    });
   });
 }
 
 export function getFountainRating(req, res) {
-  // Get path parameter
+  // Get path parameters
+  // TOOD fountainId is not considered here, same potential issue as with pictures?
+  // const fountainId = req.params.id;
   const ratingId = req.params.ratingId;
 
   // Get fountain rating
@@ -225,7 +243,9 @@ export function getFountainRating(req, res) {
 }
 
 export function updateFountainRating(req, res) {
-  // Get path parameter
+  // Get path parameters
+  // TODO fountainId is not considered here, same potential issue as with pictures?
+  // const fountainId = req.params.id;
   const ratingId = req.params.ratingId;
   // Get new rating details from request
   const ratingDetails : IFountainRatingDetails = req.body;
