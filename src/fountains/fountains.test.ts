@@ -612,7 +612,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Create a few ratings for a particular fountain
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id);
+    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, user.id);
+    console.log(createdFountainRatings);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
