@@ -10,6 +10,7 @@ import {
 } from "../utils/constants";
 import { IPicture } from "../utils/types";
 import { generateFountainId, generateFountainRatingId, generatePictureId } from "../utils/generate";
+import {FountainRating} from "../mongoDB";
 
 // TODO think about how to set correct status depending on response from database
 // If none are found, should be 404 not found?
@@ -26,7 +27,7 @@ export async function ratingPermissionCheck(req, res, next) {
   const userId = req.user.id;
 
   // Get rating from database
-  const rating = await database.getFountainRating(ratingId);
+  const rating = await database.getRating<IFountainRating>(FountainRating, ratingId);
   
   // Check if user owns rating
   if (!rating.user_id == userId) {
@@ -187,7 +188,7 @@ export function getFountainRatings(req, res) {
 
   // Get fountain ratings
   return new Promise((resolve) => {
-    database.getFountainRatings(fountainId).then((fountainRatings) => {
+    database.getRatings<IFountainRating>(FountainRating, fountainId).then((fountainRatings) => {
       resolve(res.status(HTTP_OK).json(fountainRatings));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -214,7 +215,7 @@ export function addFountainRating(req, res) {
     details: ratingDetails
   };
   return new Promise((resolve) => {
-    database.createFountainRating(newRating).then((createdRating) => {
+    database.createRating<IFountainRating>(FountainRating, newRating).then((createdRating) => {
       resolve(res.status(HTTP_OK).json(createdRating))
     }).catch((error) => {
       if (error.message && error.stack && error.stack.startsWith("ValidationError")) {
@@ -234,7 +235,7 @@ export function getFountainRating(req, res) {
 
   // Get fountain rating
   return new Promise((resolve) => {
-    database.getFountainRating(ratingId).then((fountainRating) => {
+    database.getRating<IFountainRating>(FountainRating, ratingId).then((fountainRating) => {
       resolve(res.status(HTTP_OK).json(fountainRating))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -252,7 +253,7 @@ export function updateFountainRating(req, res) {
 
   // Update fountain rating
   return new Promise((resolve) => {
-    database.updateFountainRatingById(ratingId, ratingDetails).then((fountainRating) => {
+    database.updateRatingById<IFountainRating>(FountainRating, ratingId, ratingDetails).then((fountainRating) => {
       resolve(res.status(HTTP_OK).json(fountainRating))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));

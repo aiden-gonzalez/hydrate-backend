@@ -1,14 +1,13 @@
-import {Fountain, FountainRating, User, Picture, IDbFountain} from "../mongoDB";
+import {Fountain, User, Picture, IDbFountain} from "../mongoDB";
 import { IUserProfile } from "../profiles/types";
 import { IPicture, IUser } from "./types";
 import {Model} from "mongoose";
 import {
   IFountain,
   IFountainQueryParams,
-  IFountainRating,
   iDbFountainToIFountain,
   iFountainToIDbFountain,
-  IFountainInfo, IFountainRatingDetails, iFountainInfoToIDbFountainInfo
+  IFountainInfo, iFountainInfoToIDbFountainInfo
 } from "../fountains/types";
 
 // FOUNTAIN
@@ -46,25 +45,25 @@ export async function updateFountainById(fountainId : string, fountainInfo : IFo
   return iDbFountainToIFountain(await updateEntity<IDbFountain>(Fountain, { id: fountainId }, { info: iFountainInfoToIDbFountainInfo(fountainInfo) }))
 }
 
-// FOUNTAIN RATING
-export async function getFountainRatings(fountainId : string) : Promise<IFountainRating[]> {
-  const fountainRatings = await queryEntities<IFountainRating>(FountainRating, { fountain_id: fountainId });
-  for (const rating in fountainRatings) {
-    cleanFountainRatingDetails(fountainRatings[rating]);
+// RATINGS
+export async function createRating<Type>(ratingModel : Model<Type>, rating: Type) : Promise<Type> {
+  return cleanRatingDetails<Type>(await createEntity<Type>(ratingModel, rating));
+}
+
+export async function getRatings<Type>(ratingModel : Model<Type>, entityId : string) : Promise<Type[]> {
+  const ratings = await queryEntities<Type>(ratingModel, { $or: [ { fountain_id: entityId }, { bathroom_id: entityId } ] });
+  for (const rating in ratings) {
+    cleanRatingDetails<Type>(ratings[rating]);
   }
-  return fountainRatings;
+  return ratings;
 }
 
-export async function getFountainRating(ratingId : string) : Promise<IFountainRating> {
-  return cleanFountainRatingDetails(await fetchEntity<IFountainRating>(FountainRating, { id: ratingId }));
+export async function getRating<Type>(ratingModel : Model<Type>, ratingId : string) : Promise<Type> {
+  return cleanRatingDetails(await fetchEntity<Type>(ratingModel, { id: ratingId }));
 }
 
-export async function createFountainRating(fountainRating: IFountainRating) : Promise<IFountainRating> {
-  return cleanFountainRatingDetails(await createEntity<IFountainRating>(FountainRating, fountainRating))
-}
-
-export async function updateFountainRatingById(ratingId : string, ratingDetails : IFountainRatingDetails) : Promise<IFountainRating> {
-  return cleanFountainRatingDetails(await updateEntity<IFountainRating>(FountainRating, { id: ratingId }, {details: ratingDetails}));
+export async function updateRatingById<Type>(ratingModel : Model<Type>, ratingId : string, ratingDetails : any) : Promise<Type> {
+  return cleanRatingDetails<Type>(await updateEntity<Type>(ratingModel, { id: ratingId }, {details: ratingDetails}));
 }
 
 // USER
@@ -106,10 +105,6 @@ export function deletePicture(pictureId: string) : Promise<void> {
 }
 
 // GENERIC
-export async function getRating<Type>(ratingModel : Model<Type>, ratingId : string) : Promise<Type> {
-  return cleanRatingDetails(await fetchEntity<Type>(ratingModel, { id: ratingId }));
-}
-
 function createEntity<Type>(entityModel : Model<Type>, entityDetails : Type) : Promise<Type> {
   return new Promise((resolve, reject) => {
     const entityDoc = new entityModel(entityDetails);

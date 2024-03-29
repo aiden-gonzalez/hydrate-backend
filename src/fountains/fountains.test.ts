@@ -28,7 +28,7 @@ import { IFountain, IFountainRating, IFountainRatingDetails } from "./types";
 import * as database from "../utils/database";
 import {generateFountainId, generateFountainRatingId, generatePictureId, generateUserId} from "../utils/generate";
 import {ILocation, IPicture, IUser} from "../utils/types";
-import {Fountain} from "../mongoDB";
+import {Fountain, FountainRating} from "../mongoDB";
 import {calculateDistance} from "../utils/calculation";
 
 describe("FOUNTAINS: CRUD of all kinds", () => {
@@ -123,9 +123,9 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       } as IFountainRatingDetails
     }
 
-    const createdFountainRatingOne = await database.createFountainRating(fountainRatingOne);
-    const createdFountainRatingTwo = await database.createFountainRating(fountainRatingTwo);
-    const createdFountainRatingThree = await database.createFountainRating(fountainRatingThree);
+    const createdFountainRatingOne = await database.createRating<IFountainRating>(FountainRating, fountainRatingOne);
+    const createdFountainRatingTwo = await database.createRating<IFountainRating>(FountainRating, fountainRatingTwo);
+    const createdFountainRatingThree = await database.createRating<IFountainRating>(FountainRating, fountainRatingThree);
 
     return [createdFountainRatingOne, createdFountainRatingTwo, createdFountainRatingThree];
   }
