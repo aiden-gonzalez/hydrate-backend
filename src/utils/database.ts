@@ -188,21 +188,11 @@ function cleanUserProfile(user : any) : IUser {
 function cleanRatingDetails<Type>(rating : any) : Type {
   if (rating === null) return null;
   
-  if (rating.details && rating.details.hasOwnProperty('_id') {
+  if (rating.details && rating.details.hasOwnProperty('_id')) {
     delete rating.details._id
   }
 
   return rating;
-}
-
-// Removes fountain rating details mongo ID
-function cleanFountainRatingDetails(fountainRating : any) : IFountainRating {
-  if (fountainRating === null) return null;
-
-  if (fountainRating.details && fountainRating.details.hasOwnProperty('_id')) {
-    delete fountainRating.details._id;
-  }
-  return fountainRating;
 }
 
 // Returns an object with the top-level mongo ID removed
