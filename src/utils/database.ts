@@ -16,7 +16,6 @@ export async function createFountain(fountain : IFountain) : Promise<IFountain> 
   return iDbFountainToIFountain(await createEntity<IDbFountain>(Fountain, iFountainToIDbFountain(fountain)));
 }
 
-
 export async function queryFountains(queryParams : IFountainQueryParams) : Promise<Array<IFountain>> {
   const mongoQuery = {};
   if (queryParams.bottle_filler) {
@@ -107,6 +106,10 @@ export function deletePicture(pictureId: string) : Promise<void> {
 }
 
 // GENERIC
+export async function getRating<Type>(ratingModel : Model<Type>, ratingId : string) : Promise<Type> {
+  return cleanRatingDetails(await fetchEntity<Type>(ratingModel, { id: ratingId }));
+}
+
 function createEntity<Type>(entityModel : Model<Type>, entityDetails : Type) : Promise<Type> {
   return new Promise((resolve, reject) => {
     const entityDoc = new entityModel(entityDetails);
@@ -179,6 +182,17 @@ function cleanUserProfile(user : any) : IUser {
     delete user.profile._id;
   }
   return user;
+}
+
+// Removes rating details mongo ID
+function cleanRatingDetails<Type>(rating : any) : Type {
+  if (rating === null) return null;
+  
+  if (rating.details && rating.details.hasOwnProperty('_id') {
+    delete rating.details._id
+  }
+
+  return rating;
 }
 
 // Removes fountain rating details mongo ID
