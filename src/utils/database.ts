@@ -45,6 +45,11 @@ export async function updateFountainById(fountainId : string, fountainInfo : IFo
   return iDbFountainToIFountain(await updateEntity<IDbFountain>(Fountain, { id: fountainId }, { info: iFountainInfoToIDbFountainInfo(fountainInfo) }))
 }
 
+// FOUNTAIN OR BATHROOM (FOB)
+export async function createFob<Type>(fobModel : Model<Type>, fob : Type) : Promise<Type> {
+  return iDbFobToFob<Type>(await createEntity<Type>(fobModel, iFobToIDbFob(fob)));
+}
+
 // RATINGS
 export async function createRating<Type>(ratingModel : Model<Type>, rating: Type) : Promise<Type> {
   return cleanRatingDetails<Type>(await createEntity<Type>(ratingModel, rating));
