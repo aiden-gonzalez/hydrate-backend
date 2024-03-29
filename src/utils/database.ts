@@ -49,6 +49,7 @@ export async function updateFountainById(fountainId : string, fountainInfo : IFo
 
 // FOUNTAIN RATING
 export function getFountainRatings(fountainId : string) : Promise<IFountainRating[]> {
+  let fountainRatings =
   return queryEntities<IFountainRating>(FountainRating, { fountain_id: fountainId });
 }
 
@@ -94,8 +95,7 @@ export function getPictureById(pictureId: string) : Promise<IPicture> {
   return fetchEntity<IPicture>(Picture, { id: pictureId });
 }
 
-// TODO make function return Promise<IPicture[]>
-export function getPictures(entityId : string) : any {
+export function getPictures(entityId : string) : Promise<IPicture[]> {
   return queryEntities<IPicture>(Picture, { entity_id: entityId });
 }
 

@@ -19,7 +19,7 @@ import {
   addFountainPicture,
   getFountainPicture,
   deleteFountainPicture,
-  // getFountainRatings,
+  getFountainRatings,
   addFountainRating,
   // getFountainRating,
   // updateFountainRating
@@ -40,7 +40,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
   const addFountainPictureFuncs = [authenticateRequest, addFountainPicture];
   const getFountainPictureFuncs = [authenticateRequest, getFountainPicture];
   const deleteFountainPictureFuncs = [authenticateRequest, deleteFountainPicture];
-  // const getFountainRatingsFuncs = [authenticateRequest, getFountainRatings];
+  const getFountainRatingsFuncs = [authenticateRequest, getFountainRatings];
   const addFountainRatingFuncs = [authenticateRequest, addFountainRating];
   // const getFountainRatingFuncs = [authenticateRequest, getFountainRating];
   // const updateFountainRatingFuncs = [authenticateRequest, ratingPermissionCheck, updateFountainRating];
@@ -613,10 +613,17 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Create a few ratings for a particular fountain
     const createdFountainRatings = await createFountainRatings(createdFountains[0].id, user.id);
-    console.log(createdFountainRatings);
+
+    // Set up request
+    req.params = {
+      id: createdFountains[0].id
+    };
+
+    // Try to get ratings
+    await simulateRouter(req, res, getFountainRatingsFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message.details, req.body);
+    expectEntitiesEqual(res.message, createdFountainRatings);
   });
 });
