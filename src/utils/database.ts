@@ -48,13 +48,16 @@ export async function updateFountainById(fountainId : string, fountainInfo : IFo
 }
 
 // FOUNTAIN RATING
-export function getFountainRatings(fountainId : string) : Promise<IFountainRating[]> {
-  let fountainRatings =
-  return queryEntities<IFountainRating>(FountainRating, { fountain_id: fountainId });
+export async function getFountainRatings(fountainId : string) : Promise<IFountainRating[]> {
+  const fountainRatings = await queryEntities<IFountainRating>(FountainRating, { fountain_id: fountainId });
+  for (const rating in fountainRatings) {
+    cleanFountainRatingDetails(fountainRatings[rating]);
+  }
+  return fountainRatings;
 }
 
-export function getFountainRating(ratingId : string) : Promise<IFountainRating> {
-  return fetchEntity<IFountainRating>(FountainRating, { id: ratingId });
+export async function getFountainRating(ratingId : string) : Promise<IFountainRating> {
+  return cleanFountainRatingDetails(await fetchEntity<IFountainRating>(FountainRating, { id: ratingId }));
 }
 
 export async function createFountainRating(fountainRating: IFountainRating) : Promise<IFountainRating> {

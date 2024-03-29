@@ -10,7 +10,7 @@ import {
 import {expect} from "chai";
 import * as constants from "../utils/constants";
 import {
-  //ratingPermissionCheck,
+  ratingPermissionCheck,
   getFountains,
   createFountain,
   getFountainById,
@@ -21,12 +21,12 @@ import {
   deleteFountainPicture,
   getFountainRatings,
   addFountainRating,
-  // getFountainRating,
-  // updateFountainRating
+  getFountainRating,
+  updateFountainRating
 } from "./fountainsController";
 import { IFountain, IFountainRating, IFountainRatingDetails } from "./types";
 import * as database from "../utils/database";
-import {generateFountainId, generateFountainRatingId, generatePictureId} from "../utils/generate";
+import {generateFountainId, generateFountainRatingId, generatePictureId, generateUserId} from "../utils/generate";
 import {ILocation, IPicture, IUser} from "../utils/types";
 import {Fountain} from "../mongoDB";
 import {calculateDistance} from "../utils/calculation";
@@ -42,8 +42,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
   const deleteFountainPictureFuncs = [authenticateRequest, deleteFountainPicture];
   const getFountainRatingsFuncs = [authenticateRequest, getFountainRatings];
   const addFountainRatingFuncs = [authenticateRequest, addFountainRating];
-  // const getFountainRatingFuncs = [authenticateRequest, getFountainRating];
-  // const updateFountainRatingFuncs = [authenticateRequest, ratingPermissionCheck, updateFountainRating];
+  const getFountainRatingFuncs = [authenticateRequest, getFountainRating];
+  const updateFountainRatingFuncs = [authenticateRequest, ratingPermissionCheck, updateFountainRating];
 
   // TODO add more unhappy paths? Malformed data, bad responses?
 
@@ -625,5 +625,107 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
     expectEntitiesEqual(res.message, createdFountainRatings);
+  });
+
+  it("Can't get a particular fountain rating without authentication", async () => {
+    const req = getReqMock();
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Add ratings
+    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, generateUserId());
+
+    // Set up request
+    req.params = {
+      ratingId: createdFountainRatings[0].id
+    };
+
+    // Try to get fountain rating
+    await simulateRouter(req, res, getFountainRatingFuncs);
+
+    // Should have failed with unauthorized
+    expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
+    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
+  });
+
+  it("Successfully gets a particular fountain rating", async () => {
+    const user = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Add ratings
+    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, user.id);
+
+    // Set up request
+    req.params = {
+      ratingId: createdFountainRatings[0].id
+    };
+
+    // Try to get fountain rating
+    await simulateRouter(req, res, getFountainRatingFuncs);
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expectEntitiesEqual(res.message, createdFountainRatings[0]);
+  });
+
+  it ("can't update a fountain rating without authentication", async () => {
+    const req = getReqMock();
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Create ratings
+    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, generateUserId());
+
+    // Specify fountain rating updates in request
+    createdFountainRatings[0].details = createdFountainRatings[1].details;
+    req.params = {
+      ratingId: createdFountainRatings[0].id
+    };
+    req.body = createdFountainRatings[0].details;
+
+    // Try to update fountain rating
+    await simulateRouter(req, res, updateFountainRatingFuncs);
+
+    // Should have failed with unauthorized
+    expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
+    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
+  });
+
+  it ("updates a fountain rating", async () => {
+    const user : IUser = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create fountains
+    const createdFountains = await createFountains();
+
+    // Create ratings
+    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, user.id);
+
+    // Specify fountain rating updates in request
+    createdFountainRatings[0].details = createdFountainRatings[1].details;
+    req.params = {
+      ratingId: createdFountainRatings[0].id
+    };
+    req.body = createdFountainRatings[0].details;
+
+    // Try to update fountain rating
+    await simulateRouter(req, res, updateFountainRatingFuncs);
+
+    // Ignore updatedAt
+    delete createdFountainRatings[0]["updatedAt"];
+    delete res.message.updatedAt;
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expect(createdFountainRatings[0]).to.deep.equal(res.message);
   });
 });

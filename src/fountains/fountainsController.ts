@@ -228,7 +228,7 @@ export function addFountainRating(req, res) {
 
 export function getFountainRating(req, res) {
   // Get path parameters
-  // TOOD fountainId is not considered here, same potential issue as with pictures?
+  // TODO fountainId is not considered here, same potential issue as with pictures?
   // const fountainId = req.params.id;
   const ratingId = req.params.ratingId;
 
