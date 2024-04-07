@@ -24,7 +24,14 @@ const dbLocationSchema : Schema = new Schema<IDbLocation>({
 });
 
 // BathroomInfo
-const bathroomInfoSchema : Schema = new Schema<bathroomTypes.IBathroomInfo>({
+export type IDbBathroomInfo = {
+  name: string,
+  gender: string,
+  location: IDbLocation,
+  baby_changer: boolean,
+  sanitary_products: boolean
+};
+const bathroomInfoSchema : Schema = new Schema<IDbBathroomInfo>({
   name: {
     type: String,
     required: false
@@ -50,7 +57,11 @@ const bathroomInfoSchema : Schema = new Schema<bathroomTypes.IBathroomInfo>({
 });
 
 // Bathroom
-const bathroomSchema = new Schema<bathroomTypes.IBathroom>({
+export type IDbBathroom = {
+  id: string,
+  info: IDbBathroomInfo
+};
+const bathroomSchema = new Schema<IDbBathroom>({
   id: {
     type: String,
     match: regexes.bathroomIdRegex,
@@ -64,7 +75,7 @@ const bathroomSchema = new Schema<bathroomTypes.IBathroom>({
 }, {
   timestamps: true
 });
-export const Bathroom = model<bathroomTypes.IBathroom>("Bathroom", bathroomSchema);
+export const Bathroom = model<IDbBathroom>("Bathroom", bathroomSchema);
 
 // BathroomRatingDetails
 const bathroomRatingDetailsSchema : Schema = new Schema<bathroomTypes.IBathroomRatingDetails>({

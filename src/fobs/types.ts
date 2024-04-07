@@ -1,24 +1,27 @@
 import {IDbFountain, IDbBathroom} from "../mongoDB";
-import {iDbFountainInfoToIFountainInfo, IFountain, iFountainInfoToIDbFountainInfo} from "../fountains/types";
-import {iDbBathroomInfoToIBathroomInfo, IBathroom, iBathroomInfoToIDbBathroomInfo} from "../bathrooms/types";
+import {IFountain} from "../fountains/types";
+import {IBathroom} from "../bathrooms/types";
+import { iDbLocationToILocation, iLocationToIDbLocation } from "../utils/types";
+
+export function isFountain(fob: IFountain | IBathroom | IDbFountain | IDbBathroom) : fob is IFountain | IDbFountain {
+  return (fob as IFountain | IDbFountain).info.bottle_filler !== undefined;
+}
+
+export function isBathroom(fob: IFountain | IBathroom | IDbFountain | IDbBathroom) : fob is IBathroom | IDbBathroom {
+  return (fob as IBathroom | IDbBathroom).info.sanitary_products !== undefined;
+}
 
 
-
-export function iFobToIDbFob(fob: IFountain | IBathroom) : IDbFountain | IDbBathroom {
-  if (typeof(fob) === IFountain) {
-    return {
-      id: fob.id,
-      info: iFountainInfoToIDbFountainInfo(fob.info)
-    } as IDbFountain;
-  }
+export function iFobToIDbFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fob: Type) : DbType {
   return {
     id: fob.id,
-    info: iBathroomInfoToIDbBathroomInfo(fob.info)
-  } as IDbBathroom;
+    info: {...fob.info, location: iLocationToIDbLocation(fob.info.location)}
+  } as DbType;
 }
-export function iDbFountainToIFountain(dbFountain : IDbFountain) : IFountain {
+
+export function iDbFobToIFob<DbType extends IDbFountain | IDbBathroom, Type extends IFountain | IBathroom>(dbFob : DbType) : Type {
   return {
-    id: dbFountain.id,
-    info: iDbFountainInfoToIFountainInfo(dbFountain.info)
-  } as IFountain;
+    id: dbFob.id,
+    info: {...dbFob.info, location: iDbLocationToILocation(dbFob.info.location)}
+  } as Type;
 }

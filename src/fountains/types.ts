@@ -3,6 +3,10 @@ import { IDbFountain, IDbFountainInfo } from "../mongoDB";
 import { iLocationToIDbLocation, iDbLocationToILocation } from "../utils/types";
 
 export type IFountainInfo = components["schemas"]["FountainInfo"];
+export type IFountain = components["schemas"]["Fountain"];
+export type IFountainRatingDetails = components["schemas"]["FountainRatingDetails"];
+export type IFountainRating = components["schemas"]["FountainRating"];
+
 export function iFountainInfoToIDbFountainInfo(fountainInfo: IFountainInfo) : IDbFountainInfo {
   return {
     name: fountainInfo.name,
@@ -17,7 +21,6 @@ export function iDbFountainInfoToIFountainInfo(dbFountainInfo: IDbFountainInfo) 
     location: iDbLocationToILocation(dbFountainInfo.location)
   }
 }
-export type IFountain = components["schemas"]["Fountain"];
 export function iFountainToIDbFountain(fountain: IFountain) : IDbFountain {
   return {
     id: fountain.id,
@@ -30,8 +33,6 @@ export function iDbFountainToIFountain(dbFountain : IDbFountain) : IFountain {
     info: iDbFountainInfoToIFountainInfo(dbFountain.info)
   } as IFountain;
 }
-export type IFountainRatingDetails = components["schemas"]["FountainRatingDetails"];
-export type IFountainRating = components["schemas"]["FountainRating"];
 
 export type IFountainQueryParams = {
   bottle_filler?: boolean;

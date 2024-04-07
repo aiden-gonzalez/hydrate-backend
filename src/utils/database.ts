@@ -1,4 +1,4 @@
-import {Fountain, User, Picture, IDbFountain} from "../mongoDB";
+import {Fountain, User, Picture, IDbFountain, IDbBathroom} from "../mongoDB";
 import { IUserProfile } from "../profiles/types";
 import { IPicture, IUser } from "./types";
 import {Model} from "mongoose";
@@ -6,15 +6,12 @@ import {
   IFountain,
   IFountainQueryParams,
   iDbFountainToIFountain,
-  iFountainToIDbFountain,
   IFountainInfo, iFountainInfoToIDbFountainInfo
 } from "../fountains/types";
+import { iDbFobToIFob, iFobToIDbFob } from "../fobs/types";
+import { IBathroom } from "../bathrooms/types";
 
 // FOUNTAIN
-export async function createFountain(fountain : IFountain) : Promise<IFountain> {
-  return iDbFountainToIFountain(await createEntity<IDbFountain>(Fountain, iFountainToIDbFountain(fountain)));
-}
-
 export async function queryFountains(queryParams : IFountainQueryParams) : Promise<Array<IFountain>> {
   const mongoQuery = {};
   if (queryParams.bottle_filler) {
@@ -46,8 +43,8 @@ export async function updateFountainById(fountainId : string, fountainInfo : IFo
 }
 
 // FOUNTAIN OR BATHROOM (FOB)
-export async function createFob<Type>(fobModel : Model<Type>, fob : Type) : Promise<Type> {
-  return iDbFobToFob<Type>(await createEntity<Type>(fobModel, iFobToIDbFob(fob)));
+export async function createFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fob : Type) : Promise<Type> {
+  return iDbFobToIFob<DbType, Type>(await createEntity<DbType>(fobModel, iFobToIDbFob<Type, DbType>(fob)));
 }
 
 // RATINGS

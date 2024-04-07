@@ -10,7 +10,7 @@ import {
 } from "../utils/constants";
 import { IPicture } from "../utils/types";
 import { generateFountainId, generateFountainRatingId, generatePictureId } from "../utils/generate";
-import {FountainRating} from "../mongoDB";
+import {Fountain, FountainRating, IDbFountain} from "../mongoDB";
 
 // TODO think about how to set correct status depending on response from database
 // If none are found, should be 404 not found?
@@ -67,7 +67,7 @@ export function createFountain(req, res) {
     info: fountainInfo
   }
   return new Promise((resolve) => {
-    database.createFountain(newFountain).then((createdFountain) => {
+    database.createFob<IFountain, IDbFountain>(Fountain, newFountain).then((createdFountain) => {
       resolve(res.status(HTTP_CREATED).json(createdFountain));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
