@@ -34,59 +34,59 @@ export async function queryFountains(queryParams : IFountainQueryParams) : Promi
   return (await queryEntities<IDbFountain>(Fountain, mongoQuery)).map((dbFountain : IDbFountain) => iDbFountainToIFountain(dbFountain));
 }
 
-export async function getFountain(fountainId : string) : Promise<IFountain> {
-  return iDbFountainToIFountain(await fetchEntity<IDbFountain>(Fountain, { id: fountainId }));
-}
-
 export async function updateFountainById(fountainId : string, fountainInfo : IFountainInfo) : Promise<IFountain> {
   return iDbFountainToIFountain(await updateEntity<IDbFountain>(Fountain, { id: fountainId }, { info: iFountainInfoToIDbFountainInfo(fountainInfo) }))
 }
 
 // FOUNTAIN OR BATHROOM (FOB)
 export async function createFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fob : Type) : Promise<Type> {
-  return iDbFobToIFob<DbType, Type>(await createEntity<DbType>(fobModel, iFobToIDbFob<Type, DbType>(fob)));
+  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await createEntity<DbType>(fobModel, iFobToIDbFob<Type, DbType>(fob))), "info");
+}
+
+export async function getFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fobId : string) : Promise<Type> {
+  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await fetchEntity<DbType>(fobModel, { id: fobId })));
 }
 
 // RATINGS
 export async function createRating<Type>(ratingModel : Model<Type>, rating: Type) : Promise<Type> {
-  return cleanRatingDetails<Type>(await createEntity<Type>(ratingModel, rating));
+  return cleanEntityId<Type>(await createEntity<Type>(ratingModel, rating), "details");
 }
 
 export async function getRatings<Type>(ratingModel : Model<Type>, entityId : string) : Promise<Type[]> {
   const ratings = await queryEntities<Type>(ratingModel, { $or: [ { fountain_id: entityId }, { bathroom_id: entityId } ] });
   for (const rating in ratings) {
-    cleanRatingDetails<Type>(ratings[rating]);
+    cleanEntityId<Type>(ratings[rating], "details");
   }
   return ratings;
 }
 
 export async function getRating<Type>(ratingModel : Model<Type>, ratingId : string) : Promise<Type> {
-  return cleanRatingDetails(await fetchEntity<Type>(ratingModel, { id: ratingId }));
+  return cleanEntityId<Type>(await fetchEntity<Type>(ratingModel, { id: ratingId }), "details");
 }
 
 export async function updateRatingById<Type>(ratingModel : Model<Type>, ratingId : string, ratingDetails : any) : Promise<Type> {
-  return cleanRatingDetails<Type>(await updateEntity<Type>(ratingModel, { id: ratingId }, {details: ratingDetails}));
+  return cleanEntityId<Type>(await updateEntity<Type>(ratingModel, { id: ratingId }, {details: ratingDetails}), "details");
 }
 
 // USER
 export async function createUser(user : IUser) : Promise<IUser> {
-  return cleanUserProfile(await createEntity<IUser>(User, user));
+  return cleanEntityId<IUser>(await createEntity<IUser>(User, user), "profile");
 }
 
 export async function fetchUserById (userId: string) : Promise<IUser> {
-  return cleanUserProfile(await fetchEntity<IUser>(User, { id: userId }));
+  return cleanEntityId<IUser>(await fetchEntity<IUser>(User, { id: userId }), "profile");
 }
 
 export async function fetchUserByUsername (username: string) : Promise<IUser> {
-  return cleanUserProfile(await fetchEntity<IUser>(User, { username: username }));
+  return cleanEntityId<IUser>(await fetchEntity<IUser>(User, { username: username }), "profile");
 }
 
 export async function fetchUserByEmail (email: string) : Promise<IUser> {
-  return cleanUserProfile(await fetchEntity<IUser>(User, { email: email }));
+  return cleanEntityId<IUser>(await fetchEntity<IUser>(User, { email: email }), "profile");
 }
 
 export async function updateUserProfileByUsername (username: string, profile: IUserProfile) : Promise<IUserProfile> {
-  return cleanUserProfile(await updateEntity<IUser>(User, {username: username}, {profile: profile})).profile;
+  return cleanEntityId<IUser>(await updateEntity<IUser>(User, {username: username}, {profile: profile}), "profile").profile;
 }
 
 // PICTURE
@@ -132,7 +132,6 @@ function fetchEntity<Type>(entityModel : Model<Type>, query : any) : Promise<Typ
   });
 }
 
-// TODO finish this function
 function queryEntities<Type>(entityModel : Model<Type>, query : any) : Promise<Type[]> {
   return new Promise((resolve, reject) => {
     entityModel.find(query).exec().then((dbEntities) => {
@@ -171,25 +170,16 @@ function deleteEntity<Type>(entityModel: Model<Type>, query : any) : Promise<voi
   })
 }
 
-// Removes user profile mongo ID
-function cleanUserProfile(user : any) : IUser {
-  if (user === null) return null;
+// Removes mongo ID from specified property of entity
+function cleanEntityId<Type>(entity : any, propertyName? : string) : Type {
+  if (entity === null) return null;
 
-  if (user.profile && user.profile.hasOwnProperty('_id')) {
-    delete user.profile._id;
+  if (propertyName === null && entity.hasOwnProperty('_id')) {
+    delete entity._id;
+  } else if (entity[propertyName] && entity[propertyName].hasOwnProperty('_id')) {
+    delete entity[propertyName]._id;
   }
-  return user;
-}
-
-// Removes rating details mongo ID
-function cleanRatingDetails<Type>(rating : any) : Type {
-  if (rating === null) return null;
-  
-  if (rating.details && rating.details.hasOwnProperty('_id')) {
-    delete rating.details._id
-  }
-
-  return rating;
+  return entity;
 }
 
 // Returns an object with the top-level mongo ID removed

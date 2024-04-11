@@ -175,7 +175,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
-  it("Creates a fountain with authentication", async () => {
+  it("creates a fountain with authentication", async () => {
     const fountainToCreate = getFountain();
     const req = getAuthedReqMockForUser(await getUser(), fountainToCreate.info);
     const res = getResMock();
@@ -349,7 +349,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(createdFountains[0]).to.deep.equal(res.message);
   });
 
-  it("Can't create a fountain picture without authentication", async () => {
+  it("can't create a fountain picture without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
 
@@ -370,7 +370,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
-  it("Can't create a fountain picture with invalid URL", async () => {
+  it("can't create a fountain picture with invalid URL", async () => {
     const user : IUser = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
@@ -392,7 +392,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.message).to.satisfy((message) => message.startsWith("Picture validation failed"));
   });
 
-  it("Creates a fountain picture", async () => {
+  it("creates a fountain picture", async () => {
     const user : IUser = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
@@ -417,7 +417,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(pictureToCreate).to.deep.equal(res.message);
   });
 
-  it("Can't get fountain pictures without authentication", async () => {
+  it("can't get fountain pictures without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
 
@@ -440,7 +440,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
-  it("Gets fountain pictures", async () => {
+  it("gets fountain pictures", async () => {
     const user = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
@@ -464,7 +464,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expectEntitiesEqual(res.message, createdPictures);
   });
 
-  it("Can't get a particular picture without authentication", async () => {
+  it("can't get a particular picture without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
 
@@ -487,7 +487,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
-  it("Successfully gets a particular picture", async () => {
+  it("successfully gets a particular picture", async () => {
     const user = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
@@ -511,7 +511,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expectEntitiesEqual(res.message, createdPictures[0]);
   });
 
-  it("Successfully deletes a picture while authenticated", async () => {
+  it("successfully deletes a picture while authenticated", async () => {
     const user = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
@@ -538,7 +538,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(picture).to.be.null;
   });
 
-  it("Can't create fountain rating without authentication", async () => {
+  it("can't create fountain rating without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
 
@@ -559,7 +559,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
-  it("Can't create a fountain rating with invalid scores", async () => {
+  it("can't create a fountain rating with invalid scores", async () => {
     const user = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
@@ -581,7 +581,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.message).to.satisfy((message) => message.startsWith("FountainRating validation failed"));
   });
 
-  it("Successfully creates a fountain rating", async () => {
+  it("successfully creates a fountain rating", async () => {
     const user = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
@@ -603,7 +603,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expectEntitiesEqual(res.message.details, req.body);
   });
 
-  it("Successfully gets all ratings for a particular fountain", async () => {
+  it("successfully gets all ratings for a particular fountain", async () => {
     const user = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
@@ -627,7 +627,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expectEntitiesEqual(res.message, createdFountainRatings);
   });
 
-  it("Can't get a particular fountain rating without authentication", async () => {
+  it("can't get a particular fountain rating without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
 
@@ -650,7 +650,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
-  it("Successfully gets a particular fountain rating", async () => {
+  it("successfully gets a particular fountain rating", async () => {
     const user = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();

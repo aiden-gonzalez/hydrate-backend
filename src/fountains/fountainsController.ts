@@ -81,7 +81,7 @@ export function getFountainById(req, res) {
 
   // Get fountain
   return new Promise((resolve) => {
-    database.getFountain(fountainId).then((fountain) => {
+    database.getFob<IFountain, IDbFountain>(Fountain, fountainId).then((fountain) => {
       resolve(res.status(HTTP_OK).json(fountain))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
