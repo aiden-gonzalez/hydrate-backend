@@ -49,7 +49,7 @@ export function getFountains(req, res) {
 
   // Execute query
   return new Promise((resolve) => {
-    database.queryFountains(queryParams).then((fountains) => {
+    database.queryFob<IFountain, IDbFountain>(Fountain, queryParams).then((fountains) => {
       resolve(res.status(HTTP_OK).json(fountains))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));

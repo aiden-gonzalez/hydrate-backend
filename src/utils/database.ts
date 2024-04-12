@@ -1,22 +1,30 @@
-import {Fountain, User, Picture, IDbFountain, IDbBathroom, IDbBathroomInfo, IDbFountainInfo} from "../mongoDB";
+import {User, Picture, IDbFountain, IDbBathroom, IDbBathroomInfo, IDbFountainInfo} from "../mongoDB";
 import { IUserProfile } from "../profiles/types";
 import { IPicture, IUser } from "./types";
 import {Model} from "mongoose";
 import {
   IFountain,
   IFountainQueryParams,
-  iDbFountainToIFountain,
   IFountainInfo
 } from "../fountains/types";
 import {iDbFobToIFob, iFobInfoToIDbFobInfo, iFobToIDbFob} from "../fobs/types";
-import {IBathroom, IBathroomInfo} from "../bathrooms/types";
+import {IBathroom, IBathroomInfo, IBathroomQueryParams} from "../bathrooms/types";
 
-// FOUNTAIN
-export async function queryFountains(queryParams : IFountainQueryParams) : Promise<Array<IFountain>> {
+// FOUNTAIN OR BATHROOM (FOB)
+export async function createFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fob : Type) : Promise<Type> {
+  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await createEntity<DbType>(fobModel, iFobToIDbFob<Type, DbType>(fob))), "info");
+}
+
+export async function getFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fobId : string) : Promise<Type> {
+  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await fetchEntity<DbType>(fobModel, { id: fobId })), "info");
+}
+
+export async function updateFobById<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom, InfoType extends IFountainInfo | IBathroomInfo, DbInfoType extends IDbFountainInfo | IDbBathroomInfo>(fobModel : Model<DbType>, fobId : string, fobInfo : InfoType) : Promise<Type> {
+  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await updateEntity<DbType>(fobModel, { id: fobId }, { info: iFobInfoToIDbFobInfo<InfoType, DbInfoType>(fobInfo) })), "info");
+}
+
+export async function queryFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, queryParams : IFountainQueryParams | IBathroomQueryParams) : Promise<Array<Type>> {
   const mongoQuery = {};
-  if (queryParams.bottle_filler) {
-    mongoQuery["info.bottle_filler"] = queryParams.bottle_filler;
-  }
   if (queryParams.latitude && queryParams.longitude) {
     mongoQuery["info.location"] = {
       $near: {
@@ -30,21 +38,13 @@ export async function queryFountains(queryParams : IFountainQueryParams) : Promi
       mongoQuery["info.location"]["$near"]["$maxDistance"] = queryParams.radius;
     }
   }
+  for (const key in queryParams) {
+    if (key != "latitude" && key != "longitude" && key != "radius" && queryParams[key] != undefined) {
+      mongoQuery["info." + key] = queryParams[key];
+    }
+  }
 
-  return (await queryEntities<IDbFountain>(Fountain, mongoQuery)).map((dbFountain : IDbFountain) => iDbFountainToIFountain(dbFountain));
-}
-
-// FOUNTAIN OR BATHROOM (FOB)
-export async function createFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fob : Type) : Promise<Type> {
-  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await createEntity<DbType>(fobModel, iFobToIDbFob<Type, DbType>(fob))), "info");
-}
-
-export async function getFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fobId : string) : Promise<Type> {
-  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await fetchEntity<DbType>(fobModel, { id: fobId })), "info");
-}
-
-export async function updateFobById<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom, InfoType extends IFountainInfo | IBathroomInfo, DbInfoType extends IDbFountainInfo | IDbBathroomInfo>(fobModel : Model<DbType>, fobId : string, fobInfo : InfoType) : Promise<Type> {
-  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await updateEntity<DbType>(fobModel, { id: fobId }, { info: iFobInfoToIDbFobInfo<InfoType, DbInfoType>(fobInfo) })), "info");
+  return cleanArrayEntityId<Type>((await queryEntities<DbType>(fobModel, mongoQuery)).map((dbFob : DbType) => iDbFobToIFob<DbType, Type>(dbFob)), "info");
 }
 
 // RATINGS
@@ -168,6 +168,16 @@ function deleteEntity<Type>(entityModel: Model<Type>, query : any) : Promise<voi
       reject(error);
     })
   })
+}
+
+// Array version of cleanEntityId
+function cleanArrayEntityId<Type>(entities : Type[], propertyName? : string) : Type[] {
+  if (entities === null) return null;
+
+  for (let i = 0; i < entities.length; i++) {
+    cleanEntityId<Type>(entities[i], propertyName);
+  }
+  return entities;
 }
 
 // Removes mongo ID from specified property of entity
