@@ -64,7 +64,7 @@ export async function getRating<Type>(ratingModel : Model<Type>, ratingId : stri
   return cleanEntityId<Type>(await fetchEntity<Type>(ratingModel, { id: ratingId }), "details");
 }
 
-export async function updateRatingById<Type>(ratingModel : Model<Type>, ratingId : string, ratingDetails : any) : Promise<Type> {
+export async function updateRatingById<Type, DetailsType>(ratingModel : Model<Type>, ratingId : string, ratingDetails : DetailsType) : Promise<Type> {
   return cleanEntityId<Type>(await updateEntity<Type>(ratingModel, { id: ratingId }, {details: ratingDetails}), "details");
 }
 

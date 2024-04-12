@@ -253,7 +253,7 @@ export function updateFountainRating(req, res) {
 
   // Update fountain rating
   return new Promise((resolve) => {
-    database.updateRatingById<IFountainRating>(FountainRating, ratingId, ratingDetails).then((fountainRating) => {
+    database.updateRatingById<IFountainRating, IFountainRatingDetails>(FountainRating, ratingId, ratingDetails).then((fountainRating) => {
       resolve(res.status(HTTP_OK).json(fountainRating))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
