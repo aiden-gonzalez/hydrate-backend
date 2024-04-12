@@ -1,4 +1,4 @@
-import {Fountain, User, Picture, IDbFountain, IDbBathroom} from "../mongoDB";
+import {Fountain, User, Picture, IDbFountain, IDbBathroom, IDbBathroomInfo, IDbFountainInfo} from "../mongoDB";
 import { IUserProfile } from "../profiles/types";
 import { IPicture, IUser } from "./types";
 import {Model} from "mongoose";
@@ -6,10 +6,10 @@ import {
   IFountain,
   IFountainQueryParams,
   iDbFountainToIFountain,
-  IFountainInfo, iFountainInfoToIDbFountainInfo
+  IFountainInfo
 } from "../fountains/types";
-import { iDbFobToIFob, iFobToIDbFob } from "../fobs/types";
-import { IBathroom } from "../bathrooms/types";
+import {iDbFobToIFob, iFobInfoToIDbFobInfo, iFobToIDbFob} from "../fobs/types";
+import {IBathroom, IBathroomInfo} from "../bathrooms/types";
 
 // FOUNTAIN
 export async function queryFountains(queryParams : IFountainQueryParams) : Promise<Array<IFountain>> {
@@ -34,17 +34,17 @@ export async function queryFountains(queryParams : IFountainQueryParams) : Promi
   return (await queryEntities<IDbFountain>(Fountain, mongoQuery)).map((dbFountain : IDbFountain) => iDbFountainToIFountain(dbFountain));
 }
 
-export async function updateFountainById(fountainId : string, fountainInfo : IFountainInfo) : Promise<IFountain> {
-  return iDbFountainToIFountain(await updateEntity<IDbFountain>(Fountain, { id: fountainId }, { info: iFountainInfoToIDbFountainInfo(fountainInfo) }))
-}
-
 // FOUNTAIN OR BATHROOM (FOB)
 export async function createFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fob : Type) : Promise<Type> {
   return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await createEntity<DbType>(fobModel, iFobToIDbFob<Type, DbType>(fob))), "info");
 }
 
 export async function getFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fobId : string) : Promise<Type> {
-  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await fetchEntity<DbType>(fobModel, { id: fobId })));
+  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await fetchEntity<DbType>(fobModel, { id: fobId })), "info");
+}
+
+export async function updateFobById<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom, InfoType extends IFountainInfo | IBathroomInfo, DbInfoType extends IDbFountainInfo | IDbBathroomInfo>(fobModel : Model<DbType>, fobId : string, fobInfo : InfoType) : Promise<Type> {
+  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await updateEntity<DbType>(fobModel, { id: fobId }, { info: iFobInfoToIDbFobInfo<InfoType, DbInfoType>(fobInfo) })), "info");
 }
 
 // RATINGS
