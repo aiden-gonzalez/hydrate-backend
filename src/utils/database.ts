@@ -1,29 +1,34 @@
-import {User, Picture, IDbFountain, IDbBathroom, IDbBathroomInfo, IDbFountainInfo} from "../mongoDB";
+import {User, Picture} from "../mongoDB";
 import { IUserProfile } from "../profiles/types";
 import { IPicture, IUser } from "./types";
 import {Model} from "mongoose";
+import {IFountainQueryParams} from "../fountains/types";
 import {
-  IFountain,
-  IFountainQueryParams,
-  IFountainInfo
-} from "../fountains/types";
-import {iDbFobToIFob, iFobInfoToIDbFobInfo, iFobToIDbFob} from "../fobs/types";
-import {IBathroom, IBathroomInfo, IBathroomQueryParams} from "../bathrooms/types";
+  IDbFob,
+  iDbFobToIFob,
+  IFob,
+  IFobInfo,
+  iFobInfoToIDbFobInfo,
+  IFobRating,
+  IFobRatingDetails,
+  iFobToIDbFob
+} from "../fobs/types";
+import {IBathroomQueryParams} from "../bathrooms/types";
 
 // FOUNTAIN OR BATHROOM (FOB)
-export async function createFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fob : Type) : Promise<Type> {
-  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await createEntity<DbType>(fobModel, iFobToIDbFob<Type, DbType>(fob))), "info");
+export async function createFob(fobModel : Model<IDbFob>, fob : IFob) : Promise<IFob> {
+  return cleanEntityId<IFob>(iDbFobToIFob(await createEntity<IDbFob>(fobModel, iFobToIDbFob(fob))), "info");
 }
 
-export async function getFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, fobId : string) : Promise<Type> {
-  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await fetchEntity<DbType>(fobModel, { id: fobId })), "info");
+export async function getFob(fobModel : Model<IDbFob>, fobId : string) : Promise<IFob> {
+  return cleanEntityId<IFob>(iDbFobToIFob(await fetchEntity<IDbFob>(fobModel, { id: fobId })), "info");
 }
 
-export async function updateFobById<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom, InfoType extends IFountainInfo | IBathroomInfo, DbInfoType extends IDbFountainInfo | IDbBathroomInfo>(fobModel : Model<DbType>, fobId : string, fobInfo : InfoType) : Promise<Type> {
-  return cleanEntityId<Type>(iDbFobToIFob<DbType, Type>(await updateEntity<DbType>(fobModel, { id: fobId }, { info: iFobInfoToIDbFobInfo<InfoType, DbInfoType>(fobInfo) })), "info");
+export async function updateFobById(fobModel : Model<IDbFob>, fobId : string, fobInfo : IFobInfo) : Promise<IFob> {
+  return cleanEntityId<IFob>(iDbFobToIFob(await updateEntity<IDbFob>(fobModel, { id: fobId }, { info: iFobInfoToIDbFobInfo(fobInfo) })), "info");
 }
 
-export async function queryFob<Type extends IFountain | IBathroom, DbType extends IDbFountain | IDbBathroom>(fobModel : Model<DbType>, queryParams : IFountainQueryParams | IBathroomQueryParams) : Promise<Array<Type>> {
+export async function queryFob(fobModel : Model<IDbFob>, queryParams : IFountainQueryParams | IBathroomQueryParams) : Promise<Array<IFob>> {
   const mongoQuery = {};
   if (queryParams.latitude && queryParams.longitude) {
     mongoQuery["info.location"] = {
@@ -44,28 +49,28 @@ export async function queryFob<Type extends IFountain | IBathroom, DbType extend
     }
   }
 
-  return cleanArrayEntityId<Type>((await queryEntities<DbType>(fobModel, mongoQuery)).map((dbFob : DbType) => iDbFobToIFob<DbType, Type>(dbFob)), "info");
+  return cleanArrayEntityId<IFob>((await queryEntities<IDbFob>(fobModel, mongoQuery)).map((dbFob : IDbFob) => iDbFobToIFob(dbFob)), "info");
 }
 
 // RATINGS
-export async function createRating<Type>(ratingModel : Model<Type>, rating: Type) : Promise<Type> {
-  return cleanEntityId<Type>(await createEntity<Type>(ratingModel, rating), "details");
+export async function createRating(ratingModel : Model<IFobRating>, rating: IFobRating) : Promise<IFobRating> {
+  return cleanEntityId<IFobRating>(await createEntity<IFobRating>(ratingModel, rating), "details");
 }
 
-export async function getRatings<Type>(ratingModel : Model<Type>, entityId : string) : Promise<Type[]> {
-  const ratings = await queryEntities<Type>(ratingModel, { $or: [ { fountain_id: entityId }, { bathroom_id: entityId } ] });
+export async function getRatings(ratingModel : Model<IFobRating>, entityId : string) : Promise<IFobRating[]> {
+  const ratings = await queryEntities<IFobRating>(ratingModel, { $or: [ { fountain_id: entityId }, { bathroom_id: entityId } ] });
   for (const rating in ratings) {
-    cleanEntityId<Type>(ratings[rating], "details");
+    cleanEntityId<IFobRating>(ratings[rating], "details");
   }
   return ratings;
 }
 
-export async function getRating<Type>(ratingModel : Model<Type>, ratingId : string) : Promise<Type> {
-  return cleanEntityId<Type>(await fetchEntity<Type>(ratingModel, { id: ratingId }), "details");
+export async function getRating(ratingModel : Model<IFobRating>, ratingId : string) : Promise<IFobRating> {
+  return cleanEntityId<IFobRating>(await fetchEntity<IFobRating>(ratingModel, { id: ratingId }), "details");
 }
 
-export async function updateRatingById<Type, DetailsType>(ratingModel : Model<Type>, ratingId : string, ratingDetails : DetailsType) : Promise<Type> {
-  return cleanEntityId<Type>(await updateEntity<Type>(ratingModel, { id: ratingId }, {details: ratingDetails}), "details");
+export async function updateRatingById(ratingModel : Model<IFobRating>, ratingId : string, ratingDetails : IFobRatingDetails) : Promise<IFobRating> {
+  return cleanEntityId<IFobRating>(await updateEntity<IFobRating>(ratingModel, { id: ratingId }, {details: ratingDetails}), "details");
 }
 
 // USER
