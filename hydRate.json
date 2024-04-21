@@ -76,7 +76,7 @@
                     },
                     {
                         "name": "radius",
-                        "description": "Radius to fetch fountains within",
+                        "description": "Radius to fetch fountains within (in meters)",
                         "schema": {
                             "type": "number"
                         },
@@ -1210,6 +1210,16 @@
                     "required": true
                 }
             ]
+        },
+        "/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Server OK"
+                    }
+                },
+                "summary": "Generic endpoint"
+            }
         }
     },
     "components": {

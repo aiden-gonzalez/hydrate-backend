@@ -44,7 +44,7 @@ export interface paths {
           latitude?: number;
           /** @description Filter fountains by bottle_filler property */
           bottle_filler?: boolean;
-          /** @description Radius to fetch fountains within */
+          /** @description Radius to fetch fountains within (in meters) */
           radius?: number;
         };
       };
@@ -884,6 +884,17 @@ export interface paths {
     parameters: {
       path: {
         id: string;
+      };
+    };
+  };
+  "/": {
+    /** Generic endpoint */
+    get: {
+      responses: {
+        /** @description Server OK */
+        200: {
+          content: never;
+        };
       };
     };
   };
