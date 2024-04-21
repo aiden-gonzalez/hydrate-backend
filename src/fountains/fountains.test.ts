@@ -11,39 +11,40 @@ import {expect} from "chai";
 import * as constants from "../utils/constants";
 import {
   ratingPermissionCheck,
-  getFountains,
-  createFountain,
-  getFountainById,
-  updateFountain,
-  getFountainPictures,
-  addFountainPicture,
-  getFountainPicture,
-  deleteFountainPicture,
-  getFountainRatings,
-  addFountainRating,
-  getFountainRating,
-  updateFountainRating
-} from "./fountainsController";
+  getFobs,
+  createFob,
+  getFobById,
+  updateFob,
+  getFobPictures,
+  addFobPicture,
+  getFobPicture,
+  deleteFobPicture,
+  getFobRatings,
+  addFobRating,
+  getFobRating,
+  updateFobRating
+} from "../fobs/fobsController";
+import {setupFountainReq} from "./fountainsRouter";
 import { IFountain, IFountainRating, IFountainRatingDetails } from "./types";
 import * as database from "../utils/database";
 import {generateFountainId, generateFountainRatingId, generatePictureId, generateUserId} from "../utils/generate";
 import {ILocation, IPicture, IUser} from "../utils/types";
-import {Fountain, FountainRating, IDbFountain} from "../mongoDB";
+import {Fountain, FountainRating} from "../mongoDB";
 import {calculateDistance} from "../utils/calculation";
 
 describe("FOUNTAINS: CRUD of all kinds", () => {
-  const getFountainsFuncs = [authenticateRequest, getFountains];
-  const createFountainFuncs = [authenticateRequest, createFountain];
-  const getFountainFuncs = [authenticateRequest, getFountainById];
-  const updateFountainFuncs = [authenticateRequest, updateFountain];
-  const getFountainPicturesFuncs = [authenticateRequest, getFountainPictures];
-  const addFountainPictureFuncs = [authenticateRequest, addFountainPicture];
-  const getFountainPictureFuncs = [authenticateRequest, getFountainPicture];
-  const deleteFountainPictureFuncs = [authenticateRequest, deleteFountainPicture];
-  const getFountainRatingsFuncs = [authenticateRequest, getFountainRatings];
-  const addFountainRatingFuncs = [authenticateRequest, addFountainRating];
-  const getFountainRatingFuncs = [authenticateRequest, getFountainRating];
-  const updateFountainRatingFuncs = [authenticateRequest, ratingPermissionCheck, updateFountainRating];
+  const getFountainsFuncs = [authenticateRequest, setupFountainReq, getFobs];
+  const createFountainFuncs = [authenticateRequest, setupFountainReq, createFob];
+  const getFountainFuncs = [authenticateRequest, setupFountainReq, getFobById];
+  const updateFountainFuncs = [authenticateRequest, setupFountainReq, updateFob];
+  const getFountainPicturesFuncs = [authenticateRequest, setupFountainReq, getFobPictures];
+  const addFountainPictureFuncs = [authenticateRequest, setupFountainReq, addFobPicture];
+  const getFountainPictureFuncs = [authenticateRequest, setupFountainReq, getFobPicture];
+  const deleteFountainPictureFuncs = [authenticateRequest, setupFountainReq, deleteFobPicture];
+  const getFountainRatingsFuncs = [authenticateRequest, setupFountainReq, getFobRatings];
+  const addFountainRatingFuncs = [authenticateRequest, setupFountainReq, addFobRating];
+  const getFountainRatingFuncs = [authenticateRequest, setupFountainReq, getFobRating];
+  const updateFountainRatingFuncs = [authenticateRequest, setupFountainReq, ratingPermissionCheck, updateFobRating];
 
   // TODO add more unhappy paths? Malformed data, bad responses?
 
@@ -83,9 +84,9 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       }
     };
 
-    const createdFountainOne = await database.createFob<IFountain, IDbFountain>(Fountain, fountainOne);
-    const createdFountainTwo = await database.createFob<IFountain, IDbFountain>(Fountain, fountainTwo);
-    const createdFountainThree = await database.createFob<IFountain, IDbFountain>(Fountain, fountainThree);
+    const createdFountainOne = await database.createFob(Fountain, fountainOne);
+    const createdFountainTwo = await database.createFob(Fountain, fountainTwo);
+    const createdFountainThree = await database.createFob(Fountain, fountainThree);
 
     return [createdFountainOne, createdFountainTwo, createdFountainThree];
   }
@@ -123,9 +124,9 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       } as IFountainRatingDetails
     }
 
-    const createdFountainRatingOne = await database.createRating<IFountainRating>(FountainRating, fountainRatingOne);
-    const createdFountainRatingTwo = await database.createRating<IFountainRating>(FountainRating, fountainRatingTwo);
-    const createdFountainRatingThree = await database.createRating<IFountainRating>(FountainRating, fountainRatingThree);
+    const createdFountainRatingOne = await database.createRating(FountainRating, fountainRatingOne);
+    const createdFountainRatingTwo = await database.createRating(FountainRating, fountainRatingTwo);
+    const createdFountainRatingThree = await database.createRating(FountainRating, fountainRatingThree);
 
     return [createdFountainRatingOne, createdFountainRatingTwo, createdFountainRatingThree];
   }
@@ -234,7 +235,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdFountains.filter((fountain) => fountain.info.bottle_filler));
+    expectEntitiesEqual(res.message, createdFountains.filter((fountain) => (fountain as IFountain).info.bottle_filler));
   });
 
   it ("gets all fountains within a certain radius of a point", async () => {

@@ -10,12 +10,20 @@ export type IDbFobInfo = IDbFountainInfo | IDbBathroomInfo;
 export type IFobRating = IFountainRating | IBathroomRating;
 export type IFobRatingDetails = IFountainRatingDetails | IBathroomRatingDetails;
 
-export function isFountain(fob: IFob | IDbFob) : fob is IFob {
+export function isFountain(fob: IFob | IDbFob) : fob is IFountain | IDbFountain {
   return (fob as IFountain | IDbFountain).info.bottle_filler !== undefined;
 }
 
-export function isBathroom(fob: IFob | IDbFob) : fob is IFob {
+export function isBathroom(fob: IFob | IDbFob) : fob is IBathroom | IDbBathroom {
   return (fob as IBathroom | IDbBathroom).info.sanitary_products !== undefined;
+}
+
+export function isFountainRating(fobRating: IFobRating) : fobRating is IFountainRating {
+  return (fobRating as IFountainRating).details.taste !== undefined;
+}
+
+export function isBathroomRating(fobRating : IFobRating) : fobRating is IBathroomRating {
+  return (fobRating as IBathroomRating).details.washing !== undefined;
 }
 
 export function iFobInfoToIDbFobInfo(fobInfo : IFobInfo) : IDbFobInfo {
