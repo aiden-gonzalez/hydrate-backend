@@ -28,15 +28,10 @@ export interface paths {
     };
   };
   "/api/fountains": {
-    /** Get a group of fountains (query) or a certain fountain (by ID) */
+    /** Get a group of fountains (query) */
     get: {
       parameters: {
         query?: {
-          /**
-           * @description ID of fountain to fetch.
-           * Overrides all other query parameters!
-           */
-          id?: string;
           /**
            * @description Longitude to fetch fountains around.
            * If provided, must also provide latitude!
@@ -70,36 +65,6 @@ export interface paths {
         };
       };
     };
-    /** Update fountain info for a particular fountain */
-    put: {
-      parameters: {
-        query: {
-          /** @description ID of fountain to update */
-          id: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["FountainInfo"];
-        };
-      };
-      responses: {
-        /** @description Fountain successfully updated! */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Fountain"];
-          };
-        };
-        /** @description Malformed request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
     /** Add a fountain */
     post: {
       requestBody: {
@@ -110,9 +75,6 @@ export interface paths {
       responses: {
         /** @description Successfully added fountain! */
         201: {
-          headers: {
-            Location?: string;
-          };
           content: {
             "application/json": components["schemas"]["Fountain"];
           };
@@ -123,556 +85,6 @@ export interface paths {
         };
         /** @description Access token incorrect / insufficient / expired! */
         401: {
-          content: never;
-        };
-      };
-    };
-  };
-  "/api/bathrooms": {
-    /** Get a group of bathrooms (query) or a certain bathroom (by ID) */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description ID of bathroom to fetch.
-           * Overrides all other query parameters!
-           */
-          id?: string;
-          /**
-           * @description Longitude to fetch bathrooms around.
-           * If provided, must also provide latitude!
-           */
-          longitude?: number;
-          /**
-           * @description Latitude to fetch bathrooms around.
-           * If provided, must provide longitude!
-           */
-          latitude?: number;
-          /** @description Radius to fetch bathrooms within */
-          radius?: number;
-          /** @description Filter bathrooms by baby_changer property */
-          baby_changer?: boolean;
-          /** @description Filter bathrooms by gender property */
-          gender?: string;
-          /** @description Filter bathrooms by sanitary_products property */
-          sanitary_products?: boolean;
-        };
-      };
-      responses: {
-        /** @description Successful query.  Return array of bathrooms. */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Bathroom"][];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
-    /** Update bathroom info for a particular bathroom */
-    put: {
-      parameters: {
-        query: {
-          /** @description ID of bathroom to update */
-          id: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["BathroomInfo"];
-        };
-      };
-      responses: {
-        /** @description Bathroom successfully updated! */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Bathroom"];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
-    /** Add a bathroom */
-    post: {
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["BathroomInfo"];
-        };
-      };
-      responses: {
-        /** @description Successfully added bathroom! */
-        201: {
-          headers: {
-            Location?: string;
-          };
-          content: {
-            "application/json": components["schemas"]["Bathroom"];
-          };
-        };
-        /** @description Malformed request! Missing some information or not in right format. */
-        400: {
-          content: never;
-        };
-        /** @description Access token incorrect / insufficient / expired! */
-        401: {
-          content: never;
-        };
-      };
-    };
-  };
-  "/api/bathrooms/ratings": {
-    /** Get ratings for a particular bathroom */
-    get: {
-      parameters: {
-        query: {
-          /** @description ID of bathroom to fetch ratings for */
-          id: string;
-          /** @description Optional pagination: Size of pages to fetch (number of ratings per page) */
-          page_size?: number;
-          /** @description Optional pagination: Offset of page to fetch (default is 0, max is 100) */
-          page_offset?: number;
-        };
-      };
-      responses: {
-        /** @description Successful query.  Return array of bathroom ratings. */
-        200: {
-          content: {
-            "application/json": components["schemas"]["BathroomRating"][];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
-    /** Update bathroom rating */
-    put: {
-      parameters: {
-        query: {
-          /** @description ID of bathroom rating to update */
-          id: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["BathroomRatingDetails"];
-        };
-      };
-      responses: {
-        /** @description Bathroom rating successfully updated! */
-        200: {
-          content: {
-            "application/json": components["schemas"]["BathroomRating"];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
-    /** Add a bathroom rating */
-    post: {
-      parameters: {
-        query: {
-          /** @description ID of bathroom to add rating to */
-          bathroom_id: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["BathroomRatingDetails"];
-        };
-      };
-      responses: {
-        /** @description Successfully added bathroom rating! */
-        201: {
-          headers: {
-            Location?: string;
-          };
-          content: {
-            "application/json": components["schemas"]["BathroomRating"];
-          };
-        };
-        /** @description Malformed request! Missing some information or not in right format. */
-        400: {
-          content: never;
-        };
-        /** @description Access token incorrect / insufficient / expired! */
-        401: {
-          content: never;
-        };
-      };
-    };
-  };
-  "/api/fountains/ratings": {
-    /** Get ratings for a particular fountain */
-    get: {
-      parameters: {
-        query: {
-          /** @description ID of fountain to fetch ratings for */
-          id: string;
-          /** @description Optional pagination: Size of pages to fetch (number of ratings per page) */
-          page_size?: number;
-          /** @description Optional pagination: Offset of page to fetch (default is 0, max is 100) */
-          page_offset?: number;
-        };
-      };
-      responses: {
-        /** @description Successful query.  Return array of fountain ratings. */
-        200: {
-          content: {
-            "application/json": components["schemas"]["FountainRating"][];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
-    /** Update fountain rating */
-    put: {
-      parameters: {
-        query: {
-          /** @description ID of fountain rating to update */
-          id: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["FountainRatingDetails"];
-        };
-      };
-      responses: {
-        /** @description Fountain rating successfully updated! */
-        200: {
-          content: {
-            "application/json": components["schemas"]["FountainRating"];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
-    /** Add a fountain rating */
-    post: {
-      parameters: {
-        query: {
-          /** @description ID of fountain to add rating to */
-          fountain_id: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["FountainRatingDetails"];
-        };
-      };
-      responses: {
-        /** @description Successfully added fountain rating! */
-        201: {
-          headers: {
-            Location?: string;
-          };
-          content: {
-            "application/json": components["schemas"]["FountainRating"];
-          };
-        };
-        /** @description Malformed request! Missing some information or not in right format. */
-        400: {
-          content: never;
-        };
-        /** @description Access token incorrect / insufficient / expired! */
-        401: {
-          content: never;
-        };
-      };
-    };
-  };
-  "/api/bathrooms/pictures": {
-    /**
-     * Get bathroom photos
-     * @description Fetches all if no offset provided.  Otherwise fetches just that photo.
-     */
-    get: {
-      parameters: {
-        query: {
-          /** @description Offset of photo to fetch (first picture is 0) */
-          offset?: number;
-          /** @description ID of bathroom to fetch pictures for */
-          bathroom_id: string;
-        };
-      };
-      responses: {
-        /** @description Successful photo link request */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Picture"];
-          };
-        };
-        /** @description Malformed request (may be missing required parameters) */
-        400: {
-          content: never;
-        };
-        /** @description Authentication/authorization failed */
-        401: {
-          content: never;
-        };
-        /** @description Picture of bathroom with provided offset does not exist! */
-        404: {
-          content: never;
-        };
-      };
-    };
-    /** Add bathroom picture (link only, file hosting will have to be handled separately) */
-    post: {
-      parameters: {
-        query: {
-          /** @description ID of bathroom to add photo for */
-          bathroom_id: string;
-        };
-      };
-      /** @description Picture link */
-      requestBody: {
-        content: {
-          "application/json": string;
-        };
-      };
-      responses: {
-        /** @description Successfully added picture! */
-        201: {
-          headers: {
-            Location?: string;
-          };
-          content: {
-            "application/json": components["schemas"]["Picture"];
-          };
-        };
-        /** @description Malformed request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication/authorization failed */
-        401: {
-          content: never;
-        };
-      };
-    };
-    /** Delete a bathroom picture */
-    delete: {
-      parameters: {
-        query: {
-          /** @description ID of picture to remove */
-          id: string;
-        };
-      };
-      responses: {
-        /** @description Successfully removed picture! */
-        200: {
-          content: never;
-        };
-        /** @description Malformed request (missing ID?) */
-        400: {
-          content: never;
-        };
-        /** @description Authorization/authentication failed! */
-        403: {
-          content: never;
-        };
-        /** @description Picture with provided ID not found! */
-        404: {
-          content: never;
-        };
-      };
-    };
-  };
-  "/api/fountains/pictures": {
-    /**
-     * Get fountain photos
-     * @description Fetches all if no offset provided.  Otherwise fetches just that photo.
-     */
-    get: {
-      parameters: {
-        query: {
-          /** @description Offset of photo to fetch (first picture is 0) */
-          offset?: number;
-          /** @description ID of fountain to fetch pictures for */
-          fountain_id: string;
-        };
-      };
-      responses: {
-        /** @description Successful photo link request */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Picture"];
-          };
-        };
-        /** @description Malformed request (may be missing required parameters) */
-        400: {
-          content: never;
-        };
-        /** @description Authentication/authorization failed */
-        401: {
-          content: never;
-        };
-        /** @description Picture of fountain with provided offset does not exist! */
-        404: {
-          content: never;
-        };
-      };
-    };
-    /** Add fountain picture (link only, file hosting will have to be handled separately) */
-    post: {
-      parameters: {
-        query: {
-          /** @description ID of fountain to add photo for */
-          fountain_id: string;
-        };
-      };
-      /** @description Picture link */
-      requestBody: {
-        content: {
-          "application/json": string;
-        };
-      };
-      responses: {
-        /** @description Successfully added picture! */
-        201: {
-          headers: {
-            Location?: string;
-          };
-          content: {
-            "application/json": components["schemas"]["Picture"];
-          };
-        };
-        /** @description Malformed request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication/authorization failed */
-        401: {
-          content: never;
-        };
-      };
-    };
-    /** Delete a fountain picture */
-    delete: {
-      parameters: {
-        query: {
-          /** @description ID of picture to remove */
-          id: string;
-        };
-      };
-      responses: {
-        /** @description Successfully removed picture! */
-        200: {
-          content: never;
-        };
-        /** @description Malformed request (missing ID?) */
-        400: {
-          content: never;
-        };
-        /** @description Authorization/authentication failed! */
-        403: {
-          content: never;
-        };
-        /** @description Picture with provided ID not found! */
-        404: {
-          content: never;
-        };
-      };
-    };
-  };
-  "/api/profiles": {
-    /** Get a profile by username */
-    get: {
-      parameters: {
-        query: {
-          /** @description Username of user to fetch profile for */
-          username: string;
-        };
-      };
-      responses: {
-        /** @description Successfully fetched user profile */
-        200: {
-          content: {
-            "application/json": components["schemas"]["UserProfile"];
-          };
-        };
-        /** @description Malformed request (missing username?) */
-        400: {
-          content: never;
-        };
-        /** @description Authorization/authentication failed (access token invalid, or maybe not allowed to view this profile?) */
-        403: {
-          content: never;
-        };
-        /** @description User with provided username not found! */
-        404: {
-          content: never;
-        };
-      };
-    };
-    /** Update user profile by user ID */
-    put: {
-      parameters: {
-        query: {
-          /** @description ID of user whose profile to update */
-          id: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["UserProfile"];
-        };
-      };
-      responses: {
-        /** @description Successfully updated user profile! */
-        200: {
-          content: never;
-        };
-        /** @description Malformed request! */
-        400: {
-          content: never;
-        };
-        /** @description Authorization/authentication failed! */
-        401: {
-          content: never;
-        };
-        /** @description Could not find user with ID */
-        404: {
           content: never;
         };
       };
@@ -727,6 +139,751 @@ export interface paths {
         401: {
           content: never;
         };
+      };
+    };
+  };
+  "/api/profiles/{username}": {
+    /** Get a profile by username */
+    get: {
+      parameters: {
+        path: {
+          username: string;
+        };
+      };
+      responses: {
+        /** @description Successfully fetched user profile */
+        200: {
+          content: {
+            "application/json": components["schemas"]["UserProfile"];
+          };
+        };
+        /** @description Malformed request (missing username?) */
+        400: {
+          content: never;
+        };
+        /** @description Authorization/authentication failed (access token invalid, or maybe not allowed to view this profile?) */
+        403: {
+          content: never;
+        };
+        /** @description User with provided username not found! */
+        404: {
+          content: never;
+        };
+      };
+    };
+    /** Update user profile by username */
+    put: {
+      parameters: {
+        path: {
+          username: string;
+        };
+      };
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["UserProfile"];
+        };
+      };
+      responses: {
+        /** @description Successfully updated user profile! */
+        200: {
+          content: {
+            "application/json": components["schemas"]["UserProfile"];
+          };
+        };
+        /** @description Malformed request! */
+        400: {
+          content: never;
+        };
+        /** @description Authorization/authentication failed! */
+        401: {
+          content: never;
+        };
+        /** @description Could not find user with ID */
+        404: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        username: string;
+      };
+    };
+  };
+  "/api/bathrooms": {
+    /** Get a group of bathrooms (query) */
+    get: {
+      parameters: {
+        query?: {
+          /**
+           * @description Longitude to fetch bathrooms around.
+           * If provided, must also provide latitude!
+           */
+          longitude?: number;
+          /**
+           * @description Latitude to fetch bathrooms around.
+           * If provided, must provide longitude!
+           */
+          latitude?: number;
+          /** @description Radius to fetch bathrooms within */
+          radius?: number;
+          /** @description Filter bathrooms by baby_changer property */
+          baby_changer?: boolean;
+          /** @description Filter bathrooms by gender property */
+          gender?: string;
+          /** @description Filter bathrooms by sanitary_products property */
+          sanitary_products?: boolean;
+        };
+      };
+      responses: {
+        /** @description Successful query.  Return array of bathrooms. */
+        200: {
+          content: {
+            "application/json": components["schemas"]["Bathroom"][];
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication failed */
+        403: {
+          content: never;
+        };
+      };
+    };
+    /** Create (add) a bathroom */
+    post: {
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["BathroomInfo"];
+        };
+      };
+      responses: {
+        /** @description Successfully added bathroom! */
+        201: {
+          content: {
+            "application/json": components["schemas"]["Bathroom"];
+          };
+        };
+        /** @description Malformed request! Missing some information or not in right format. */
+        400: {
+          content: never;
+        };
+        /** @description Access token incorrect / insufficient / expired! */
+        401: {
+          content: never;
+        };
+      };
+    };
+  };
+  "/api/bathrooms/{id}/ratings": {
+    /** Get ratings for a particular bathroom */
+    get: {
+      parameters: {
+        query?: {
+          /** @description Optional pagination: Size of pages to fetch (number of ratings per page) */
+          page_size?: number;
+          /** @description Optional pagination: Offset of page to fetch (default is 0, max is 100) */
+          page_offset?: number;
+        };
+        path: {
+          id: string;
+        };
+      };
+      responses: {
+        /** @description Successful query.  Return array of bathroom ratings. */
+        200: {
+          content: {
+            "application/json": components["schemas"]["BathroomRating"][];
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication failed */
+        403: {
+          content: never;
+        };
+      };
+    };
+    /** Add a bathroom rating */
+    post: {
+      parameters: {
+        path: {
+          id: string;
+        };
+      };
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["BathroomRatingDetails"];
+        };
+      };
+      responses: {
+        /** @description Successfully added bathroom rating! */
+        201: {
+          content: {
+            "application/json": components["schemas"]["BathroomRating"];
+          };
+        };
+        /** @description Malformed request! Missing some information or not in right format. */
+        400: {
+          content: never;
+        };
+        /** @description Access token incorrect / insufficient / expired! */
+        401: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+  };
+  "/api/bathrooms/{id}/ratings/{ratingId}": {
+    /** Get a particular rating for a particular bathroom */
+    get: {
+      parameters: {
+        path: {
+          id: string;
+          ratingId: string;
+        };
+      };
+      responses: {
+        /** @description Successful request, return rating */
+        200: {
+          content: {
+            "application/json": components["schemas"]["BathroomRating"];
+          };
+        };
+      };
+    };
+    /** Update bathroom rating */
+    put: {
+      parameters: {
+        path: {
+          id: string;
+          ratingId: string;
+        };
+      };
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["BathroomRatingDetails"];
+        };
+      };
+      responses: {
+        /** @description Bathroom rating successfully updated! */
+        200: {
+          content: {
+            "application/json": components["schemas"]["BathroomRating"];
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication failed */
+        403: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        id: string;
+        ratingId: string;
+      };
+    };
+  };
+  "/api/bathrooms/{id}": {
+    /** Get bathroom */
+    get: {
+      parameters: {
+        path: {
+          id: string;
+        };
+      };
+      responses: {
+        /** @description Successful request, return bathroom. */
+        200: {
+          content: {
+            "application/json": components["schemas"]["Bathroom"];
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: never;
+        };
+        /** @description Insufficient auth */
+        403: {
+          content: never;
+        };
+      };
+    };
+    /** Update bathroom info for a particular bathroom */
+    put: {
+      parameters: {
+        path: {
+          id: string;
+        };
+      };
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["BathroomInfo"];
+        };
+      };
+      responses: {
+        /** @description Bathroom successfully updated! */
+        200: {
+          content: {
+            "application/json": components["schemas"]["Bathroom"];
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication failed */
+        403: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+  };
+  "/api/bathrooms/{id}/pictures": {
+    /**
+     * Get bathroom photos
+     * @description Fetches all if no offset provided.  Otherwise fetches just that photo.
+     */
+    get: {
+      parameters: {
+        query?: {
+          /** @description Offset of photo to fetch (first picture is 0) */
+          offset?: number;
+        };
+        path: {
+          id: string;
+        };
+      };
+      responses: {
+        /** @description Successful photo link request */
+        200: {
+          content: {
+            "application/json": components["schemas"]["Picture"];
+          };
+        };
+        /** @description Malformed request (may be missing required parameters) */
+        400: {
+          content: never;
+        };
+        /** @description Authentication/authorization failed */
+        401: {
+          content: never;
+        };
+        /** @description Picture of bathroom with provided offset does not exist! */
+        404: {
+          content: never;
+        };
+      };
+    };
+    /** Add bathroom picture (link only, file hosting will have to be handled separately) */
+    post: {
+      parameters: {
+        path: {
+          id: string;
+        };
+      };
+      /** @description Picture link */
+      requestBody: {
+        content: {
+          "application/json": string;
+        };
+      };
+      responses: {
+        /** @description Successfully added picture! */
+        201: {
+          content: {
+            "application/json": components["schemas"]["Picture"];
+          };
+        };
+        /** @description Malformed request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication/authorization failed */
+        401: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+  };
+  "/api/bathrooms/{id}/pictures/{pictureId}": {
+    /** Get a particular picture for a particular bathroom */
+    get: {
+      parameters: {
+        path: {
+          id: string;
+          pictureId: string;
+        };
+      };
+      responses: {
+        /** @description Successful request, return picture */
+        200: {
+          content: {
+            "application/json": components["schemas"]["Picture"];
+          };
+        };
+      };
+    };
+    /** Delete a bathroom picture */
+    delete: {
+      parameters: {
+        path: {
+          id: string;
+          pictureId: string;
+        };
+      };
+      responses: {
+        /** @description Successfully removed picture! */
+        200: {
+          content: never;
+        };
+        /** @description Malformed request (missing ID?) */
+        400: {
+          content: never;
+        };
+        /** @description Authorization/authentication failed! */
+        403: {
+          content: never;
+        };
+        /** @description Picture with provided ID not found! */
+        404: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        id: string;
+        pictureId: string;
+      };
+    };
+  };
+  "/api/fountains/{id}/pictures": {
+    /**
+     * Get fountain photos
+     * @description Fetches all if no offset provided.  Otherwise fetches just that photo.
+     */
+    get: {
+      parameters: {
+        query?: {
+          /** @description Offset of photo to fetch (first picture is 0) */
+          offset?: number;
+        };
+        path: {
+          id: string;
+        };
+      };
+      responses: {
+        /** @description Successful photo link request */
+        200: {
+          content: {
+            "application/json": components["schemas"]["Picture"];
+          };
+        };
+        /** @description Malformed request (may be missing required parameters) */
+        400: {
+          content: never;
+        };
+        /** @description Authentication/authorization failed */
+        401: {
+          content: never;
+        };
+        /** @description Picture of fountain with provided offset does not exist! */
+        404: {
+          content: never;
+        };
+      };
+    };
+    /** Add fountain picture (link only, file hosting will have to be handled separately) */
+    post: {
+      parameters: {
+        path: {
+          id: string;
+        };
+      };
+      /** @description Picture link */
+      requestBody: {
+        content: {
+          "application/json": string;
+        };
+      };
+      responses: {
+        /** @description Successfully added picture! */
+        201: {
+          content: {
+            "application/json": components["schemas"]["Picture"];
+          };
+        };
+        /** @description Malformed request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication/authorization failed */
+        401: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+  };
+  "/api/fountains/{id}/pictures/{pictureId}": {
+    /** Get a particular picture for a particular fountain */
+    get: {
+      parameters: {
+        path: {
+          id: string;
+          pictureId: string;
+        };
+      };
+      responses: {
+        /** @description Successful request, return picture */
+        200: {
+          content: {
+            "application/json": components["schemas"]["Picture"];
+          };
+        };
+      };
+    };
+    /** Delete a fountain picture */
+    delete: {
+      parameters: {
+        path: {
+          id: string;
+          pictureId: string;
+        };
+      };
+      responses: {
+        /** @description Successfully removed picture! */
+        200: {
+          content: never;
+        };
+        /** @description Malformed request (missing ID?) */
+        400: {
+          content: never;
+        };
+        /** @description Authorization/authentication failed! */
+        403: {
+          content: never;
+        };
+        /** @description Picture with provided ID not found! */
+        404: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        id: string;
+        pictureId: string;
+      };
+    };
+  };
+  "/api/fountains/{id}/ratings": {
+    /** Get ratings for a particular fountain */
+    get: {
+      parameters: {
+        query?: {
+          /** @description Optional pagination: Size of pages to fetch (number of ratings per page) */
+          page_size?: number;
+          /** @description Optional pagination: Offset of page to fetch (default is 0, max is 100) */
+          page_offset?: number;
+        };
+        path: {
+          id: string;
+        };
+      };
+      responses: {
+        /** @description Successful query.  Return array of fountain ratings. */
+        200: {
+          content: {
+            "application/json": components["schemas"]["FountainRating"][];
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication failed */
+        403: {
+          content: never;
+        };
+      };
+    };
+    /** Add a fountain rating */
+    post: {
+      parameters: {
+        path: {
+          id: string;
+        };
+      };
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["FountainRatingDetails"];
+        };
+      };
+      responses: {
+        /** @description Successfully added fountain rating! */
+        201: {
+          content: {
+            "application/json": components["schemas"]["FountainRating"];
+          };
+        };
+        /** @description Malformed request! Missing some information or not in right format. */
+        400: {
+          content: never;
+        };
+        /** @description Access token incorrect / insufficient / expired! */
+        401: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+  };
+  "/api/fountains/{id}/ratings/{ratingId}": {
+    /** Get a particular rating for a particular fountain */
+    get: {
+      parameters: {
+        path: {
+          id: string;
+          ratingId: string;
+        };
+      };
+      responses: {
+        /** @description Successful request, return fountain rating */
+        200: {
+          content: {
+            "application/json": components["schemas"]["FountainRating"];
+          };
+        };
+      };
+    };
+    /** Update fountain rating */
+    put: {
+      parameters: {
+        path: {
+          id: string;
+          ratingId: string;
+        };
+      };
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["FountainRatingDetails"];
+        };
+      };
+      responses: {
+        /** @description Fountain rating successfully updated! */
+        200: {
+          content: {
+            "application/json": components["schemas"]["FountainRating"];
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication failed */
+        403: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        id: string;
+        ratingId: string;
+      };
+    };
+  };
+  "/api/fountains/{id}": {
+    /** Get fountain */
+    get: {
+      parameters: {
+        path: {
+          id: string;
+        };
+      };
+      responses: {
+        /** @description Successful request, return fountain. */
+        200: {
+          content: {
+            "application/json": components["schemas"]["Fountain"];
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: never;
+        };
+        /** @description Insufficient auth */
+        403: {
+          content: never;
+        };
+      };
+    };
+    /** Update fountain info for a particular fountain */
+    put: {
+      parameters: {
+        path: {
+          id: string;
+        };
+      };
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["FountainInfo"];
+        };
+      };
+      responses: {
+        /** @description Fountain successfully updated! */
+        200: {
+          content: {
+            "application/json": components["schemas"]["Fountain"];
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication failed */
+        403: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        id: string;
       };
     };
   };
