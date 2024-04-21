@@ -1,11 +1,12 @@
 import 'dotenv/config';
 import mongoose from "mongoose";
 import {ILocation, IPicture, IUser} from "./utils/types";
-import {generateFountainId, generatePictureId, generateUserId} from "./utils/generate";
+import {generateBathroomId, generateFountainId, generatePictureId, generateUserId} from "./utils/generate";
 import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
 import {expect} from "chai";
 import {IFountain, IFountainInfo, IFountainRatingDetails} from "./fountains/types";
+import {IBathroom, IBathroomInfo, IBathroomRatingDetails} from "./bathrooms/types";
 
 // Tell mongoose to use es6 Promise implementation
 mongoose.Promise = global.Promise;
@@ -83,12 +84,35 @@ export function getFountain (name  = "fountain name", bottle_filler  = false, lo
   } as IFountain;
 }
 
+export function getBathroom (name = "bathroom name", gender = "male", baby_changer = false, sanitary_products = false, location : ILocation = getLocation()) : IBathroom {
+  return {
+    id: generateBathroomId(),
+    info: {
+      name: name,
+      gender: gender,
+      baby_changer: baby_changer,
+      sanitary_products: sanitary_products,
+      location: location
+    } as IBathroomInfo
+  } as IBathroom;
+}
+
 export function getFountainRatingDetails (pressure = 3, taste = 3, temperature = 3) : IFountainRatingDetails {
   return {
     pressure: pressure,
     taste: taste,
     temperature: temperature
   } as IFountainRatingDetails;
+}
+
+export function getBathroomRatingDetails (cleanliness = 3, decor = 3, drying = 3, privacy = 3, washing = 3) : IBathroomRatingDetails {
+  return {
+    cleanliness: cleanliness,
+    decor: decor,
+    drying: drying,
+    privacy: privacy,
+    washing: washing
+  } as IBathroomRatingDetails;
 }
 
 export function getPicture () : IPicture {
