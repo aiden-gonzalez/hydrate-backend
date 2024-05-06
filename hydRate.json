@@ -688,11 +688,14 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Picture"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Picture"
+                                    }
                                 }
                             }
                         },
-                        "description": "Successful photo link request"
+                        "description": "Successful pictures request"
                     },
                     "400": {
                         "description": "Malformed request (may be missing required parameters)"
@@ -838,11 +841,14 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Picture"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Picture"
+                                    }
                                 }
                             }
                         },
-                        "description": "Successful photo link request"
+                        "description": "Successful pictures request"
                     },
                     "400": {
                         "description": "Malformed request (may be missing required parameters)"
