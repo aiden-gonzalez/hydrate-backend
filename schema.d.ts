@@ -504,7 +504,7 @@ export interface paths {
       /** @description Picture link */
       requestBody: {
         content: {
-          "application/json": string;
+          "application/json": components["schemas"]["PictureInfo"];
         };
       };
       responses: {
@@ -628,7 +628,7 @@ export interface paths {
       /** @description Picture link */
       requestBody: {
         content: {
-          "application/json": string;
+          "application/json": components["schemas"]["PictureInfo"];
         };
       };
       responses: {
@@ -966,19 +966,23 @@ export interface components {
       details: components["schemas"]["FountainRatingDetails"];
     };
     /**
-     * @example {
-     *   "id": "some text",
-     *   "picture_link": "some text",
-     *   "entity_id": "some text"
-     * }
+     * @example [
+     *   {
+     *     "id": "string_id",
+     *     "entity_id": "string_id",
+     *     "info": {
+     *       "url": "https://google.com"
+     *     }
+     *   }
+     * ]
      */
     Picture: {
       /** @description Unique ID of picture */
       id: string;
-      /** @description Link to picture */
-      picture_link: string;
       /** @description Fountain or bathroom ID picture is for */
       entity_id: string;
+      /** @description Info for picture */
+      info: components["schemas"]["PictureInfo"];
     };
     /**
      * @example {
@@ -1225,6 +1229,20 @@ export interface components {
     AuthRequest: {
       /** @description Credentials for user */
       user_credentials: components["schemas"]["UserCredentials"];
+    };
+    /**
+     * @example [
+     *   {
+     *     "url": "https://google.com"
+     *   }
+     * ]
+     */
+    PictureInfo: {
+      /**
+       * @description URL of picture
+       * @example https://google.com
+       */
+      url: string;
     };
   };
   responses: never;

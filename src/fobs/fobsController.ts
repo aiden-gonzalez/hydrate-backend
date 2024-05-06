@@ -13,7 +13,7 @@ import {
   HTTP_INTERNAL_ERROR,
   HTTP_OK
 } from "../utils/constants";
-import { IPicture } from "../utils/types";
+import { IPicture, IPictureInfo } from "../utils/types";
 import {
   generateBathroomId,
   generateBathroomRatingId,
@@ -147,13 +147,13 @@ export function addFobPicture(req, res) {
   // Get path parameter
   const fobId = req.params.id;
   // Get picture info from request
-  const pictureLink : string = req.body;
+  const pictureInfo : IPictureInfo = req.body;
 
   // Create picture
   const newPicture : IPicture = {
     id: generatePictureId(),
     entity_id: fobId,
-    picture_link: pictureLink
+    info: pictureInfo
   }
   return new Promise((resolve) => {
     database.createPicture(newPicture).then((createdPicture) => {
@@ -246,7 +246,7 @@ export function addFobRating(req, res) {
 
   return new Promise((resolve) => {
     database.createRating(req.fobRatingModel, newRating).then((createdRating) => {
-      resolve(res.status(HTTP_OK).json(createdRating))
+      resolve(res.status(HTTP_CREATED).json(createdRating))
     }).catch((error) => {
       if (error.message && error.stack && error.stack.startsWith("ValidationError")) {
         resolve(res.status(HTTP_BAD_REQUEST).send(error.message));

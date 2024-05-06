@@ -719,7 +719,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "string"
+                                "$ref": "#/components/schemas/PictureInfo"
                             }
                         }
                     },
@@ -869,7 +869,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "string"
+                                "$ref": "#/components/schemas/PictureInfo"
                             }
                         }
                     },
@@ -1335,7 +1335,7 @@
                 "required": [
                     "id",
                     "entity_id",
-                    "picture_link"
+                    "info"
                 ],
                 "type": "object",
                 "properties": {
@@ -1343,20 +1343,24 @@
                         "description": "Unique ID of picture",
                         "type": "string"
                     },
-                    "picture_link": {
-                        "description": "Link to picture",
-                        "type": "string"
-                    },
                     "entity_id": {
                         "description": "Fountain or bathroom ID picture is for",
                         "type": "string"
+                    },
+                    "info": {
+                        "$ref": "#/components/schemas/PictureInfo",
+                        "description": "Info for picture"
                     }
                 },
-                "example": {
-                    "id": "some text",
-                    "picture_link": "some text",
-                    "entity_id": "some text"
-                }
+                "example": [
+                    {
+                        "id": "string_id",
+                        "entity_id": "string_id",
+                        "info": {
+                            "url": "https://google.com"
+                        }
+                    }
+                ]
             },
             "BathroomRating": {
                 "description": "",
@@ -1782,6 +1786,25 @@
                         "password": "some text"
                     }
                 }
+            },
+            "PictureInfo": {
+                "description": "",
+                "required": [
+                    "url"
+                ],
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "URL of picture",
+                        "type": "string",
+                        "example": "https://google.com"
+                    }
+                },
+                "example": [
+                    {
+                        "url": "https://google.com"
+                    }
+                ]
             }
         },
         "securitySchemes": {

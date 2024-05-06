@@ -40,4 +40,5 @@ export function dbUserToIUser (dbUser) : IUser {
     }
   };
 }
+export type IPictureInfo = components["schemas"]["PictureInfo"];
 export type IPicture = components["schemas"]["Picture"];
