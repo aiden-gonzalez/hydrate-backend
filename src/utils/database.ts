@@ -58,11 +58,7 @@ export async function createRating(ratingModel : Model<IFobRating>, rating: IFob
 }
 
 export async function getRatings(ratingModel : Model<IFobRating>, entityId : string) : Promise<IFobRating[]> {
-  const ratings = await queryEntities<IFobRating>(ratingModel, { $or: [ { fountain_id: entityId }, { bathroom_id: entityId } ] });
-  for (const rating in ratings) {
-    cleanEntityId<IFobRating>(ratings[rating], "details");
-  }
-  return ratings;
+  return cleanArrayEntityId<IFobRating>(await queryEntities<IFobRating>(ratingModel, { $or: [ { fountain_id: entityId }, { bathroom_id: entityId } ] }), "details");
 }
 
 export async function getRating(ratingModel : Model<IFobRating>, ratingId : string) : Promise<IFobRating> {
@@ -95,16 +91,16 @@ export async function updateUserProfileByUsername (username: string, profile: IU
 }
 
 // PICTURE
-export function createPicture(picture: IPicture) : Promise<IPicture> {
-  return createEntity<IPicture>(Picture, picture);
+export async function createPicture(picture: IPicture) : Promise<IPicture> {
+  return cleanEntityId<IPicture>(await createEntity<IPicture>(Picture, picture), "info");
 }
 
-export function getPictureById(pictureId: string) : Promise<IPicture> {
-  return fetchEntity<IPicture>(Picture, { id: pictureId });
+export async function getPictureById(pictureId: string) : Promise<IPicture> {
+  return cleanEntityId<IPicture>(await fetchEntity<IPicture>(Picture, { id: pictureId }), "info");
 }
 
-export function getPictures(entityId : string) : Promise<IPicture[]> {
-  return queryEntities<IPicture>(Picture, { entity_id: entityId });
+export async function getPictures(entityId : string) : Promise<IPicture[]> {
+  return cleanArrayEntityId<IPicture>(await queryEntities<IPicture>(Picture, { entity_id: entityId }), "info");
 }
 
 export function deletePicture(pictureId: string) : Promise<void> {

@@ -27,8 +27,8 @@ import {
 import {setupFountainReq} from "./fountainsRouter";
 import { IFountain, IFountainRating, IFountainRatingDetails } from "./types";
 import * as database from "../utils/database";
-import {generateFountainId, generateFountainRatingId, generatePictureId, generateUserId} from "../utils/generate";
-import {ILocation, IPicture, IUser} from "../utils/types";
+import {generateFountainId, generateFountainRatingId, generateUserId} from "../utils/generate";
+import {ILocation, IUser} from "../utils/types";
 import {Fountain, FountainRating} from "../mongoDB";
 import {calculateDistance} from "../utils/calculation";
 
@@ -133,21 +133,9 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
   async function createPictures(entityId : string) {
     // Create pictures
-    const pictureOne : IPicture = {
-      id: generatePictureId(),
-      picture_link: "https://www.google.com",
-      entity_id: entityId
-    };
-    const pictureTwo : IPicture = {
-      id: generatePictureId(),
-      picture_link: "https://www.facebook.com",
-      entity_id: entityId
-    };
-    const pictureThree : IPicture = {
-      id: generatePictureId(),
-      picture_link: "https://www.mail.google.com",
-      entity_id: entityId
-    };
+    const pictureOne = getPicture(entityId, "https://www.google.com");
+    const pictureTwo = getPicture(entityId, "https://www.facebook.com");
+    const pictureThree = getPicture(entityId, "https://www.mail.google.com");
 
     const createdPictureOne = await database.createPicture(pictureOne);
     const createdPictureTwo = await database.createPicture(pictureTwo);
@@ -407,7 +395,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
     const pictureToCreate = getPicture();
     pictureToCreate.entity_id = createdFountains[0].id;
-    req.body = pictureToCreate.picture_link; // valid picture link
+    req.body = pictureToCreate.info; // valid picture link
 
     // Try to create fountain picture
     await simulateRouter(req, res, addFountainPictureFuncs);
@@ -600,7 +588,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     await simulateRouter(req, res, addFountainRatingFuncs);
 
     // Should have succeeded
-    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expect(res.sentStatus).to.equal(constants.HTTP_CREATED);
     expectEntitiesEqual(res.message.details, req.body);
   });
 

@@ -300,6 +300,18 @@ const userSchema : Schema = new Schema<utilTypes.IUser>({
 });
 export const User = model<utilTypes.IUser>("User", userSchema);
 
+// Picture Info
+const pictureInfoSchema : Schema = new Schema<utilTypes.IPictureInfo>({
+  url: {
+    type: String,
+    validate: {
+      validator: validators.urlValidator,
+      message: "picture_link must be valid URL."
+    },
+    required: true
+  }
+});
+
 // Picture
 const pictureSchema : Schema = new Schema<utilTypes.IPicture>({
   id: {
@@ -316,12 +328,8 @@ const pictureSchema : Schema = new Schema<utilTypes.IPicture>({
     },
     required: true
   },
-  picture_link: {
-    type: String,
-    validate: {
-      validator: validators.urlValidator,
-      message: "picture_link must be valid URL."
-    },
+  info: {
+    type: pictureInfoSchema,
     required: true
   }
 });

@@ -115,11 +115,13 @@ export function getBathroomRatingDetails (cleanliness = 3, decor = 3, drying = 3
   } as IBathroomRatingDetails;
 }
 
-export function getPicture () : IPicture {
+export function getPicture (entity_id = generateFountainId(), url = "https://www.google.com") : IPicture {
   return {
     id: generatePictureId(),
-    entity_id: generateFountainId(),
-    picture_link: "https://www.google.com"
+    entity_id: entity_id,
+    info: {
+      url: url
+    }
   }
 }
 
