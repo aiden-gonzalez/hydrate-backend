@@ -474,10 +474,10 @@ export interface paths {
         };
       };
       responses: {
-        /** @description Successful photo link request */
+        /** @description Successful pictures request */
         200: {
           content: {
-            "application/json": components["schemas"]["Picture"];
+            "application/json": components["schemas"]["Picture"][];
           };
         };
         /** @description Malformed request (may be missing required parameters) */
@@ -598,10 +598,10 @@ export interface paths {
         };
       };
       responses: {
-        /** @description Successful photo link request */
+        /** @description Successful pictures request */
         200: {
           content: {
-            "application/json": components["schemas"]["Picture"];
+            "application/json": components["schemas"]["Picture"][];
           };
         };
         /** @description Malformed request (may be missing required parameters) */
