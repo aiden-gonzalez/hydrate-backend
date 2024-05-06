@@ -157,7 +157,7 @@ export function addFobPicture(req, res) {
   }
   return new Promise((resolve) => {
     database.createPicture(newPicture).then((createdPicture) => {
-      resolve(res.status(HTTP_OK).json(createdPicture))
+      resolve(res.status(HTTP_CREATED).json(createdPicture))
     }).catch((error) => {
       if (error.message && error.stack && error.stack.startsWith("ValidationError")) {
         resolve(res.status(HTTP_BAD_REQUEST).send(error.message));

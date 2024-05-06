@@ -401,7 +401,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     await simulateRouter(req, res, addFountainPictureFuncs);
 
     // Should have succeeded
-    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expect(res.sentStatus).to.equal(constants.HTTP_CREATED);
     pictureToCreate.id = res.message.id;
     expect(pictureToCreate).to.deep.equal(res.message);
   });
