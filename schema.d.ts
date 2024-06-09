@@ -46,6 +46,12 @@ export interface paths {
           bottle_filler?: boolean;
           /** @description Radius to fetch fountains within (in meters) */
           radius?: number;
+          /** @description ID of user that created the fountain(s) */
+          user_id?: string;
+          /** @description Filter fountains to those created on or after this date.  Unix epoch milliseconds timestamp. */
+          from_date?: number;
+          /** @description Filter fountains to those created before or on this date.  Unix epoch milliseconds timestamp. */
+          to_date?: number;
         };
       };
       responses: {
@@ -233,6 +239,12 @@ export interface paths {
           gender?: string;
           /** @description Filter bathrooms by sanitary_products property */
           sanitary_products?: boolean;
+          /** @description ID of user that created the bathroom(s) */
+          user_id?: string;
+          /** @description Filter bathrooms to those created on or after this date.  Unix epoch milliseconds timestamp. */
+          from_date?: number;
+          /** @description Filter bathrooms to those created before or on this date.  Unix epoch milliseconds timestamp. */
+          to_date?: number;
         };
       };
       responses: {
@@ -1010,15 +1022,14 @@ export interface components {
       details: components["schemas"]["FountainRatingDetails"];
     };
     /**
-     * @example [
-     *   {
-     *     "id": "string_id",
-     *     "entity_id": "string_id",
-     *     "info": {
-     *       "url": "https://google.com"
-     *     }
-     *   }
-     * ]
+     * @example {
+     *   "id": "some text",
+     *   "entity_id": "some text",
+     *   "info": {
+     *     "url": "some text"
+     *   },
+     *   "user_id": "some text"
+     * }
      */
     Picture: {
       /** @description Unique ID of picture */
@@ -1027,6 +1038,8 @@ export interface components {
       entity_id: string;
       /** @description Info for picture */
       info: components["schemas"]["PictureInfo"];
+      /** @description ID of user that created the picture. */
+      user_id: string;
     };
     /**
      * @example {
@@ -1115,10 +1128,11 @@ export interface components {
      *     "name": "some text",
      *     "bottle_filler": true,
      *     "location": {
-     *       "longitude": 76.73,
-     *       "latitude": 39.89
+     *       "longitude": 65.96,
+     *       "latitude": 60.57
      *     }
-     *   }
+     *   },
+     *   "user_id": "some text"
      * }
      */
     Fountain: {
@@ -1126,14 +1140,16 @@ export interface components {
       id: string;
       /** @description Fountain information */
       info: components["schemas"]["FountainInfo"];
+      /** @description ID of user that created the fountain. */
+      user_id: string;
     };
     /**
      * @example {
      *   "name": "some text",
      *   "bottle_filler": true,
      *   "location": {
-     *     "longitude": 20.66,
-     *     "latitude": 98.72
+     *     "longitude": 13.04,
+     *     "latitude": 48.71
      *   }
      * }
      */
@@ -1152,8 +1168,8 @@ export interface components {
      *   "sanitary_products": true,
      *   "baby_changer": true,
      *   "location": {
-     *     "longitude": 32.05,
-     *     "latitude": 13.47
+     *     "longitude": 1.21,
+     *     "latitude": 50.7
      *   }
      * }
      */
@@ -1179,10 +1195,11 @@ export interface components {
      *     "sanitary_products": true,
      *     "baby_changer": true,
      *     "location": {
-     *       "longitude": 16.32,
-     *       "latitude": 86.3
+     *       "longitude": 22.15,
+     *       "latitude": 67.15
      *     }
-     *   }
+     *   },
+     *   "user_id": "some text"
      * }
      */
     Bathroom: {
@@ -1190,6 +1207,8 @@ export interface components {
       id: string;
       /** @description Info for bathroom */
       info: components["schemas"]["BathroomInfo"];
+      /** @description ID of user that created the bathroom. */
+      user_id: string;
     };
     /**
      * @description Actual details of bathroom rating
@@ -1275,11 +1294,9 @@ export interface components {
       user_credentials: components["schemas"]["UserCredentials"];
     };
     /**
-     * @example [
-     *   {
-     *     "url": "https://google.com"
-     *   }
-     * ]
+     * @example {
+     *   "url": "some text"
+     * }
      */
     PictureInfo: {
       /**
@@ -1288,7 +1305,133 @@ export interface components {
        */
       url: string;
     };
-    /** @description Summary of user contributions */
+    /**
+     * @description Summary of user contributions
+     * @example {
+     *   "fountains": [
+     *     {
+     *       "id": "some text",
+     *       "info": {
+     *         "name": "some text",
+     *         "bottle_filler": true,
+     *         "location": {
+     *           "longitude": 57.31,
+     *           "latitude": 60.06
+     *         }
+     *       },
+     *       "user_id": "some text"
+     *     },
+     *     {
+     *       "id": "some text",
+     *       "info": {
+     *         "name": "some text",
+     *         "bottle_filler": true,
+     *         "location": {
+     *           "longitude": 78.88,
+     *           "latitude": 28.23
+     *         }
+     *       },
+     *       "user_id": "some text"
+     *     }
+     *   ],
+     *   "bathrooms": [
+     *     {
+     *       "id": "some text",
+     *       "info": {
+     *         "name": "some text",
+     *         "gender": "some text",
+     *         "sanitary_products": true,
+     *         "baby_changer": true,
+     *         "location": {
+     *           "longitude": 11.57,
+     *           "latitude": 85.56
+     *         }
+     *       },
+     *       "user_id": "some text"
+     *     },
+     *     {
+     *       "id": "some text",
+     *       "info": {
+     *         "name": "some text",
+     *         "gender": "some text",
+     *         "sanitary_products": true,
+     *         "baby_changer": true,
+     *         "location": {
+     *           "longitude": 44.76,
+     *           "latitude": 83.35
+     *         }
+     *       },
+     *       "user_id": "some text"
+     *     }
+     *   ],
+     *   "fountain_ratings": [
+     *     {
+     *       "id": "some text",
+     *       "fountain_id": "some text",
+     *       "user_id": "some text",
+     *       "details": {
+     *         "pressure": 25,
+     *         "taste": 17,
+     *         "temperature": 29
+     *       }
+     *     },
+     *     {
+     *       "id": "some text",
+     *       "fountain_id": "some text",
+     *       "user_id": "some text",
+     *       "details": {
+     *         "pressure": 41,
+     *         "taste": 2,
+     *         "temperature": 47
+     *       }
+     *     }
+     *   ],
+     *   "bathroom_ratings": [
+     *     {
+     *       "id": "some text",
+     *       "bathroom_id": "some text",
+     *       "user_id": "some text",
+     *       "details": {
+     *         "cleanliness": 7,
+     *         "decor": 85,
+     *         "drying": 23,
+     *         "privacy": 57,
+     *         "washing": 1
+     *       }
+     *     },
+     *     {
+     *       "id": "some text",
+     *       "bathroom_id": "some text",
+     *       "user_id": "some text",
+     *       "details": {
+     *         "cleanliness": 28,
+     *         "decor": 7,
+     *         "drying": 74,
+     *         "privacy": 32,
+     *         "washing": 85
+     *       }
+     *     }
+     *   ],
+     *   "pictures": [
+     *     {
+     *       "id": "some text",
+     *       "entity_id": "some text",
+     *       "info": {
+     *         "url": "some text"
+     *       },
+     *       "user_id": "some text"
+     *     },
+     *     {
+     *       "id": "some text",
+     *       "entity_id": "some text",
+     *       "info": {
+     *         "url": "some text"
+     *       },
+     *       "user_id": "some text"
+     *     }
+     *   ]
+     * }
+     */
     UserContributions: {
       /** @description Fountains created by user */
       fountains: components["schemas"]["Fountain"][];

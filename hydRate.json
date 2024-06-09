@@ -82,6 +82,32 @@
                         },
                         "in": "query",
                         "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "description": "ID of user that created the fountain(s)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": false
+                    },
+                    {
+                        "name": "from_date",
+                        "description": "Filter fountains to those created on or after this date.  Unix epoch milliseconds timestamp.",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query",
+                        "required": false
+                    },
+                    {
+                        "name": "to_date",
+                        "description": "Filter fountains to those created before or on this date.  Unix epoch milliseconds timestamp.",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -354,6 +380,30 @@
                         "description": "Filter bathrooms by sanitary_products property",
                         "schema": {
                             "type": "boolean"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "user_id",
+                        "description": "ID of user that created the bathroom(s)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "from_date",
+                        "description": "Filter bathrooms to those created on or after this date.  Unix epoch milliseconds timestamp.",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "to_date",
+                        "description": "Filter bathrooms to those created before or on this date.  Unix epoch milliseconds timestamp.",
+                        "schema": {
+                            "type": "number"
                         },
                         "in": "query"
                     }
@@ -1410,7 +1460,8 @@
                 "required": [
                     "id",
                     "entity_id",
-                    "info"
+                    "info",
+                    "user_id"
                 ],
                 "type": "object",
                 "properties": {
@@ -1425,17 +1476,20 @@
                     "info": {
                         "$ref": "#/components/schemas/PictureInfo",
                         "description": "Info for picture"
+                    },
+                    "user_id": {
+                        "description": "ID of user that created the picture.",
+                        "type": "string"
                     }
                 },
-                "example": [
-                    {
-                        "id": "string_id",
-                        "entity_id": "string_id",
-                        "info": {
-                            "url": "https://google.com"
-                        }
-                    }
-                ]
+                "example": {
+                    "id": "some text",
+                    "entity_id": "some text",
+                    "info": {
+                        "url": "some text"
+                    },
+                    "user_id": "some text"
+                }
             },
             "BathroomRating": {
                 "description": "",
@@ -1572,7 +1626,8 @@
                 "description": "Basic fountain information",
                 "required": [
                     "id",
-                    "info"
+                    "info",
+                    "user_id"
                 ],
                 "type": "object",
                 "properties": {
@@ -1583,6 +1638,10 @@
                     "info": {
                         "$ref": "#/components/schemas/FountainInfo",
                         "description": "Fountain information"
+                    },
+                    "user_id": {
+                        "description": "ID of user that created the fountain.",
+                        "type": "string"
                     }
                 },
                 "example": {
@@ -1591,10 +1650,11 @@
                         "name": "some text",
                         "bottle_filler": true,
                         "location": {
-                            "longitude": 76.73,
-                            "latitude": 39.89
+                            "longitude": 65.96,
+                            "latitude": 60.57
                         }
-                    }
+                    },
+                    "user_id": "some text"
                 }
             },
             "FountainInfo": {
@@ -1623,8 +1683,8 @@
                     "name": "some text",
                     "bottle_filler": true,
                     "location": {
-                        "longitude": 20.66,
-                        "latitude": 98.72
+                        "longitude": 13.04,
+                        "latitude": 48.71
                     }
                 }
             },
@@ -1667,8 +1727,8 @@
                     "sanitary_products": true,
                     "baby_changer": true,
                     "location": {
-                        "longitude": 32.05,
-                        "latitude": 13.47
+                        "longitude": 1.21,
+                        "latitude": 50.7
                     }
                 }
             },
@@ -1676,7 +1736,8 @@
                 "description": "Bathroom",
                 "required": [
                     "id",
-                    "info"
+                    "info",
+                    "user_id"
                 ],
                 "type": "object",
                 "properties": {
@@ -1687,6 +1748,10 @@
                     "info": {
                         "$ref": "#/components/schemas/BathroomInfo",
                         "description": "Info for bathroom"
+                    },
+                    "user_id": {
+                        "description": "ID of user that created the bathroom.",
+                        "type": "string"
                     }
                 },
                 "example": {
@@ -1697,10 +1762,11 @@
                         "sanitary_products": true,
                         "baby_changer": true,
                         "location": {
-                            "longitude": 16.32,
-                            "latitude": 86.3
+                            "longitude": 22.15,
+                            "latitude": 67.15
                         }
-                    }
+                    },
+                    "user_id": "some text"
                 }
             },
             "BathroomRatingDetails": {
@@ -1875,11 +1941,9 @@
                         "example": "https://google.com"
                     }
                 },
-                "example": [
-                    {
-                        "url": "https://google.com"
-                    }
-                ]
+                "example": {
+                    "url": "some text"
+                }
             },
             "UserContributions": {
                 "description": "Summary of user contributions",
@@ -1927,6 +1991,130 @@
                             "$ref": "#/components/schemas/Picture"
                         }
                     }
+                },
+                "example": {
+                    "fountains": [
+                        {
+                            "id": "some text",
+                            "info": {
+                                "name": "some text",
+                                "bottle_filler": true,
+                                "location": {
+                                    "longitude": 57.31,
+                                    "latitude": 60.06
+                                }
+                            },
+                            "user_id": "some text"
+                        },
+                        {
+                            "id": "some text",
+                            "info": {
+                                "name": "some text",
+                                "bottle_filler": true,
+                                "location": {
+                                    "longitude": 78.88,
+                                    "latitude": 28.23
+                                }
+                            },
+                            "user_id": "some text"
+                        }
+                    ],
+                    "bathrooms": [
+                        {
+                            "id": "some text",
+                            "info": {
+                                "name": "some text",
+                                "gender": "some text",
+                                "sanitary_products": true,
+                                "baby_changer": true,
+                                "location": {
+                                    "longitude": 11.57,
+                                    "latitude": 85.56
+                                }
+                            },
+                            "user_id": "some text"
+                        },
+                        {
+                            "id": "some text",
+                            "info": {
+                                "name": "some text",
+                                "gender": "some text",
+                                "sanitary_products": true,
+                                "baby_changer": true,
+                                "location": {
+                                    "longitude": 44.76,
+                                    "latitude": 83.35
+                                }
+                            },
+                            "user_id": "some text"
+                        }
+                    ],
+                    "fountain_ratings": [
+                        {
+                            "id": "some text",
+                            "fountain_id": "some text",
+                            "user_id": "some text",
+                            "details": {
+                                "pressure": 25,
+                                "taste": 17,
+                                "temperature": 29
+                            }
+                        },
+                        {
+                            "id": "some text",
+                            "fountain_id": "some text",
+                            "user_id": "some text",
+                            "details": {
+                                "pressure": 41,
+                                "taste": 2,
+                                "temperature": 47
+                            }
+                        }
+                    ],
+                    "bathroom_ratings": [
+                        {
+                            "id": "some text",
+                            "bathroom_id": "some text",
+                            "user_id": "some text",
+                            "details": {
+                                "cleanliness": 7,
+                                "decor": 85,
+                                "drying": 23,
+                                "privacy": 57,
+                                "washing": 1
+                            }
+                        },
+                        {
+                            "id": "some text",
+                            "bathroom_id": "some text",
+                            "user_id": "some text",
+                            "details": {
+                                "cleanliness": 28,
+                                "decor": 7,
+                                "drying": 74,
+                                "privacy": 32,
+                                "washing": 85
+                            }
+                        }
+                    ],
+                    "pictures": [
+                        {
+                            "id": "some text",
+                            "entity_id": "some text",
+                            "info": {
+                                "url": "some text"
+                            },
+                            "user_id": "some text"
+                        },
+                        {
+                            "id": "some text",
+                            "entity_id": "some text",
+                            "info": {
+                                "url": "some text"
+                            },
+                            "user_id": "some text"
+                        }
+                    ]
                 }
             }
         },
