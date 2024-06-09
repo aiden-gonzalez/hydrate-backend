@@ -1340,7 +1340,15 @@
             },
             "parameters": [
                 {
+                    "examples": {
+                        "username": {
+                            "value": "\"some text\""
+                        }
+                    },
                     "name": "username",
+                    "schema": {
+                        "type": "string"
+                    },
                     "in": "path",
                     "required": true
                 }
