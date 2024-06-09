@@ -898,6 +898,50 @@ export interface paths {
       };
     };
   };
+  "/api/profiles/{username}/contributions": {
+    /**
+     * Get user contributions
+     * @description Uses an optimized database query to get user created fountains, bathrooms, ratings, and pictures. All contributions by that user basically.
+     */
+    get: {
+      parameters: {
+        query?: {
+          /** @description Limit query to contributions on and after this date.  Unix epoch milliseconds timestamp. */
+          from_date?: number;
+          /** @description Limit query to contributions up to and on this date.  Unix epoch milliseconds timestamp. */
+          to_date?: number;
+        };
+        path: {
+          username: string;
+        };
+      };
+      responses: {
+        /** @description Request successful. Returns user contributions. */
+        200: {
+          content: {
+            "application/json": components["schemas"]["UserContributions"];
+          };
+        };
+        /** @description Malformed request */
+        400: {
+          content: never;
+        };
+        /** @description Authorization/authentication failed (access token invalid, or maybe not allowed to view this profile?) */
+        401: {
+          content: never;
+        };
+        /** @description User not found */
+        404: {
+          content: never;
+        };
+      };
+    };
+    parameters: {
+      path: {
+        username: string;
+      };
+    };
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -1243,6 +1287,19 @@ export interface components {
        * @example https://google.com
        */
       url: string;
+    };
+    /** @description Summary of user contributions */
+    UserContributions: {
+      /** @description Fountains created by user */
+      fountains: components["schemas"]["Fountain"][];
+      /** @description Bathrooms created by user */
+      bathrooms: components["schemas"]["Bathroom"][];
+      /** @description Fountain ratings created by user */
+      fountain_ratings: components["schemas"]["FountainRating"][];
+      /** @description Bathroom ratings created by user */
+      bathroom_ratings: components["schemas"]["BathroomRating"][];
+      /** @description Pictures created by user */
+      pictures: components["schemas"]["Picture"][];
     };
   };
   responses: never;
