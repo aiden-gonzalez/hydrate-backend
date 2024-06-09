@@ -107,8 +107,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Get a group of fountains (query)"
@@ -125,9 +124,6 @@
                     "required": true
                 },
                 "responses": {
-                    "400": {
-                        "description": "Malformed request! Missing some information or not in right format."
-                    },
                     "201": {
                         "content": {
                             "application/json": {
@@ -138,14 +134,16 @@
                         },
                         "description": "Successfully added fountain!"
                     },
+                    "400": {
+                        "description": "Malformed request! Missing some information or not in right format."
+                    },
                     "401": {
                         "description": "Access token incorrect / insufficient / expired!"
                     }
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Add a fountain"
@@ -245,8 +243,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Get a profile by username"
@@ -285,8 +282,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Update user profile by username"
@@ -385,8 +381,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Get a group of bathrooms (query)"
@@ -422,8 +417,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Create (add) a bathroom"
@@ -473,8 +467,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Get ratings for a particular bathroom"
@@ -510,8 +503,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Add a bathroom rating"
@@ -541,6 +533,11 @@
                         "description": "Successful request, return rating"
                     }
                 },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
                 "summary": "Get a particular rating for a particular bathroom"
             },
             "put": {
@@ -574,8 +571,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Update bathroom rating"
@@ -620,6 +616,11 @@
                         "description": "Insufficient auth"
                     }
                 },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
                 "summary": "Get bathroom"
             },
             "put": {
@@ -653,8 +654,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Update bathroom info for a particular bathroom"
@@ -709,8 +709,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Get bathroom photos",
@@ -748,8 +747,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Add bathroom picture (link only, file hosting will have to be handled separately)"
@@ -779,6 +777,11 @@
                         "description": "Successful request, return picture"
                     }
                 },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
                 "summary": "Get a particular picture for a particular bathroom"
             },
             "delete": {
@@ -798,8 +801,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Delete a bathroom picture"
@@ -862,8 +864,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Get fountain photos",
@@ -901,8 +902,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Add fountain picture (link only, file hosting will have to be handled separately)"
@@ -932,6 +932,11 @@
                         "description": "Successful request, return picture"
                     }
                 },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
                 "summary": "Get a particular picture for a particular fountain"
             },
             "delete": {
@@ -951,8 +956,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Delete a fountain picture"
@@ -1020,8 +1024,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Get ratings for a particular fountain"
@@ -1057,8 +1060,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Add a fountain rating"
@@ -1088,6 +1090,11 @@
                         "description": "Successful request, return fountain rating"
                     }
                 },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
                 "summary": "Get a particular rating for a particular fountain"
             },
             "put": {
@@ -1121,8 +1128,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Update fountain rating"
@@ -1167,6 +1173,11 @@
                         "description": "Insufficient auth"
                     }
                 },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
                 "summary": "Get fountain"
             },
             "put": {
@@ -1200,8 +1211,7 @@
                 },
                 "security": [
                     {
-                        "Access_Token": [
-                        ]
+                        "Access_Token": []
                     }
                 ],
                 "summary": "Update fountain info for a particular fountain"
@@ -1226,6 +1236,65 @@
                 },
                 "summary": "Generic endpoint"
             }
+        },
+        "/api/profiles/{username}/contributions": {
+            "summary": "Endpoint for getting user contributions",
+            "description": "",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "from_date",
+                        "description": "Limit query to contributions on and after this date.  Unix epoch milliseconds timestamp.",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "to_date",
+                        "description": "Limit query to contributions up to and on this date.  Unix epoch milliseconds timestamp.",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserContributions"
+                                }
+                            }
+                        },
+                        "description": "Request successful. Returns user contributions."
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Authorization/authentication failed (access token invalid, or maybe not allowed to view this profile?)"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
+                "summary": "Get user contributions",
+                "description": "Uses an optimized database query to get user created fountains, bathrooms, ratings, and pictures. All contributions by that user basically."
+            },
+            "parameters": [
+                {
+                    "name": "username",
+                    "in": "path",
+                    "required": true
+                }
+            ]
         }
     },
     "components": {
@@ -1811,6 +1880,54 @@
                         "url": "https://google.com"
                     }
                 ]
+            },
+            "UserContributions": {
+                "description": "Summary of user contributions",
+                "required": [
+                    "fountains",
+                    "bathrooms",
+                    "fountain_ratings",
+                    "bathroom_ratings",
+                    "pictures"
+                ],
+                "type": "object",
+                "properties": {
+                    "fountains": {
+                        "description": "Fountains created by user",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Fountain"
+                        }
+                    },
+                    "bathrooms": {
+                        "description": "Bathrooms created by user",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Bathroom"
+                        }
+                    },
+                    "fountain_ratings": {
+                        "description": "Fountain ratings created by user",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FountainRating"
+                        }
+                    },
+                    "bathroom_ratings": {
+                        "description": "Bathroom ratings created by user",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BathroomRating"
+                        }
+                    },
+                    "pictures": {
+                        "description": "Pictures created by user",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Picture"
+                        }
+                    }
+                }
             }
         },
         "securitySchemes": {
