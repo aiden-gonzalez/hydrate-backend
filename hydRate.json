@@ -1379,6 +1379,14 @@
                     "id": {
                         "description": "Unique user id (not technically necessary but helpful)",
                         "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Created timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
+                    },
+                    "updated_at": {
+                        "description": "Updated timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
                     }
                 },
                 "example": {
@@ -1442,6 +1450,14 @@
                     "details": {
                         "$ref": "#/components/schemas/FountainRatingDetails",
                         "description": "Details of fountain rating"
+                    },
+                    "created_at": {
+                        "description": "Created timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
+                    },
+                    "updated_at": {
+                        "description": "Updated timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
                     }
                 },
                 "example": {
@@ -1480,6 +1496,14 @@
                     "user_id": {
                         "description": "ID of user that created the picture.",
                         "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Created timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
+                    },
+                    "updated_at": {
+                        "description": "Updated timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
                     }
                 },
                 "example": {
@@ -1516,6 +1540,14 @@
                     "details": {
                         "$ref": "#/components/schemas/BathroomRatingDetails",
                         "description": "Details of bathroom rating"
+                    },
+                    "created_at": {
+                        "description": "Created timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
+                    },
+                    "updated_at": {
+                        "description": "Updated timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
                     }
                 },
                 "example": {
@@ -1523,12 +1555,14 @@
                     "bathroom_id": "some text",
                     "user_id": "some text",
                     "details": {
-                        "cleanliness": 3,
-                        "decor": 3,
-                        "drying": 3,
-                        "privacy": 2,
-                        "washing": 5
-                    }
+                        "cleanliness": 47,
+                        "decor": 63,
+                        "drying": 37,
+                        "privacy": 24,
+                        "washing": 56
+                    },
+                    "created_at": 46,
+                    "updated_at": 7
                 }
             },
             "UserCredentials": {
@@ -1642,6 +1676,14 @@
                     "user_id": {
                         "description": "ID of user that created the fountain.",
                         "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Created timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
+                    },
+                    "updated_at": {
+                        "description": "Updated timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
                     }
                 },
                 "example": {
@@ -1752,6 +1794,14 @@
                     "user_id": {
                         "description": "ID of user that created the bathroom.",
                         "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Created timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
+                    },
+                    "updated_at": {
+                        "description": "Updated timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
                     }
                 },
                 "example": {
@@ -1762,11 +1812,13 @@
                         "sanitary_products": true,
                         "baby_changer": true,
                         "location": {
-                            "longitude": 22.15,
-                            "latitude": 67.15
+                            "longitude": 19.94,
+                            "latitude": 21.38
                         }
                     },
-                    "user_id": "some text"
+                    "user_id": "some text",
+                    "created_at": 71,
+                    "updated_at": 78
                 }
             },
             "BathroomRatingDetails": {

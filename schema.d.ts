@@ -986,6 +986,10 @@ export interface components {
       profile: components["schemas"]["UserProfile"];
       /** @description Unique user id (not technically necessary but helpful) */
       id: string;
+      /** @description Created timestamp.  Unix epoch milliseconds. */
+      created_at?: number;
+      /** @description Updated timestamp.  Unix epoch milliseconds. */
+      updated_at?: number;
     };
     /**
      * @example {
@@ -1020,6 +1024,10 @@ export interface components {
       user_id: string;
       /** @description Details of fountain rating */
       details: components["schemas"]["FountainRatingDetails"];
+      /** @description Created timestamp.  Unix epoch milliseconds. */
+      created_at?: number;
+      /** @description Updated timestamp.  Unix epoch milliseconds. */
+      updated_at?: number;
     };
     /**
      * @example {
@@ -1040,6 +1048,10 @@ export interface components {
       info: components["schemas"]["PictureInfo"];
       /** @description ID of user that created the picture. */
       user_id: string;
+      /** @description Created timestamp.  Unix epoch milliseconds. */
+      created_at?: number;
+      /** @description Updated timestamp.  Unix epoch milliseconds. */
+      updated_at?: number;
     };
     /**
      * @example {
@@ -1047,12 +1059,14 @@ export interface components {
      *   "bathroom_id": "some text",
      *   "user_id": "some text",
      *   "details": {
-     *     "cleanliness": 3,
-     *     "decor": 3,
-     *     "drying": 3,
-     *     "privacy": 2,
-     *     "washing": 5
-     *   }
+     *     "cleanliness": 47,
+     *     "decor": 63,
+     *     "drying": 37,
+     *     "privacy": 24,
+     *     "washing": 56
+     *   },
+     *   "created_at": 46,
+     *   "updated_at": 7
      * }
      */
     BathroomRating: {
@@ -1064,6 +1078,10 @@ export interface components {
       user_id: string;
       /** @description Details of bathroom rating */
       details: components["schemas"]["BathroomRatingDetails"];
+      /** @description Created timestamp.  Unix epoch milliseconds. */
+      created_at?: number;
+      /** @description Updated timestamp.  Unix epoch milliseconds. */
+      updated_at?: number;
     };
     /**
      * @description Set of login credentials
@@ -1142,6 +1160,10 @@ export interface components {
       info: components["schemas"]["FountainInfo"];
       /** @description ID of user that created the fountain. */
       user_id: string;
+      /** @description Created timestamp.  Unix epoch milliseconds. */
+      created_at?: number;
+      /** @description Updated timestamp.  Unix epoch milliseconds. */
+      updated_at?: number;
     };
     /**
      * @example {
@@ -1195,11 +1217,13 @@ export interface components {
      *     "sanitary_products": true,
      *     "baby_changer": true,
      *     "location": {
-     *       "longitude": 22.15,
-     *       "latitude": 67.15
+     *       "longitude": 19.94,
+     *       "latitude": 21.38
      *     }
      *   },
-     *   "user_id": "some text"
+     *   "user_id": "some text",
+     *   "created_at": 71,
+     *   "updated_at": 78
      * }
      */
     Bathroom: {
@@ -1209,6 +1233,10 @@ export interface components {
       info: components["schemas"]["BathroomInfo"];
       /** @description ID of user that created the bathroom. */
       user_id: string;
+      /** @description Created timestamp.  Unix epoch milliseconds. */
+      created_at?: number;
+      /** @description Updated timestamp.  Unix epoch milliseconds. */
+      updated_at?: number;
     };
     /**
      * @description Actual details of bathroom rating
