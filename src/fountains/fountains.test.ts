@@ -338,6 +338,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    // Copy new updated at
+    createdFountains[0].updated_at = res.message.updated_at;
     expect(createdFountains[0]).to.deep.equal(res.message);
   });
 
@@ -404,7 +406,10 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_CREATED);
+    // Copy generated properties
     pictureToCreate.id = res.message.id;
+    pictureToCreate.created_at = res.message.created_at;
+    pictureToCreate.updated_at = res.message.updated_at;
     expect(pictureToCreate).to.deep.equal(res.message);
   });
 
@@ -711,12 +716,10 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     // Try to update fountain rating
     await simulateRouter(req, res, updateFountainRatingFuncs);
 
-    // Ignore updatedAt
-    delete createdFountainRatings[0]["updatedAt"];
-    delete res.message.updatedAt;
-
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    // Copy new updated at
+    createdFountainRatings[0].updated_at = res.message.updated_at;
     expect(createdFountainRatings[0]).to.deep.equal(res.message);
   });
 });

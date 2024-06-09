@@ -19,15 +19,15 @@ const propsToClean = ['_id', '__v'];
 
 // FOUNTAIN OR BATHROOM (FOB)
 export async function createFob(fobModel : Model<IDbFob>, fob : IFob) : Promise<IFob> {
-  return cleanEntityId<IFob>(iDbFobToIFob(await createEntity<IDbFob>(fobModel, iFobToIDbFob(fob))), "info");
+  return cleanEntityIdWithTimestamps<IFob>(iDbFobToIFob(await createEntity<IDbFob>(fobModel, iFobToIDbFob(fob))), "info");
 }
 
 export async function getFob(fobModel : Model<IDbFob>, fobId : string) : Promise<IFob> {
-  return cleanEntityId<IFob>(iDbFobToIFob(await fetchEntity<IDbFob>(fobModel, { id: fobId })), "info");
+  return cleanEntityIdWithTimestamps<IFob>(iDbFobToIFob(await fetchEntity<IDbFob>(fobModel, { id: fobId })), "info");
 }
 
 export async function updateFobById(fobModel : Model<IDbFob>, fobId : string, fobInfo : IFobInfo) : Promise<IFob> {
-  return cleanEntityId<IFob>(iDbFobToIFob(await updateEntity<IDbFob>(fobModel, { id: fobId }, { info: iFobInfoToIDbFobInfo(fobInfo) })), "info");
+  return cleanEntityIdWithTimestamps<IFob>(iDbFobToIFob(await updateEntity<IDbFob>(fobModel, { id: fobId }, { info: iFobInfoToIDbFobInfo(fobInfo) })), "info");
 }
 
 export async function queryFob(fobModel : Model<IDbFob>, queryParams : IFountainQueryParams | IBathroomQueryParams) : Promise<Array<IFob>> {
@@ -54,49 +54,49 @@ export async function queryFob(fobModel : Model<IDbFob>, queryParams : IFountain
     }
   }
 
-  return cleanArrayEntityId<IFob>((await queryEntities<IDbFob>(fobModel, mongoQuery)).map((dbFob : IDbFob) => iDbFobToIFob(dbFob)), "info");
+  return cleanArrayEntityIdWithTimestamps<IFob>((await queryEntities<IDbFob>(fobModel, mongoQuery)).map((dbFob : IDbFob) => iDbFobToIFob(dbFob)), "info");
 }
 
 // RATINGS
 export async function createRating(ratingModel : Model<IFobRating>, rating: IFobRating) : Promise<IFobRating> {
-  return cleanEntityId<IFobRating>(await createEntity<IFobRating>(ratingModel, rating), "details");
+  return cleanEntityIdWithTimestamps<IFobRating>(await createEntity<IFobRating>(ratingModel, rating), "details");
 }
 
 export async function getRatings(ratingModel : Model<IFobRating>, entityId : string) : Promise<IFobRating[]> {
-  return cleanArrayEntityId<IFobRating>(await queryEntities<IFobRating>(ratingModel, { $or: [ { fountain_id: entityId }, { bathroom_id: entityId } ] }), "details");
+  return cleanArrayEntityIdWithTimestamps<IFobRating>(await queryEntities<IFobRating>(ratingModel, { $or: [ { fountain_id: entityId }, { bathroom_id: entityId } ] }), "details");
 }
 
 export async function getRatingsByUser(ratingModel : Model<IFobRating>, userId : string) : Promise<IFobRating[]> {
-  return cleanArrayEntityId<IFobRating>(await queryEntities<IFobRating>(ratingModel, { user_id: userId }), "details");
+  return cleanArrayEntityIdWithTimestamps<IFobRating>(await queryEntities<IFobRating>(ratingModel, { user_id: userId }), "details");
 }
 
 export async function getRating(ratingModel : Model<IFobRating>, ratingId : string) : Promise<IFobRating> {
-  return cleanEntityId<IFobRating>(await fetchEntity<IFobRating>(ratingModel, { id: ratingId }), "details");
+  return cleanEntityIdWithTimestamps<IFobRating>(await fetchEntity<IFobRating>(ratingModel, { id: ratingId }), "details");
 }
 
 export async function updateRatingById(ratingModel : Model<IFobRating>, ratingId : string, ratingDetails : IFobRatingDetails) : Promise<IFobRating> {
-  return cleanEntityId<IFobRating>(await updateEntity<IFobRating>(ratingModel, { id: ratingId }, {details: ratingDetails}), "details");
+  return cleanEntityIdWithTimestamps<IFobRating>(await updateEntity<IFobRating>(ratingModel, { id: ratingId }, {details: ratingDetails}), "details");
 }
 
 // USER
 export async function createUser(user : IUser) : Promise<IUser> {
-  return cleanEntityId<IUser>(await createEntity<IUser>(User, user), "profile");
+  return cleanEntityIdWithTimestamps<IUser>(await createEntity<IUser>(User, user), "profile");
 }
 
 export async function fetchUserById (userId: string) : Promise<IUser> {
-  return cleanEntityId<IUser>(await fetchEntity<IUser>(User, { id: userId }), "profile");
+  return cleanEntityIdWithTimestamps<IUser>(await fetchEntity<IUser>(User, { id: userId }), "profile");
 }
 
 export async function fetchUserByUsername (username: string) : Promise<IUser> {
-  return cleanEntityId<IUser>(await fetchEntity<IUser>(User, { username: username }), "profile");
+  return cleanEntityIdWithTimestamps<IUser>(await fetchEntity<IUser>(User, { username: username }), "profile");
 }
 
 export async function fetchUserByEmail (email: string) : Promise<IUser> {
-  return cleanEntityId<IUser>(await fetchEntity<IUser>(User, { email: email }), "profile");
+  return cleanEntityIdWithTimestamps<IUser>(await fetchEntity<IUser>(User, { email: email }), "profile");
 }
 
 export async function updateUserProfileByUsername (username: string, profile: IUserProfile) : Promise<IUserProfile> {
-  return cleanEntityId<IUser>(await updateEntity<IUser>(User, {username: username}, {profile: profile}), "profile").profile;
+  return cleanEntityIdWithTimestamps<IUser>(await updateEntity<IUser>(User, {username: username}, {profile: profile}), "profile").profile;
 }
 
 export async function getUserContributionsById (userId: string, params: IUserContributionQueryParams) : Promise<IUserContributions> {
@@ -129,19 +129,19 @@ export async function getUserContributionsById (userId: string, params: IUserCon
 
 // PICTURE
 export async function createPicture(picture: IPicture) : Promise<IPicture> {
-  return cleanEntityId<IPicture>(await createEntity<IPicture>(Picture, picture), "info");
+  return cleanEntityIdWithTimestamps<IPicture>(await createEntity<IPicture>(Picture, picture), "info");
 }
 
 export async function getPictureById(pictureId: string) : Promise<IPicture> {
-  return cleanEntityId<IPicture>(await fetchEntity<IPicture>(Picture, { id: pictureId }), "info");
+  return cleanEntityIdWithTimestamps<IPicture>(await fetchEntity<IPicture>(Picture, { id: pictureId }), "info");
 }
 
 export async function getPictures(entityId : string) : Promise<IPicture[]> {
-  return cleanArrayEntityId<IPicture>(await queryEntities<IPicture>(Picture, { entity_id: entityId }), "info");
+  return cleanArrayEntityIdWithTimestamps<IPicture>(await queryEntities<IPicture>(Picture, { entity_id: entityId }), "info");
 }
 
 export async function getPicturesByUser(userId : string) : Promise<IPicture[]> {
-  return cleanArrayEntityId<IPicture>(await queryEntities<IPicture>(Picture, { user_id: userId }), "info");
+  return cleanArrayEntityIdWithTimestamps<IPicture>(await queryEntities<IPicture>(Picture, { user_id: userId }), "info");
 }
 
 export function deletePicture(pictureId: string) : Promise<void> {
@@ -153,7 +153,7 @@ function createEntity<Type>(entityModel : Model<Type>, entityDetails : Type) : P
   return new Promise((resolve, reject) => {
     const entityDoc = new entityModel(entityDetails);
     entityDoc.save().then((createdEntity) => {
-      resolve(getCleanObject(createdEntity));
+      resolve(getCleanObjectWithTimestamps(createdEntity));
     }).catch((error) => {
       reject(error);
     });
@@ -164,7 +164,7 @@ function fetchEntity<Type>(entityModel : Model<Type>, query : any) : Promise<Typ
   return new Promise((resolve, reject) => {
     entityModel.findOne(query).lean().exec().then((dbEntity) => {
       if (dbEntity !== null) {
-        resolve(cleanEntityId(dbEntity));
+        resolve(cleanEntityIdWithTimestamps(dbEntity));
       } else {
         resolve(null);
       }
@@ -177,7 +177,7 @@ function fetchEntity<Type>(entityModel : Model<Type>, query : any) : Promise<Typ
 function queryEntities<Type>(entityModel : Model<Type>, query : any) : Promise<Type[]> {
   return new Promise((resolve, reject) => {
     entityModel.find(query).lean().exec().then((dbEntities) => {
-      resolve(dbEntities.map((entity) => cleanEntityId(entity)));
+      resolve(dbEntities.map((entity) => cleanEntityIdWithTimestamps(entity)));
     }).catch((error) => {
       reject(error);
     })
@@ -192,7 +192,7 @@ function updateEntity<Type>(entityModel: Model<Type>, filter : any, update : any
       { new: true }
     ).lean().exec().then((updatedEntity) => {
       if (updatedEntity !== null) {
-        resolve(cleanEntityId(updatedEntity));
+        resolve(cleanEntityIdWithTimestamps(updatedEntity));
       } else {
         resolve(null);
       }
@@ -212,18 +212,18 @@ function deleteEntity<Type>(entityModel: Model<Type>, query : any) : Promise<voi
   })
 }
 
-// Array version of cleanEntityId
-function cleanArrayEntityId<Type>(entities : Type[], propertyName? : string) : Type[] {
+// Array version of cleanEntityIdWithTimestamps
+function cleanArrayEntityIdWithTimestamps<Type>(entities : Type[], propertyName? : string) : Type[] {
   if (entities === null) return null;
 
   for (let i = 0; i < entities.length; i++) {
-    cleanEntityId<Type>(entities[i], propertyName);
+    cleanEntityIdWithTimestamps<Type>(entities[i], propertyName);
   }
   return entities;
 }
 
 // Removes mongo ID from specified property of entity
-function cleanEntityId<Type>(entity : any, propertyName? : string) : Type {
+function cleanEntityIdWithTimestamps<Type>(entity : any, propertyName? : string) : Type {
   if (entity === null) return null;
 
   for (const prop of propsToClean) {
@@ -234,12 +234,12 @@ function cleanEntityId<Type>(entity : any, propertyName? : string) : Type {
     }
   }
 
-  return entity;
+  return processTimestamps(entity);
 }
 
 // Returns an object with the top-level mongo ID removed
-function getCleanObject(mongoObject : any) : any {
-  if (mongoObject === null) return null;
+function getCleanObjectWithTimestamps(mongoObject : any) : any {
+  if (mongoObject === null || mongoObject === undefined) return mongoObject;
 
   const entityObject = mongoObject.toObject();
   for (const prop of propsToClean) {
@@ -248,5 +248,20 @@ function getCleanObject(mongoObject : any) : any {
     }
   }
 
-  return entityObject;
+  return processTimestamps(entityObject);
+}
+
+function processTimestamps(entity : any) : any {
+  if (entity === null || entity === undefined) return entity;
+
+  if (entity && entity.hasOwnProperty("createdAt")) {
+    entity.created_at = (entity.createdAt as Date).getTime();
+    delete entity.createdAt;
+  }
+  if (entity && entity.hasOwnProperty("updatedAt")) {
+    entity.updated_at = (entity.updatedAt as Date).getTime();
+    delete entity.updatedAt;
+  }
+
+  return entity;
 }

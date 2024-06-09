@@ -60,7 +60,9 @@ const bathroomInfoSchema : Schema = new Schema<IDbBathroomInfo>({
 export type IDbBathroom = {
   id: string,
   user_id: string,
-  info: IDbBathroomInfo
+  info: IDbBathroomInfo,
+  created_at?: number,
+  updated_at?: number
 };
 const bathroomSchema = new Schema<IDbBathroom>({
   id: {
@@ -170,7 +172,9 @@ const fountainInfoSchema : Schema = new Schema<IDbFountainInfo>({
 export type IDbFountain = {
   id: string,
   user_id: string,
-  info: IDbFountainInfo
+  info: IDbFountainInfo,
+  created_at?: number,
+  updated_at?: number
 }
 const fountainSchema : Schema = new Schema<IDbFountain>({
   id: {

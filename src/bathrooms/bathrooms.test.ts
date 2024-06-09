@@ -352,6 +352,8 @@ describe("BATHROOMS: CRUD of all kinds", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    // Copy new updatedAt timestamp
+    createdBathrooms[0].updated_at = res.message.updated_at;
     expect(createdBathrooms[0]).to.deep.equal(res.message);
   });
 
@@ -422,7 +424,10 @@ describe("BATHROOMS: CRUD of all kinds", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_CREATED);
+    // Copy generated properties
     pictureToCreate.id = res.message.id;
+    pictureToCreate.created_at = res.message.created_at;
+    pictureToCreate.updated_at = res.message.updated_at;
     expect(pictureToCreate).to.deep.equal(res.message);
   });
 
@@ -729,12 +734,10 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     // Try to update bathroom rating
     await simulateRouter(req, res, updateBathroomRatingFuncs);
 
-    // Ignore updatedAt
-    delete createdBathroomRatings[0]["updatedAt"];
-    delete res.message.updatedAt;
-
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    // Copy new updated at
+    createdBathroomRatings[0].updated_at = res.message.updated_at;
     expect(createdBathroomRatings[0]).to.deep.equal(res.message);
   });
 });
