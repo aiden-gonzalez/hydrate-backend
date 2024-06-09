@@ -19,6 +19,11 @@ import {IUserContributions, IUserProfile} from "./types";
 import {expect} from "chai";
 import {Bathroom, BathroomRating, Fountain, FountainRating} from "../mongoDB";
 
+function copyTimestamps(obj_a, obj_b) {
+  obj_a.created_at = obj_b.created_at;
+  obj_a.updated_at = obj_b.updated_at;
+}
+
 describe("PROFILES: getting and updating profiles", () => {
   const getProfileFuncs = [authenticateRequest, getUserMiddleware, getProfileForUser];
   const updateProfileFuncs = [authenticateRequest, getUserMiddleware, profilePermissionCheck, updateProfile];
@@ -204,6 +209,13 @@ describe("PROFILES: getting and updating profiles", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    // Copy timestamps
+    copyTimestamps(contributions.fountains[0], res.message.fountains[0]);
+    copyTimestamps(contributions.bathrooms[0], res.message.bathrooms[0]);
+    copyTimestamps(contributions.fountain_ratings[0], res.message.fountain_ratings[0]);
+    copyTimestamps(contributions.bathroom_ratings[0], res.message.bathroom_ratings[0]);
+    copyTimestamps(contributions.pictures[0], res.message.pictures[0]);
+    copyTimestamps(contributions.pictures[1], res.message.pictures[1]);
     expect(contributions).to.deep.equal(res.message);
   });
 
