@@ -34,7 +34,7 @@ import {ILocation, IUser} from "../utils/types";
 import {Bathroom, BathroomRating} from "../mongoDB";
 import {calculateDistance} from "../utils/calculation";
 
-describe("FOUNTAINS: CRUD of all kinds", () => {
+describe("BATHROOMS: CRUD of all kinds", () => {
   const getBathroomsFuncs = [authenticateRequest, setupBathroomReq, getFobs];
   const createBathroomFuncs = [authenticateRequest, setupBathroomReq, createFob];
   const getBathroomFuncs = [authenticateRequest, setupBathroomReq, getFobById];
@@ -50,10 +50,11 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
   // TODO add more unhappy paths? Malformed data, bad responses?
 
-  async function createBathrooms() {
+  async function createBathrooms(user_id = generateUserId()) {
     // Create bathrooms
     const bathroomOne : IBathroom = {
       id: generateBathroomId(),
+      user_id: user_id,
       info: {
         name: "Bathroom One",
         gender: "female",
@@ -67,6 +68,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
     const bathroomTwo : IBathroom = {
       id: generateBathroomId(),
+      user_id: user_id,
       info: {
         name: "Bathroom Two",
         gender: "male",
@@ -80,6 +82,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
     const bathroomThree : IBathroom = {
       id: generateBathroomId(),
+      user_id: user_id,
       info: {
         name: "Bathroom Three",
         gender: "female",
@@ -145,11 +148,11 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     return [createdBathroomRatingOne, createdBathroomRatingTwo, createdBathroomRatingThree];
   }
 
-  async function createPictures(entityId : string) {
+  async function createPictures(entityId : string, userId : string) {
     // Create pictures
-    const pictureOne = getPicture(entityId, "https://www.google.com");
-    const pictureTwo = getPicture(entityId, "https://www.facebook.com");
-    const pictureThree = getPicture(entityId, "https://www.mail.google.com");
+    const pictureOne = getPicture(entityId, userId, "https://www.google.com");
+    const pictureTwo = getPicture(entityId, userId, "https://www.facebook.com");
+    const pictureThree = getPicture(entityId, userId, "https://www.mail.google.com");
 
     const createdPictureOne = await database.createPicture(pictureOne);
     const createdPictureTwo = await database.createPicture(pictureTwo);
@@ -411,8 +414,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     req.params = {
       id: createdBathrooms[0].id
     };
-    const pictureToCreate = getPicture();
-    pictureToCreate.entity_id = createdBathrooms[0].id;
+    const pictureToCreate = getPicture(createdBathrooms[0].id, user.id);
     req.body = pictureToCreate.info; // picture info with valid link
 
     // Try to create bathroom picture
@@ -432,7 +434,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Add pictures
-    await createPictures(createdBathrooms[0].id);
+    await createPictures(createdBathrooms[0].id, generateUserId());
 
     // Set up request
     req.params = {
@@ -456,7 +458,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Add pictures
-    const createdPictures = await createPictures(createdBathrooms[0].id);
+    const createdPictures = await createPictures(createdBathrooms[0].id, user.id);
 
     // Set up request
     req.params = {
@@ -479,7 +481,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Add pictures
-    const createdPictures = await createPictures(createdBathrooms[0].id);
+    const createdPictures = await createPictures(createdBathrooms[0].id, generateUserId());
 
     // Set up request
     req.params = {
@@ -503,7 +505,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Add pictures
-    const createdPictures = await createPictures(createdBathrooms[0].id);
+    const createdPictures = await createPictures(createdBathrooms[0].id, user.id);
 
     // Set up request
     req.params = {
@@ -527,7 +529,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Add pictures
-    const createdPictures = await createPictures(createdBathrooms[0].id);
+    const createdPictures = await createPictures(createdBathrooms[0].id, user.id);
 
     // Set up request
     req.params = {

@@ -1,12 +1,18 @@
 import 'dotenv/config';
 import mongoose from "mongoose";
 import {ILocation, IPicture, IUser} from "./utils/types";
-import {generateBathroomId, generateFountainId, generatePictureId, generateUserId} from "./utils/generate";
+import {
+  generateBathroomId, generateBathroomRatingId,
+  generateFountainId,
+  generateFountainRatingId,
+  generatePictureId,
+  generateUserId
+} from "./utils/generate";
 import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
 import {expect} from "chai";
-import {IFountain, IFountainInfo, IFountainRatingDetails} from "./fountains/types";
-import {IBathroom, IBathroomInfo, IBathroomRatingDetails} from "./bathrooms/types";
+import {IFountain, IFountainInfo, IFountainRating, IFountainRatingDetails} from "./fountains/types";
+import {IBathroom, IBathroomInfo, IBathroomRating, IBathroomRatingDetails} from "./bathrooms/types";
 
 // Tell mongoose to use es6 Promise implementation
 mongoose.Promise = global.Promise;
@@ -73,9 +79,10 @@ export function getLocation (latitude  = 40.4237, longitude  = -86.9212) : ILoca
   } as ILocation;
 }
 
-export function getFountain (name  = "fountain name", bottle_filler  = false, location : ILocation = getLocation()) : IFountain {
+export function getFountain (user_id = generateUserId(), name  = "fountain name", bottle_filler  = false, location : ILocation = getLocation()) : IFountain {
   return {
     id: generateFountainId(),
+    user_id: user_id,
     info: {
       name: name,
       bottle_filler: bottle_filler,
@@ -84,9 +91,10 @@ export function getFountain (name  = "fountain name", bottle_filler  = false, lo
   } as IFountain;
 }
 
-export function getBathroom (name = "bathroom name", gender = "male", baby_changer = false, sanitary_products = false, location : ILocation = getLocation()) : IBathroom {
+export function getBathroom (user_id = generateUserId(), name = "bathroom name", gender = "male", baby_changer = false, sanitary_products = false, location : ILocation = getLocation()) : IBathroom {
   return {
     id: generateBathroomId(),
+    user_id: user_id,
     info: {
       name: name,
       gender: gender,
@@ -97,12 +105,30 @@ export function getBathroom (name = "bathroom name", gender = "male", baby_chang
   } as IBathroom;
 }
 
+export function getFountainRating (fountain_id = generateFountainId(), user_id = generateUserId(), details = getFountainRatingDetails()) : IFountainRating {
+  return {
+    id: generateFountainRatingId(),
+    fountain_id: fountain_id,
+    user_id: user_id,
+    details: details
+  } as IFountainRating;
+}
+
 export function getFountainRatingDetails (pressure = 3, taste = 3, temperature = 3) : IFountainRatingDetails {
   return {
     pressure: pressure,
     taste: taste,
     temperature: temperature
   } as IFountainRatingDetails;
+}
+
+export function getBathroomRating (bathroom_id = generateBathroomId(), user_id = generateUserId(), details = getBathroomRatingDetails()) : IBathroomRating {
+  return {
+    id: generateBathroomRatingId(),
+    bathroom_id: bathroom_id,
+    user_id: user_id,
+    details: details
+  } as IBathroomRating;
 }
 
 export function getBathroomRatingDetails (cleanliness = 3, decor = 3, drying = 3, privacy = 3, washing = 3) : IBathroomRatingDetails {
@@ -115,10 +141,11 @@ export function getBathroomRatingDetails (cleanliness = 3, decor = 3, drying = 3
   } as IBathroomRatingDetails;
 }
 
-export function getPicture (entity_id = generateFountainId(), url = "https://www.google.com") : IPicture {
+export function getPicture (entity_id = generateFountainId(), user_id = generateUserId(), url = "https://www.google.com") : IPicture {
   return {
     id: generatePictureId(),
     entity_id: entity_id,
+    user_id: user_id,
     info: {
       url: url
     }

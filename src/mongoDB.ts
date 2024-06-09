@@ -59,6 +59,7 @@ const bathroomInfoSchema : Schema = new Schema<IDbBathroomInfo>({
 // Bathroom
 export type IDbBathroom = {
   id: string,
+  user_id: string,
   info: IDbBathroomInfo
 };
 const bathroomSchema = new Schema<IDbBathroom>({
@@ -67,6 +68,11 @@ const bathroomSchema = new Schema<IDbBathroom>({
     match: regexes.bathroomIdRegex,
     required: true,
     unique: true
+  },
+  user_id: {
+    type: String,
+    match: regexes.userIdRegex,
+    required: true
   },
   info: {
     type: bathroomInfoSchema,
@@ -163,6 +169,7 @@ const fountainInfoSchema : Schema = new Schema<IDbFountainInfo>({
 // Fountain
 export type IDbFountain = {
   id: string,
+  user_id: string,
   info: IDbFountainInfo
 }
 const fountainSchema : Schema = new Schema<IDbFountain>({
@@ -171,6 +178,11 @@ const fountainSchema : Schema = new Schema<IDbFountain>({
     match: regexes.fountainIdRegex,
     required: true,
     unique: true
+  },
+  user_id: {
+    type: String,
+    match: regexes.userIdRegex,
+    required: true
   },
   info: {
     type: fountainInfoSchema,
@@ -319,6 +331,11 @@ const pictureSchema : Schema = new Schema<utilTypes.IPicture>({
     match: regexes.pictureIdRegex,
     required: true,
     unique: true
+  },
+  user_id: {
+    type: String,
+    match: regexes.userIdRegex,
+    required: true
   },
   entity_id: {
     type: String,

@@ -48,10 +48,11 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
   // TODO add more unhappy paths? Malformed data, bad responses?
 
-  async function createFountains() {
+  async function createFountains(user_id = generateUserId()) {
     // Create fountains
     const fountainOne : IFountain = {
       id: generateFountainId(),
+      user_id: user_id,
       info: {
         name: "Fountain One",
         bottle_filler: true,
@@ -63,6 +64,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
     const fountainTwo : IFountain = {
       id: generateFountainId(),
+      user_id: user_id,
       info: {
         name: "Fountain Two",
         bottle_filler: false,
@@ -74,6 +76,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
     const fountainThree : IFountain = {
       id: generateFountainId(),
+      user_id: user_id,
       info: {
         name: "Fountain Three",
         bottle_filler: true,
@@ -131,11 +134,11 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     return [createdFountainRatingOne, createdFountainRatingTwo, createdFountainRatingThree];
   }
 
-  async function createPictures(entityId : string) {
+  async function createPictures(entityId : string, userId : string) {
     // Create pictures
-    const pictureOne = getPicture(entityId, "https://www.google.com");
-    const pictureTwo = getPicture(entityId, "https://www.facebook.com");
-    const pictureThree = getPicture(entityId, "https://www.mail.google.com");
+    const pictureOne = getPicture(entityId, userId, "https://www.google.com");
+    const pictureTwo = getPicture(entityId, userId, "https://www.facebook.com");
+    const pictureThree = getPicture(entityId, userId, "https://www.mail.google.com");
 
     const createdPictureOne = await database.createPicture(pictureOne);
     const createdPictureTwo = await database.createPicture(pictureTwo);
@@ -393,8 +396,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     req.params = {
       id: createdFountains[0].id
     };
-    const pictureToCreate = getPicture();
-    pictureToCreate.entity_id = createdFountains[0].id;
+    const pictureToCreate = getPicture(createdFountains[0].id, user.id);
     req.body = pictureToCreate.info; // valid picture link
 
     // Try to create fountain picture
@@ -414,7 +416,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Add pictures
-    await createPictures(createdFountains[0].id);
+    await createPictures(createdFountains[0].id, generateUserId());
 
     // Set up request
     req.params = {
@@ -438,7 +440,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Add pictures
-    const createdPictures = await createPictures(createdFountains[0].id);
+    const createdPictures = await createPictures(createdFountains[0].id, user.id);
 
     // Set up request
     req.params = {
@@ -461,7 +463,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Add pictures
-    const createdPictures = await createPictures(createdFountains[0].id);
+    const createdPictures = await createPictures(createdFountains[0].id, generateUserId());
 
     // Set up request
     req.params = {
@@ -485,7 +487,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Add pictures
-    const createdPictures = await createPictures(createdFountains[0].id);
+    const createdPictures = await createPictures(createdFountains[0].id, user.id);
 
     // Set up request
     req.params = {
@@ -509,7 +511,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Add pictures
-    const createdPictures = await createPictures(createdFountains[0].id);
+    const createdPictures = await createPictures(createdFountains[0].id, user.id);
 
     // Set up request
     req.params = {

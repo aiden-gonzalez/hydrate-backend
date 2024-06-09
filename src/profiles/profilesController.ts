@@ -55,7 +55,7 @@ export async function getContributionsForUser(req, res) {
   const userId : string = req.dbUser.id;
 
   return new Promise((resolve) => {
-    database.getUserContributionsById(userId, req.params as IUserContributionQueryParams).then((contributions) => {
+    database.getUserContributionsById(userId, req.query as IUserContributionQueryParams).then((contributions) => {
       resolve(res.status(HTTP_OK).json(contributions));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));

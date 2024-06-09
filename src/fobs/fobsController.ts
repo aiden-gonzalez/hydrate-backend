@@ -57,7 +57,10 @@ export function getFobs(req, res) {
       bottle_filler: req.query?.bottle_filler,
       latitude: req.query?.latitude,
       longitude: req.query?.longitude,
-      radius: req.query?.radius
+      radius: req.query?.radius,
+      user_id: req.query?.user_id,
+      from_date: req.query?.from_date,
+      to_date: req.query?.to_date
     } as IFountainQueryParams;
   } else {
     queryParams = {
@@ -66,7 +69,10 @@ export function getFobs(req, res) {
       gender: req.query?.gender,
       latitude: req.query?.latitude,
       longitude: req.query?.longitude,
-      radius: req.query?.radius
+      radius: req.query?.radius,
+      user_id: req.query?.user_id,
+      from_date: req.query?.from_date,
+      to_date: req.query?.to_date
     } as IBathroomQueryParams;
   }
   // Execute query
@@ -86,6 +92,7 @@ export function createFob(req, res) {
   // Create fob
   const newFob = {
     id: req.isFountain ? generateFountainId() : generateBathroomId(),
+    user_id: req.user.id,
     info: fobInfo
   } as IFob;
 
@@ -152,6 +159,7 @@ export function addFobPicture(req, res) {
   // Create picture
   const newPicture : IPicture = {
     id: generatePictureId(),
+    user_id: req.user.id,
     entity_id: fobId,
     info: pictureInfo
   }

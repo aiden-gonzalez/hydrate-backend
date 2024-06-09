@@ -37,6 +37,7 @@ export function iDbFobInfoToIFobInfo(dbFobInfo : IDbFobInfo) : IFobInfo {
 export function iFobToIDbFob(fob: IFob) : IDbFob {
   return {
     id: fob.id,
+    user_id: fob.user_id,
     info: iFobInfoToIDbFobInfo(fob.info)
   } as IDbFob;
 }
@@ -44,6 +45,7 @@ export function iFobToIDbFob(fob: IFob) : IDbFob {
 export function iDbFobToIFob(dbFob : IDbFob) : IFob {
   return {
     id: dbFob.id,
+    user_id: dbFob.user_id,
     info: {...dbFob.info, location: iDbLocationToILocation(dbFob.info.location)}
   } as IFob;
 }
