@@ -1,5 +1,5 @@
-import {User, Picture} from "../mongoDB";
-import {IUserProfile} from "../profiles/types";
+import {User, Picture, Fountain, Bathroom, FountainRating, BathroomRating} from "../mongoDB";
+import {IUserContributionQueryParams, IUserContributions, IUserProfile} from "../profiles/types";
 import { IPicture, IUser } from "./types";
 import {Model} from "mongoose";
 import {IFountainQueryParams} from "../fountains/types";
@@ -63,6 +63,10 @@ export async function getRatings(ratingModel : Model<IFobRating>, entityId : str
   return cleanArrayEntityId<IFobRating>(await queryEntities<IFobRating>(ratingModel, { $or: [ { fountain_id: entityId }, { bathroom_id: entityId } ] }), "details");
 }
 
+export async function getRatingsByUser(ratingModel : Model<IFobRating>, userId : string) : Promise<IFobRating[]> {
+  return cleanArrayEntityId<IFobRating>(await queryEntities<IFobRating>(ratingModel, { user_id: userId }), "details");
+}
+
 export async function getRating(ratingModel : Model<IFobRating>, ratingId : string) : Promise<IFobRating> {
   return cleanEntityId<IFobRating>(await fetchEntity<IFobRating>(ratingModel, { id: ratingId }), "details");
 }
@@ -92,23 +96,33 @@ export async function updateUserProfileByUsername (username: string, profile: IU
   return cleanEntityId<IUser>(await updateEntity<IUser>(User, {username: username}, {profile: profile}), "profile").profile;
 }
 
-// export async function getContributionsByUsername (username: string) : Promise<IUserContributions> {
-//   let promises = [];
-//   promises.push(queryFob(fountains));
-//   promises.push(queryFob(bathrooms));
-//   promises.push(getRatings(user id));
-//   promises.push(getPictures(user id));
-//
-//   Promise.all(promises).then(results=>{
-//     // results[0] will have docs of first query
-//     // results[1] will have docs of second query
-//     // and so on...
-//
-//     // you can combine all the results here and send back in response
-//   }).catch(err=>{
-//     //handle error here
-//   })
-// }
+export async function getUserContributionsById (userId: string, params: IUserContributionQueryParams) : Promise<IUserContributions> {
+  return new Promise((resolve, reject) => {
+    const promises = [
+      queryFob(Fountain, {...{user_id: userId}, params} as IFountainQueryParams),
+      queryFob(Bathroom, {...{user_id: userId}, params} as IBathroomQueryParams),
+      getRatingsByUser(FountainRating, userId),
+      getRatingsByUser(BathroomRating, userId),
+      getPicturesByUser(userId)
+    ];
+
+    Promise.all(promises).then((results) => {
+      // results[0] will have docs of first query
+      // results[1] will have docs of second query
+      // and so on...
+      const response = {
+        fountains: results[0],
+        bathrooms: results[1],
+        fountain_ratings: results[2],
+        bathroom_ratings: results[3],
+        pictures: results[4]
+      } as IUserContributions;
+      resolve(response);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
 
 // PICTURE
 export async function createPicture(picture: IPicture) : Promise<IPicture> {
@@ -121,6 +135,10 @@ export async function getPictureById(pictureId: string) : Promise<IPicture> {
 
 export async function getPictures(entityId : string) : Promise<IPicture[]> {
   return cleanArrayEntityId<IPicture>(await queryEntities<IPicture>(Picture, { entity_id: entityId }), "info");
+}
+
+export async function getPicturesByUser(userId : string) : Promise<IPicture[]> {
+  return cleanArrayEntityId<IPicture>(await queryEntities<IPicture>(Picture, { user_id: userId }), "info");
 }
 
 export function deletePicture(pictureId: string) : Promise<void> {
