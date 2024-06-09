@@ -349,5 +349,7 @@ const pictureSchema : Schema = new Schema<utilTypes.IPicture>({
     type: pictureInfoSchema,
     required: true
   }
+}, {
+  timestamps: true
 });
 export const Picture = model<utilTypes.IPicture>("Picture", pictureSchema);

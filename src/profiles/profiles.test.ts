@@ -204,7 +204,7 @@ describe("PROFILES: getting and updating profiles", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expect(res.message).to.deep.equal(contributions);
+    expect(contributions).to.deep.equal(res.message);
   });
 
   // TODO from_date and to_date tests
