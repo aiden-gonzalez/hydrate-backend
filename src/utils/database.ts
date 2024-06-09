@@ -1,5 +1,5 @@
 import {User, Picture} from "../mongoDB";
-import { IUserProfile } from "../profiles/types";
+import {IUserProfile} from "../profiles/types";
 import { IPicture, IUser } from "./types";
 import {Model} from "mongoose";
 import {IFountainQueryParams} from "../fountains/types";
@@ -14,6 +14,8 @@ import {
   iFobToIDbFob
 } from "../fobs/types";
 import {IBathroomQueryParams} from "../bathrooms/types";
+
+const propsToClean = ['_id', '__v'];
 
 // FOUNTAIN OR BATHROOM (FOB)
 export async function createFob(fobModel : Model<IDbFob>, fob : IFob) : Promise<IFob> {
@@ -90,6 +92,24 @@ export async function updateUserProfileByUsername (username: string, profile: IU
   return cleanEntityId<IUser>(await updateEntity<IUser>(User, {username: username}, {profile: profile}), "profile").profile;
 }
 
+// export async function getContributionsByUsername (username: string) : Promise<IUserContributions> {
+//   let promises = [];
+//   promises.push(queryFob(fountains));
+//   promises.push(queryFob(bathrooms));
+//   promises.push(getRatings(user id));
+//   promises.push(getPictures(user id));
+//
+//   Promise.all(promises).then(results=>{
+//     // results[0] will have docs of first query
+//     // results[1] will have docs of second query
+//     // and so on...
+//
+//     // you can combine all the results here and send back in response
+//   }).catch(err=>{
+//     //handle error here
+//   })
+// }
+
 // PICTURE
 export async function createPicture(picture: IPicture) : Promise<IPicture> {
   return cleanEntityId<IPicture>(await createEntity<IPicture>(Picture, picture), "info");
@@ -121,9 +141,9 @@ function createEntity<Type>(entityModel : Model<Type>, entityDetails : Type) : P
 
 function fetchEntity<Type>(entityModel : Model<Type>, query : any) : Promise<Type> {
   return new Promise((resolve, reject) => {
-    entityModel.findOne(query).exec().then((dbEntity) => {
+    entityModel.findOne(query).lean().exec().then((dbEntity) => {
       if (dbEntity !== null) {
-        resolve(getCleanObject(dbEntity));
+        resolve(cleanEntityId(dbEntity));
       } else {
         resolve(null);
       }
@@ -135,8 +155,8 @@ function fetchEntity<Type>(entityModel : Model<Type>, query : any) : Promise<Typ
 
 function queryEntities<Type>(entityModel : Model<Type>, query : any) : Promise<Type[]> {
   return new Promise((resolve, reject) => {
-    entityModel.find(query).exec().then((dbEntities) => {
-      resolve(dbEntities.map((entity) => getCleanObject(entity)));
+    entityModel.find(query).lean().exec().then((dbEntities) => {
+      resolve(dbEntities.map((entity) => cleanEntityId(entity)));
     }).catch((error) => {
       reject(error);
     })
@@ -149,9 +169,9 @@ function updateEntity<Type>(entityModel: Model<Type>, filter : any, update : any
       filter,
       update,
       { new: true }
-    ).exec().then((updatedEntity) => {
+    ).lean().exec().then((updatedEntity) => {
       if (updatedEntity !== null) {
-        resolve(getCleanObject(updatedEntity));
+        resolve(cleanEntityId(updatedEntity));
       } else {
         resolve(null);
       }
@@ -163,7 +183,7 @@ function updateEntity<Type>(entityModel: Model<Type>, filter : any, update : any
 
 function deleteEntity<Type>(entityModel: Model<Type>, query : any) : Promise<void> {
   return new Promise((resolve, reject) => {
-    entityModel.deleteOne(query).exec().then(() => {
+    entityModel.deleteOne(query).lean().exec().then(() => {
       resolve();
     }).catch((error) => {
       reject(error);
@@ -185,11 +205,14 @@ function cleanArrayEntityId<Type>(entities : Type[], propertyName? : string) : T
 function cleanEntityId<Type>(entity : any, propertyName? : string) : Type {
   if (entity === null) return null;
 
-  if (propertyName === null && entity.hasOwnProperty('_id')) {
-    delete entity._id;
-  } else if (entity[propertyName] && entity[propertyName].hasOwnProperty('_id')) {
-    delete entity[propertyName]._id;
+  for (const prop of propsToClean) {
+    if ((propertyName === null || propertyName === undefined) && entity.hasOwnProperty(prop)) {
+      delete entity[prop];
+    } else if (entity[propertyName] && entity[propertyName].hasOwnProperty(prop)) {
+      delete entity[propertyName][prop];
+    }
   }
+
   return entity;
 }
 
@@ -198,11 +221,11 @@ function getCleanObject(mongoObject : any) : any {
   if (mongoObject === null) return null;
 
   const entityObject = mongoObject.toObject();
-  if (entityObject && entityObject.hasOwnProperty('_id')) {
-    delete entityObject._id;
+  for (const prop of propsToClean) {
+    if (entityObject && entityObject.hasOwnProperty(prop)) {
+      delete entityObject[prop];
+    }
   }
-  if (entityObject && entityObject.hasOwnProperty('__v')) {
-    delete entityObject.__v;
-  }
+
   return entityObject;
 }

@@ -17,5 +17,10 @@ profilesRouter.put('/profiles/:username',
   profilesController.getUserMiddleware, // get user from db by username
   profilesController.updateProfile // update and return user
 ); // update profile by username
+profilesRouter.get('/profiles/:username/contributions',
+  authenticateRequest, // authenticate request
+  profilesController.getUserMiddleware, // get user from db by username
+  profilesController.getContributionsForUser // return contributions for user
+); // get contributions by username
 
 export default profilesRouter;
