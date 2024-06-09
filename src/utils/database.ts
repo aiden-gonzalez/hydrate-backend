@@ -45,8 +45,11 @@ export async function queryFob(fobModel : Model<IDbFob>, queryParams : IFountain
       mongoQuery["info.location"]["$near"]["$maxDistance"] = queryParams.radius;
     }
   }
+  if (queryParams.user_id) {
+    mongoQuery["user_id"] = queryParams.user_id;
+  }
   for (const key in queryParams) {
-    if (key != "latitude" && key != "longitude" && key != "radius" && queryParams[key] != undefined) {
+    if (key != "latitude" && key != "longitude" && key != "radius" && key != "user_id" && queryParams[key] != undefined) {
       mongoQuery["info." + key] = queryParams[key];
     }
   }
@@ -99,8 +102,8 @@ export async function updateUserProfileByUsername (username: string, profile: IU
 export async function getUserContributionsById (userId: string, params: IUserContributionQueryParams) : Promise<IUserContributions> {
   return new Promise((resolve, reject) => {
     const promises = [
-      queryFob(Fountain, {...{user_id: userId}, params} as IFountainQueryParams),
-      queryFob(Bathroom, {...{user_id: userId}, params} as IBathroomQueryParams),
+      queryFob(Fountain, {...{user_id: userId}, ...params} as IFountainQueryParams),
+      queryFob(Bathroom, {...{user_id: userId}, ...params} as IBathroomQueryParams),
       getRatingsByUser(FountainRating, userId),
       getRatingsByUser(BathroomRating, userId),
       getPicturesByUser(userId)

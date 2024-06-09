@@ -206,4 +206,6 @@ describe("PROFILES: getting and updating profiles", () => {
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
     expect(res.message).to.deep.equal(contributions);
   });
+
+  // TODO from_date and to_date tests
 });
