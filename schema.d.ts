@@ -912,7 +912,7 @@ export interface paths {
   };
   "/api/profiles/{username}/contributions": {
     /**
-     * Get user contributions
+     * Get user contributions for specified user
      * @description Uses an optimized database query to get user created fountains, bathrooms, ratings, and pictures. All contributions by that user basically.
      */
     get: {
