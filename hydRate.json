@@ -1919,7 +1919,8 @@
                     "access_token",
                     "refresh_token",
                     "token_type",
-                    "expires"
+                    "expires",
+                    "username"
                 ],
                 "type": "object",
                 "properties": {
@@ -1938,13 +1939,18 @@
                     "expires": {
                         "description": "Number of seconds that access_token is valid for",
                         "type": "integer"
+                    },
+                    "username": {
+                        "description": "Username of authenticated user",
+                        "type": "string"
                     }
                 },
                 "example": {
                     "access_token": "some text",
                     "refresh_token": "some text",
                     "token_type": "some text",
-                    "expires": 39
+                    "expires": 12,
+                    "username": "some text"
                 }
             },
             "AuthRefreshRequest": {

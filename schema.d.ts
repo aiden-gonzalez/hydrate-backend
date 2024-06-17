@@ -1282,7 +1282,8 @@ export interface components {
      *   "access_token": "some text",
      *   "refresh_token": "some text",
      *   "token_type": "some text",
-     *   "expires": 39
+     *   "expires": 12,
+     *   "username": "some text"
      * }
      */
     AuthSuccessResponse: {
@@ -1294,6 +1295,8 @@ export interface components {
       token_type: string;
       /** @description Number of seconds that access_token is valid for */
       expires: number;
+      /** @description Username of authenticated user */
+      username: string;
     };
     /**
      * @description Request format for refreshing auth access token
