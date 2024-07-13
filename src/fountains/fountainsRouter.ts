@@ -25,7 +25,7 @@ fountainsRouter.post('/fountains',
 ); // Create fountain
 
 // fountain/:id
-fountainsRouter.put('/fountains/:id',
+fountainsRouter.get('/fountains/:id',
   authenticateRequest, // authenticate request
   setupFountainReq, // set request properties for fountain request
   fobsController.getFobById // get fountain

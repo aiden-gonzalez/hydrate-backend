@@ -25,7 +25,7 @@ bathroomsRouter.post('/bathrooms',
 ); // Create bathroom
 
 // bathroom/:id
-bathroomsRouter.put('/bathrooms/:id',
+bathroomsRouter.get('/bathrooms/:id',
   authenticateRequest, // authenticate request
   setupBathroomReq, // set request properties for bathroom request
   fobsController.getFobById // get bathroom
