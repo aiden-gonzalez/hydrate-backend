@@ -1,17 +1,20 @@
 import {User, Picture, Fountain, Bathroom, FountainRating, BathroomRating} from "../mongoDB";
 import {IUserContributionQueryParams, IUserContributions, IUserProfile} from "../profiles/types";
-import { IPicture, IUser } from "./types";
+import {IAggregation, IPicture, IUser} from "./types";
 import {Model} from "mongoose";
 import {IFountainQueryParams} from "../fountains/types";
 import {
+  IAggregatedFob,
+  IAggregatedDbFob,
   IDbFob,
-  iDbFobToIFob,
   IFob,
   IFobInfo,
-  iFobInfoToIDbFobInfo,
   IFobRating,
   IFobRatingDetails,
-  iFobToIDbFob
+  iFobInfoToIDbFobInfo,
+  iFobToIDbFob,
+  iDbFobToIFob,
+  iAggregatedDbFobToIAggregatedFob, isFountain
 } from "../fobs/types";
 import {IBathroomQueryParams} from "../bathrooms/types";
 
@@ -24,6 +27,24 @@ export async function createFob(fobModel : Model<IDbFob>, fob : IFob) : Promise<
 
 export async function getFob(fobModel : Model<IDbFob>, fobId : string) : Promise<IFob> {
   return cleanEntityIdWithTimestamps<IFob>(iDbFobToIFob(await fetchEntity<IDbFob>(fobModel, { id: fobId })), "info");
+}
+
+export async function getAggregatedFob(fobModel : Model<IDbFob>, fobId : string) : Promise<IAggregatedFob> {
+  const lookups : IAggregation[] = [
+    {
+      from: "User",
+      local: "user_id",
+      foreign: "id",
+      as: "user"
+    } as IAggregation,
+    {
+      from: isFountain()
+    } as IAggregation,
+    {
+
+    } as IAggregation
+  ]
+  return cleanEntityIdWithTimestamps<IAggregatedFob>(iAggregatedDbFobToIAggregatedFob(await fetchAggregatedEntity<IAggregatedDbFob>(fobModel, { id: fobId })), "info");
 }
 
 export async function updateFobById(fobModel : Model<IDbFob>, fobId : string, fobInfo : IFobInfo) : Promise<IFob> {
@@ -171,6 +192,29 @@ function fetchEntity<Type>(entityModel : Model<Type>, query : any) : Promise<Typ
     }).catch((error) => {
       reject(error);
     });
+  });
+}
+
+function fetchAggregatedEntity<Type>(entityModel : Model<Type>, query : any, aggregates : any[]) : Promise<Type> {
+  return new Promise((resolve, reject) => {
+    entityModel.aggregate([...aggregates.map(function (ag) {
+      return {
+        $lookup: {
+          from: ag.from,
+          localField: ag.local,
+          foreignField: ag.foreign,
+          as: ag.as
+        },
+      };
+    }), ...[{ $match: query }]]).exec().then((aggregatedDbEntities) => {
+      if (aggregatedDbEntities.length == 0) {
+        resolve(null);
+      } else {
+        resolve(cleanEntityIdWithTimestamps(aggregatedDbEntities[0]));
+      }
+    }).catch((error) => {
+      reject(error);
+    })
   });
 }
 

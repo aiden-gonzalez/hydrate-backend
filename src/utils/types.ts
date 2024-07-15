@@ -27,3 +27,11 @@ export type IUser = components["schemas"]["User"];
 
 export type IPictureInfo = components["schemas"]["PictureInfo"];
 export type IPicture = components["schemas"]["Picture"];
+
+// Aggregation Utility Type
+export type IAggregation = {
+  from: string, // collection name
+  local: string, // local field to match on
+  foreign: string, // foreign field to match with
+  as: string // field name to load as
+}
