@@ -51,7 +51,7 @@ export async function getAggregatedFob(fobModel : Model<IDbFob>, fobId : string)
       as: "pictures"
     } as IAggregation
   ]
-  return cleanEntityIdWithTimestamps<IAggregatedFob>(iAggregatedDbFobToIAggregatedFob(await fetchAggregatedEntity<IAggregatedDbFob>(fobModel, { id: fobId })), "info");
+  return cleanEntityIdWithTimestamps<IAggregatedFob>(iAggregatedDbFobToIAggregatedFob(await fetchAggregatedEntity<IAggregatedDbFob>(fobModel, { id: fobId }, lookups)), "info");
 }
 
 export async function updateFobById(fobModel : Model<IDbFob>, fobId : string, fobInfo : IFobInfo) : Promise<IFob> {
