@@ -41,5 +41,13 @@ export function regexValidator(testString: string, regex: RegExp) {
 
 // Entity ID Validator
 export function entityIdValidator(entityId: string) {
-  return validator.matches(entityId, fountainIdRegex) || validator.matches(entityId, bathroomIdRegex);
+  return fountainIdValidator(entityId) || bathroomIdValidator(entityId);
+}
+
+export function fountainIdValidator(fountainId: string) {
+  return validator.matches(fountainId, fountainIdRegex);
+}
+
+export function bathroomIdValidator(bathroomId: string) {
+  return validator.matches(bathroomId, bathroomIdRegex);
 }

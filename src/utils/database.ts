@@ -1,4 +1,4 @@
-import {User, Picture, Fountain, Bathroom, FountainRating, BathroomRating} from "../mongoDB";
+import {User, Picture, Fountain, Bathroom, FountainRating, BathroomRating, IDbFountain} from "../mongoDB";
 import {IUserContributionQueryParams, IUserContributions, IUserProfile} from "../profiles/types";
 import {IAggregation, IPicture, IUser} from "./types";
 import {Model} from "mongoose";
@@ -17,6 +17,7 @@ import {
   iAggregatedDbFobToIAggregatedFob, isFountain
 } from "../fobs/types";
 import {IBathroomQueryParams} from "../bathrooms/types";
+import {fountainIdValidator} from "./validation";
 
 const propsToClean = ['_id', '__v'];
 
@@ -38,10 +39,16 @@ export async function getAggregatedFob(fobModel : Model<IDbFob>, fobId : string)
       as: "user"
     } as IAggregation,
     {
-      from: isFountain()
+      from: fountainIdValidator(fobId) ? "FountainRating" : "BathroomRating",
+      local: "id",
+      foreign: fountainIdValidator(fobId) ? "fountain_id" : "bathroom_id",
+      as: "ratings"
     } as IAggregation,
     {
-
+      from: "Picture",
+      local: "id",
+      foreign: "entity_id",
+      as: "pictures"
     } as IAggregation
   ]
   return cleanEntityIdWithTimestamps<IAggregatedFob>(iAggregatedDbFobToIAggregatedFob(await fetchAggregatedEntity<IAggregatedDbFob>(fobModel, { id: fobId })), "info");
