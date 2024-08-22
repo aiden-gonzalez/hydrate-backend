@@ -1146,11 +1146,13 @@ export interface components {
      *     "name": "some text",
      *     "bottle_filler": true,
      *     "location": {
-     *       "longitude": 65.96,
-     *       "latitude": 60.57
+     *       "longitude": 26.65,
+     *       "latitude": 26.1
      *     }
      *   },
-     *   "user_id": "some text"
+     *   "user_id": "some text",
+     *   "created_at": 50,
+     *   "updated_at": 99
      * }
      */
     Fountain: {
