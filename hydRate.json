@@ -1408,7 +1408,9 @@
                         "full_name": "some text",
                         "picture_link": "some text"
                     },
-                    "id": "some text"
+                    "id": "some text",
+                    "created_at": 12,
+                    "updated_at": 3
                 }
             },
             "UserProfile": {
@@ -1474,9 +1476,11 @@
                     "user_id": "some text",
                     "details": {
                         "pressure": 2,
-                        "taste": 1,
-                        "temperature": 5
-                    }
+                        "taste": 6,
+                        "temperature": 18
+                    },
+                    "created_at": 63,
+                    "updated_at": 27
                 }
             },
             "Picture": {
@@ -1484,7 +1488,7 @@
                 "required": [
                     "id",
                     "entity_id",
-                    "info",
+                    "url",
                     "user_id"
                 ],
                 "type": "object",
@@ -1497,9 +1501,9 @@
                         "description": "Fountain or bathroom ID picture is for",
                         "type": "string"
                     },
-                    "info": {
-                        "$ref": "#/components/schemas/PictureInfo",
-                        "description": "Info for picture"
+                    "url": {
+                        "description": "Url for picture",
+                        "type": "string"
                     },
                     "user_id": {
                         "description": "ID of user that created the picture.",
@@ -1517,10 +1521,10 @@
                 "example": {
                     "id": "some text",
                     "entity_id": "some text",
-                    "info": {
-                        "url": "some text"
-                    },
-                    "user_id": "some text"
+                    "url": "some text",
+                    "user_id": "some text",
+                    "created_at": 20,
+                    "updated_at": 89
                 }
             },
             "BathroomRating": {
@@ -1994,23 +1998,6 @@
                         "email": "some text",
                         "password": "some text"
                     }
-                }
-            },
-            "PictureInfo": {
-                "description": "",
-                "required": [
-                    "url"
-                ],
-                "type": "object",
-                "properties": {
-                    "url": {
-                        "description": "URL of picture",
-                        "type": "string",
-                        "example": "https://google.com"
-                    }
-                },
-                "example": {
-                    "url": "some text"
                 }
             },
             "UserContributions": {
