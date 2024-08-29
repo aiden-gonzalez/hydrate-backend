@@ -1,10 +1,10 @@
 import {
-    ColumnType,
-    Generated,
-    Insertable,
-    JSONColumnType,
-    Selectable,
-    Updateable
+  ColumnType,
+  // Generated,
+  Insertable,
+  JSONColumnType,
+  Selectable,
+  Updateable
 } from "kysely";
 import {ILocation} from "../utils/types";
 
