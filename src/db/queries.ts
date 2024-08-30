@@ -1,48 +1,77 @@
 import { db } from './database';
-import { Fob } from './types';
-import {IFob} from "../fobs/types";
+import {Fob, FobUpdate, NewFob} from './types';
+import {IFob, IFobQueryParams} from "../fobs/types";
 
 // FOUNTAIN OR BATHROOM (FOB)
-export async function createFob(fob: NewFob) : Promise<IFob> {
-  return cleanEntityIdWithTimestamps<IFob>(iDbFobToIFob(await createEntity<IDbFob>(fobModel, iFobToIDbFob(fob))), "info");
+export function createFob(fob: NewFob) : Promise<Fob> {
+  return db.insertInto('fob').values(fob).returningAll().executeTakeFirstOrThrow();
 }
 
-export async function getFobById(id: string) : Promise<IFob> {
+export function getFob(id: string) : Promise<Fob> {
   return db.selectFrom('fob').where('id', '=', id).selectAll().executeTakeFirst();
 }
 
+/** @description Filter fountains by bottle_filler property */
+bottle_filler?: boolean;
+/** @description Radius to fetch fountains within (in meters) */
+radius?: number;
+/** @description ID of user that created the fountain(s) */
+user_id?: string;
+/** @description Filter fountains to those created on or after this date.  Unix epoch milliseconds timestamp. */
+from_date?: number;
+/** @description Filter fountains to those created before or on this date.  Unix epoch milliseconds timestamp. */
+to_date?: number;
 
+export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
+  let query = db.selectFrom('fob');
 
-export async function getFob(fobModel : Model<IDbFob>, fobId : string) : Promise<IFob> {
-  return cleanEntityIdWithTimestamps<IFob>(iDbFobToIFob(await fetchEntity<IDbFob>(fobModel, { id: fobId })), "info");
+  if (params.latitude && params.longitude) {
+    query = query.where('location', '@@', '$.latitude '); // Kysely is immutable, must re-assign
+  }
+
+  if (criteria.user_id) {
+    query = query.where('user_id', '=', criteria.user_id);
+  }
+
+  if (criteria.info)
 }
 
-export async function getAggregatedFob(fobModel : Model<IDbFob>, fobId : string) : Promise<IAggregatedFob> {
-  const lookups : IAggregation[] = [
-    {
-      from: "User",
-      local: "user_id",
-      foreign: "id",
-      as: "user"
-    } as IAggregation,
-    {
-      from: fountainIdValidator(fobId) ? "FountainRating" : "BathroomRating",
-      local: "id",
-      foreign: fountainIdValidator(fobId) ? "fountain_id" : "bathroom_id",
-      as: "ratings"
-    } as IAggregation,
-    {
-      from: "Picture",
-      local: "id",
-      foreign: "entity_id",
-      as: "pictures"
-    } as IAggregation
-  ]
-  return cleanEntityIdWithTimestamps<IAggregatedFob>(iAggregatedDbFobToIAggregatedFob(await fetchAggregatedEntity<IAggregatedDbFob>(fobModel, { id: fobId }, lookups)), "info");
+export async function findPeople(criteria: Partial<Person>) {
+  let query = db.selectFrom('person')
+
+  if (criteria.id) {
+    query = query.where('id', '=', criteria.id) // Kysely is immutable, you must re-assign!
+  }
+
+  if (criteria.first_name) {
+    query = query.where('first_name', '=', criteria.first_name)
+  }
+
+  if (criteria.last_name !== undefined) {
+    query = query.where(
+      'last_name',
+      criteria.last_name === null ? 'is' : '=',
+      criteria.last_name
+    )
+  }
+
+  if (criteria.gender) {
+    query = query.where('gender', '=', criteria.gender)
+  }
+
+  if (criteria.created_at) {
+    query = query.where('created_at', '=', criteria.created_at)
+  }
+
+  return await query.selectAll().execute()
 }
 
-export async function updateFobById(fobModel : Model<IDbFob>, fobId : string, fobInfo : IFobInfo) : Promise<IFob> {
-  return cleanEntityIdWithTimestamps<IFob>(iDbFobToIFob(await updateEntity<IDbFob>(fobModel, { id: fobId }, { info: iFobInfoToIDbFobInfo(fobInfo) })), "info");
+export function updateFob(id: string, updateWith: FobUpdate) : Promise<Fob> {
+  return db.updateTable('fob').set(updateWith).where('id', '=', id).returningAll().executeTakeFirst();
+}
+
+export function deleteFob(id: string) : Promise<Fob> {
+  return db.deleteFrom('fob').where('id', '=', id).returningAll().executeTakeFirst();
 }
 
 export async function queryFob(fobModel : Model<IDbFob>, queryParams : IFountainQueryParams | IBathroomQueryParams) : Promise<Array<IFob>> {

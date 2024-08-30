@@ -1,15 +1,25 @@
-import {IDbFountain, IDbBathroom, IDbFountainInfo, IDbBathroomInfo} from "../mongoDB";
-import {IFountain, IFountainInfo, IFountainRating, IFountainRatingDetails} from "../fountains/types";
-import {IBathroom, IBathroomInfo, IBathroomRating, IBathroomRatingDetails} from "../bathrooms/types";
-import {iDbLocationToILocation, iLocationToIDbLocation, IPicture} from "../utils/types";
+import {
+  IFountain,
+  IFountainInfo,
+  IFountainQueryParams,
+  IFountainRating,
+  IFountainRatingDetails
+} from "../fountains/types";
+import {
+  IBathroom,
+  IBathroomInfo,
+  IBathroomQueryParams,
+  IBathroomRating,
+  IBathroomRatingDetails
+} from "../bathrooms/types";
+import {IPicture} from "../utils/types";
 import { IUser } from "../utils/types";
 
 export type IFob = IFountain | IBathroom;
 export type IFobInfo = IFountainInfo | IBathroomInfo;
-export type IDbFob = IDbFountain | IDbBathroom;
-export type IDbFobInfo = IDbFountainInfo | IDbBathroomInfo;
 export type IFobRating = IFountainRating | IBathroomRating;
 export type IFobRatingDetails = IFountainRatingDetails | IBathroomRatingDetails;
+export type IFobQueryParams = IFountainQueryParams | IBathroomQueryParams;
 
 // Aggregate Types
 export type IFobUser = {
@@ -24,12 +34,9 @@ export type IFobPictures = {
 export type IAggregatedFountain = IFountain & IFobUser & IFobRatings & IFobPictures;
 export type IAggregatedBathroom = IBathroom & IFobUser & IFobRatings & IFobPictures;
 export type IAggregatedFob = IFob & IFobUser & IFobRatings & IFobPictures;
-export type IAggregatedDbFountain = IDbFountain & IFobUser & IFobRatings & IFobPictures;
-export type IAggregatedDbBathroom = IDbBathroom & IFobUser & IFobRatings & IFobPictures;
-export type IAggregatedDbFob = IDbFob & IFobUser & IFobRatings & IFobPictures;
 
-export function isFountain(fob: IFob | IDbFob) : fob is IFountain | IDbFountain | IAggregatedFountain | IAggregatedDbFountain {
-  return (fob as IFountain | IDbFountain | IAggregatedFountain | IAggregatedDbFountain).info.bottle_filler !== undefined;
+export function isFountain(fob: IFob) : fob is IFountain | IAggregatedFountain {
+  return (fob as IFountain | IAggregatedFountain).info.bottle_filler !== undefined;
 }
 
 export function isBathroom(fob: IFob | IDbFob) : fob is IBathroom | IDbBathroom | IAggregatedBathroom | IAggregatedDbBathroom {

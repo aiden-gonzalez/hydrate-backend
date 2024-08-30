@@ -231,7 +231,7 @@ export interface paths {
            * If provided, must provide longitude!
            */
           latitude?: number;
-          /** @description Radius to fetch bathrooms within */
+          /** @description Radius to fetch bathrooms within (in meters) */
           radius?: number;
           /** @description Filter bathrooms by baby_changer property */
           baby_changer?: boolean;
@@ -972,7 +972,9 @@ export interface components {
      *     "full_name": "some text",
      *     "picture_link": "some text"
      *   },
-     *   "id": "some text"
+     *   "id": "some text",
+     *   "created_at": 12,
+     *   "updated_at": 3
      * }
      */
     User: {
@@ -1010,9 +1012,11 @@ export interface components {
      *   "user_id": "some text",
      *   "details": {
      *     "pressure": 2,
-     *     "taste": 1,
-     *     "temperature": 5
-     *   }
+     *     "taste": 6,
+     *     "temperature": 18
+     *   },
+     *   "created_at": 63,
+     *   "updated_at": 27
      * }
      */
     FountainRating: {
@@ -1033,10 +1037,10 @@ export interface components {
      * @example {
      *   "id": "some text",
      *   "entity_id": "some text",
-     *   "info": {
-     *     "url": "some text"
-     *   },
-     *   "user_id": "some text"
+     *   "url": "some text",
+     *   "user_id": "some text",
+     *   "created_at": 20,
+     *   "updated_at": 89
      * }
      */
     Picture: {
@@ -1044,8 +1048,8 @@ export interface components {
       id: string;
       /** @description Fountain or bathroom ID picture is for */
       entity_id: string;
-      /** @description Info for picture */
-      info: components["schemas"]["PictureInfo"];
+      /** @description Url for picture */
+      url: string;
       /** @description ID of user that created the picture. */
       user_id: string;
       /** @description Created timestamp.  Unix epoch milliseconds. */
@@ -1143,16 +1147,16 @@ export interface components {
      * @example {
      *   "id": "some text",
      *   "info": {
-     *     "name": "some text",
-     *     "bottle_filler": true,
-     *     "location": {
-     *       "longitude": 26.65,
-     *       "latitude": 26.1
-     *     }
+     *     "bottle_filler": true
      *   },
      *   "user_id": "some text",
-     *   "created_at": 50,
-     *   "updated_at": 99
+     *   "created_at": 66,
+     *   "updated_at": 99,
+     *   "name": "some text",
+     *   "location": {
+     *     "longitude": 42.48,
+     *     "latitude": 65.69
+     *   }
      * }
      */
     Fountain: {
@@ -1166,66 +1170,52 @@ export interface components {
       created_at?: number;
       /** @description Updated timestamp.  Unix epoch milliseconds. */
       updated_at?: number;
-    };
-    /**
-     * @example {
-     *   "name": "some text",
-     *   "bottle_filler": true,
-     *   "location": {
-     *     "longitude": 13.04,
-     *     "latitude": 48.71
-     *   }
-     * }
-     */
-    FountainInfo: {
-      /** @description Name for fountain */
+      /** @description Name of fountain */
       name: string;
-      /** @description Whether or not the fountain features a dedicated bottle filler */
-      bottle_filler: boolean;
       /** @description Location of fountain */
       location: components["schemas"]["Location"];
     };
     /**
      * @example {
-     *   "name": "some text",
+     *   "bottle_filler": true
+     * }
+     */
+    FountainInfo: {
+      /** @description Whether or not the fountain features a dedicated bottle filler */
+      bottle_filler: boolean;
+    };
+    /**
+     * @example {
      *   "gender": "some text",
      *   "sanitary_products": true,
-     *   "baby_changer": true,
-     *   "location": {
-     *     "longitude": 1.21,
-     *     "latitude": 50.7
-     *   }
+     *   "baby_changer": true
      * }
      */
     BathroomInfo: {
-      /** @description Name of bathroom */
-      name: string;
       /** @description Gender/sex of bathroom */
       gender: string;
       /** @description Whether or not bathroom has sanitary products available (such as tampons and pads) */
       sanitary_products: boolean;
       /** @description Whether or not bathroom has a baby changer available */
       baby_changer: boolean;
-      /** @description Location of bathroom */
-      location: components["schemas"]["Location"];
     };
     /**
      * @description Bathroom
      * @example {
      *   "id": "some text",
      *   "info": {
-     *     "name": "some text",
      *     "gender": "some text",
      *     "sanitary_products": true,
-     *     "baby_changer": true,
-     *     "location": {
-     *       "longitude": 19.94,
-     *       "latitude": 21.38
-     *     }
+     *     "baby_changer": true
      *   },
      *   "user_id": "some text",
-     *   "created_at": 71,
-     *   "updated_at": 78
+     *   "created_at": 96,
+     *   "updated_at": 51,
+     *   "name": "some text",
+     *   "location": {
+     *     "longitude": 90,
+     *     "latitude": 61.27
+     *   }
      * }
      */
     Bathroom: {
@@ -1239,6 +1229,10 @@ export interface components {
       created_at?: number;
       /** @description Updated timestamp.  Unix epoch milliseconds. */
       updated_at?: number;
+      /** @description Name of bathroom */
+      name: string;
+      /** @description Location of bathroom */
+      location: components["schemas"]["Location"];
     };
     /**
      * @description Actual details of bathroom rating
@@ -1325,18 +1319,6 @@ export interface components {
     AuthRequest: {
       /** @description Credentials for user */
       user_credentials: components["schemas"]["UserCredentials"];
-    };
-    /**
-     * @example {
-     *   "url": "some text"
-     * }
-     */
-    PictureInfo: {
-      /**
-       * @description URL of picture
-       * @example https://google.com
-       */
-      url: string;
     };
     /**
      * @description Summary of user contributions

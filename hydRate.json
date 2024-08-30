@@ -351,7 +351,7 @@
                     },
                     {
                         "name": "radius",
-                        "description": "Radius to fetch bathrooms within",
+                        "description": "Radius to fetch bathrooms within (in meters)",
                         "schema": {
                             "type": "number"
                         },
@@ -1673,7 +1673,9 @@
                 "required": [
                     "id",
                     "info",
-                    "user_id"
+                    "user_id",
+                    "name",
+                    "location"
                 ],
                 "type": "object",
                 "properties": {
@@ -1696,39 +1698,10 @@
                     "updated_at": {
                         "description": "Updated timestamp.  Unix epoch milliseconds.",
                         "type": "integer"
-                    }
-                },
-                "example": {
-                    "id": "some text",
-                    "info": {
-                        "name": "some text",
-                        "bottle_filler": true,
-                        "location": {
-                            "longitude": 26.65,
-                            "latitude": 26.1
-                        }
                     },
-                    "user_id": "some text",
-                    "created_at": 50,
-                    "updated_at": 99
-                }
-            },
-            "FountainInfo": {
-                "description": "",
-                "required": [
-                    "name",
-                    "bottle_filler",
-                    "location"
-                ],
-                "type": "object",
-                "properties": {
                     "name": {
-                        "description": "Name for fountain",
+                        "description": "Name of fountain",
                         "type": "string"
-                    },
-                    "bottle_filler": {
-                        "description": "Whether or not the fountain features a dedicated bottle filler",
-                        "type": "boolean"
                     },
                     "location": {
                         "$ref": "#/components/schemas/Location",
@@ -1736,29 +1709,45 @@
                     }
                 },
                 "example": {
+                    "id": "some text",
+                    "info": {
+                        "bottle_filler": true
+                    },
+                    "user_id": "some text",
+                    "created_at": 66,
+                    "updated_at": 99,
                     "name": "some text",
-                    "bottle_filler": true,
                     "location": {
-                        "longitude": 13.04,
-                        "latitude": 48.71
+                        "longitude": 42.48,
+                        "latitude": 65.69
                     }
+                }
+            },
+            "FountainInfo": {
+                "description": "",
+                "required": [
+                    "bottle_filler"
+                ],
+                "type": "object",
+                "properties": {
+                    "bottle_filler": {
+                        "description": "Whether or not the fountain features a dedicated bottle filler",
+                        "type": "boolean"
+                    }
+                },
+                "example": {
+                    "bottle_filler": true
                 }
             },
             "BathroomInfo": {
                 "description": "",
                 "required": [
-                    "name",
                     "gender",
                     "sanitary_products",
-                    "baby_changer",
-                    "location"
+                    "baby_changer"
                 ],
                 "type": "object",
                 "properties": {
-                    "name": {
-                        "description": "Name of bathroom",
-                        "type": "string"
-                    },
                     "gender": {
                         "description": "Gender/sex of bathroom",
                         "pattern": "^((male)|(female)|(all-gender))$",
@@ -1771,21 +1760,12 @@
                     "baby_changer": {
                         "description": "Whether or not bathroom has a baby changer available",
                         "type": "boolean"
-                    },
-                    "location": {
-                        "$ref": "#/components/schemas/Location",
-                        "description": "Location of bathroom"
                     }
                 },
                 "example": {
-                    "name": "some text",
                     "gender": "some text",
                     "sanitary_products": true,
-                    "baby_changer": true,
-                    "location": {
-                        "longitude": 1.21,
-                        "latitude": 50.7
-                    }
+                    "baby_changer": true
                 }
             },
             "Bathroom": {
@@ -1793,7 +1773,9 @@
                 "required": [
                     "id",
                     "info",
-                    "user_id"
+                    "user_id",
+                    "name",
+                    "location"
                 ],
                 "type": "object",
                 "properties": {
@@ -1816,23 +1798,31 @@
                     "updated_at": {
                         "description": "Updated timestamp.  Unix epoch milliseconds.",
                         "type": "integer"
+                    },
+                    "name": {
+                        "description": "Name of bathroom",
+                        "type": "string"
+                    },
+                    "location": {
+                        "$ref": "#/components/schemas/Location",
+                        "description": "Location of bathroom"
                     }
                 },
                 "example": {
                     "id": "some text",
                     "info": {
-                        "name": "some text",
                         "gender": "some text",
                         "sanitary_products": true,
-                        "baby_changer": true,
-                        "location": {
-                            "longitude": 19.94,
-                            "latitude": 21.38
-                        }
+                        "baby_changer": true
                     },
                     "user_id": "some text",
-                    "created_at": 71,
-                    "updated_at": 78
+                    "created_at": 96,
+                    "updated_at": 51,
+                    "name": "some text",
+                    "location": {
+                        "longitude": 90,
+                        "latitude": 61.27
+                    }
                 }
             },
             "BathroomRatingDetails": {
