@@ -516,7 +516,7 @@ export interface paths {
       /** @description Picture link */
       requestBody: {
         content: {
-          "application/json": components["schemas"]["PictureInfo"];
+          "application/json": string;
         };
       };
       responses: {
@@ -640,7 +640,7 @@ export interface paths {
       /** @description Picture link */
       requestBody: {
         content: {
-          "application/json": components["schemas"]["PictureInfo"];
+          "application/json": string;
         };
       };
       responses: {

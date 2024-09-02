@@ -8,7 +8,8 @@ import {
 } from "kysely";
 import {IBathroomInfo} from "../bathrooms/types";
 import {IFountainInfo} from "../fountains/types";
-import {ILocation} from "../utils/types";
+import {IHashedPassword, ILocation} from "../utils/types";
+import {IUserProfile} from "../profiles/types";
 
 export interface Database {
   fob: FobTable,
@@ -78,14 +79,8 @@ export interface UserTable {
   id: string
   username: string
   email: string
-  hashed_password: JSONColumnType<{
-    hash_pass: string
-    hash_salt: string
-  }>
-  profile: JSONColumnType<{
-    full_name: string
-    picture_link: string
-  }>
+  hashed_password: JSONColumnType<IHashedPassword>
+  profile: JSONColumnType<IUserProfile>
   created_at: DbCreatedAt
   updated_at: DbUpdatedAt
 }
@@ -93,6 +88,7 @@ export interface UserTable {
 export type User = Selectable<UserTable>
 export type NewUser = Insertable<UserTable>
 export type UserUpdate = Updateable<UserTable>
+export type UserProfileUpdate = Updateable<IUserProfile>;
 
 export interface PictureTable {
   id: string
@@ -106,3 +102,9 @@ export interface PictureTable {
 export type Picture = Selectable<PictureTable>
 export type NewPicture = Insertable<PictureTable>
 export type PictureUpdate = Updateable<PictureTable>
+
+export type UserContributions = {
+  fobs: Fob[],
+  ratings: Rating[],
+  pictures: Picture[]
+}

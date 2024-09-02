@@ -771,7 +771,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PictureInfo"
+                                "type": "string"
                             }
                         }
                     },
@@ -926,7 +926,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PictureInfo"
+                                "type": "string"
                             }
                         }
                     },
