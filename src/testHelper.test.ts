@@ -9,7 +9,7 @@ import {
 } from "./utils/generate";
 import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
-import {expect} from "chai";
+// import {expect} from "chai";
 import {IFountain, IFountainInfo, IFountainRating, IFountainRatingDetails} from "./fountains/types";
 import {IBathroom, IBathroomInfo, IBathroomRating, IBathroomRatingDetails} from "./bathrooms/types";
 
