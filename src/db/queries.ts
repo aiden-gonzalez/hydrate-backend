@@ -8,8 +8,7 @@ import {
   Rating,
   RatingUpdate,
   User,
-  UserContributions,
-  UserProfileUpdate
+  UserContributions, UserUpdate
 } from './types';
 import {IFobQueryParams} from "../fobs/types";
 import {sql} from "kysely";
@@ -105,8 +104,8 @@ export function getUserByEmail(email: string) : Promise<User> {
   return db.selectFrom('user').where('email', '=', email).selectAll().executeTakeFirst();
 }
 
-export function updateUserProfileByUsername(username: string, profile : UserProfileUpdate) : Promise<User> {
-  return db.updateTable('user').set({profile: profile}).where('username', '=', username).returningAll().executeTakeFirst();
+export function updateUserProfileByUsername(username: string, updateWith : UserUpdate) : Promise<User> {
+  return db.updateTable('user').set({profile: updateWith.profile}).where('username', '=', username).returningAll().executeTakeFirst();
 }
 
 export function getUserContributions(userId: string, params: IUserContributionQueryParams) : Promise<UserContributions> {

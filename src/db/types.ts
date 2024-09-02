@@ -88,7 +88,6 @@ export interface UserTable {
 export type User = Selectable<UserTable>
 export type NewUser = Insertable<UserTable>
 export type UserUpdate = Updateable<UserTable>
-export type UserProfileUpdate = Updateable<IUserProfile>;
 
 export interface PictureTable {
   id: string
