@@ -7,7 +7,7 @@ const dialect = new PostgresDialect({
     database: 'postgres',
     host: 'localhost',
     user: 'postgres',
-    port: 5434,
+    port: 5432,
     max: 10
   })
 });
