@@ -1,4 +1,3 @@
-import {Picture, User} from '../mongoDB';
 import {authenticateRequest, generateToken, hashPass, isValidPass} from "./auth";
 import {
   generateBathroomId,
@@ -20,6 +19,7 @@ import {
 import {getPicture, getReqMock, getResMock, getUser} from "../testHelper.test";
 import {IUser} from "./types";
 import {expect} from "chai";
+import * as db from '../db/queries';
 
 describe("UTIL: generation and validation tests", () => {
   function testId(id: string, prefix: string, regex: RegExp) {
@@ -89,20 +89,20 @@ describe("UTIL: auth tests", () => {
   })
 });
 
-describe("UTIL: creating MongoDB documents", () => {
+describe("UTIL: creating entries in database", () => {
   it("creates a new User", async () => {
-    const newUser = new User(await getUser());
+    const newUser = await getUser();
     try {
-      await newUser.save();
+      await db.createUser(newUser);
     } catch (error) {
       throw(error.message);
     }
   });
 
   it("creates a new Picture", async () => {
-    const newPicture = new Picture(getPicture());
+    const newPicture = getPicture();
     try {
-      await newPicture.save();
+      await db.createPicture(newPicture);
     } catch (error) {
       throw(error.message);
     }

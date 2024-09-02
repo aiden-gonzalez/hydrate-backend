@@ -1838,30 +1838,35 @@
                 "properties": {
                     "cleanliness": {
                         "description": "Cleanliness rating of bathroom (1-5)",
+                        "multipleOf": 1,
                         "maximum": 5,
                         "minimum": 1,
                         "type": "integer"
                     },
                     "decor": {
                         "description": "Decor rating of bathroom (1-5)",
+                        "multipleOf": 1,
                         "maximum": 5,
                         "minimum": 1,
                         "type": "integer"
                     },
                     "drying": {
                         "description": "Drying rating of bathroom (1-5)",
+                        "multipleOf": 1,
                         "maximum": 5,
                         "minimum": 1,
                         "type": "integer"
                     },
                     "privacy": {
                         "description": "Privacy rating of bathroom (1-5)",
+                        "multipleOf": 1,
                         "maximum": 5,
                         "minimum": 1,
                         "type": "integer"
                     },
                     "washing": {
                         "description": "Washing rating of bathroom (1-5)",
+                        "multipleOf": 1,
                         "maximum": 5,
                         "minimum": 1,
                         "type": "integer"
@@ -1886,18 +1891,21 @@
                 "properties": {
                     "pressure": {
                         "description": "Pressure rating for fountain (1-5)",
+                        "multipleOf": 1,
                         "maximum": 5,
                         "minimum": 1,
                         "type": "integer"
                     },
                     "taste": {
                         "description": "Taste rating for fountain (1-5)",
+                        "multipleOf": 1,
                         "maximum": 5,
                         "minimum": 1,
                         "type": "integer"
                     },
                     "temperature": {
                         "description": "Temperature rating for fountain (1-5)",
+                        "multipleOf": 1,
                         "maximum": 5,
                         "minimum": 1,
                         "type": "integer"

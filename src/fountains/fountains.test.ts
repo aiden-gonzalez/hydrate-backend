@@ -26,10 +26,9 @@ import {
 } from "../fobs/fobsController";
 import {setupFountainReq} from "./fountainsRouter";
 import { IFountain, IFountainRating, IFountainRatingDetails } from "./types";
-import * as database from "../utils/database";
+import * as db from "../db/queries";
 import {generateFountainId, generateFountainRatingId, generateUserId} from "../utils/generate";
 import {ILocation, IUser} from "../utils/types";
-import {Fountain, FountainRating} from "../mongoDB";
 import {calculateDistance} from "../utils/calculation";
 
 describe("FOUNTAINS: CRUD of all kinds", () => {
@@ -53,43 +52,43 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const fountainOne : IFountain = {
       id: generateFountainId(),
       user_id: user_id,
+      name: "Fountain One",
+      location: {
+        latitude: 40.42476607308126,
+        longitude: -86.9114030295504
+      },
       info: {
-        name: "Fountain One",
         bottle_filler: true,
-        location: {
-          latitude: 40.42476607308126,
-          longitude: -86.9114030295504
-        }
       }
     };
     const fountainTwo : IFountain = {
       id: generateFountainId(),
       user_id: user_id,
+      name: "Fountain Two",
+      location: {
+        latitude: 40.42486535509428,
+        longitude: -86.91207343967577
+      },
       info: {
-        name: "Fountain Two",
         bottle_filler: false,
-        location: {
-          latitude: 40.42486535509428,
-          longitude: -86.91207343967577
-        }
       }
     };
     const fountainThree : IFountain = {
       id: generateFountainId(),
       user_id: user_id,
+      name: "Fountain Three",
+      location: {
+        latitude: 40.425193836261464,
+        longitude: -86.9112570893454
+      },
       info: {
-        name: "Fountain Three",
         bottle_filler: true,
-        location: {
-          latitude: 40.425193836261464,
-          longitude: -86.9112570893454
-        }
       }
     };
 
-    const createdFountainOne = await database.createFob(Fountain, fountainOne);
-    const createdFountainTwo = await database.createFob(Fountain, fountainTwo);
-    const createdFountainThree = await database.createFob(Fountain, fountainThree);
+    const createdFountainOne = await db.createFob(fountainOne);
+    const createdFountainTwo = await db.createFob(fountainTwo);
+    const createdFountainThree = await db.createFob(fountainThree);
 
     return [createdFountainOne, createdFountainTwo, createdFountainThree];
   }
@@ -127,9 +126,9 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       } as IFountainRatingDetails
     }
 
-    const createdFountainRatingOne = await database.createRating(FountainRating, fountainRatingOne);
-    const createdFountainRatingTwo = await database.createRating(FountainRating, fountainRatingTwo);
-    const createdFountainRatingThree = await database.createRating(FountainRating, fountainRatingThree);
+    const createdFountainRatingOne = await db.createRating(fountainRatingOne);
+    const createdFountainRatingTwo = await db.createRating(fountainRatingTwo);
+    const createdFountainRatingThree = await db.createRating(fountainRatingThree);
 
     return [createdFountainRatingOne, createdFountainRatingTwo, createdFountainRatingThree];
   }
@@ -140,9 +139,9 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const pictureTwo = getPicture(entityId, userId, "https://www.facebook.com");
     const pictureThree = getPicture(entityId, userId, "https://www.mail.google.com");
 
-    const createdPictureOne = await database.createPicture(pictureOne);
-    const createdPictureTwo = await database.createPicture(pictureTwo);
-    const createdPictureThree = await database.createPicture(pictureThree);
+    const createdPictureOne = await db.createPicture(pictureOne);
+    const createdPictureTwo = await db.createPicture(pictureTwo);
+    const createdPictureThree = await db.createPicture(pictureThree);
 
     return [createdPictureOne, createdPictureTwo, createdPictureThree];
   }
@@ -244,15 +243,12 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       radius: 40 // in meters
     }
 
-    // ensure index on fountain location (needed for testing since collections get rapidly dropped)
-    await Fountain.ensureIndexes();
-
     // Try to get all fountains within 50 meters of (5, 5)
     await simulateRouter(req, res, getFountainsFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdFountains.filter((fountain) => calculateDistance(fountain.info.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40));
+    expectEntitiesEqual(res.message, createdFountains.filter((fountain) => calculateDistance(fountain.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40));
   });
 
   it ("can't get a particular fountain without authentication", async () => {
@@ -399,7 +395,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       id: createdFountains[0].id
     };
     const pictureToCreate = getPicture(createdFountains[0].id, user.id);
-    req.body = pictureToCreate.info; // valid picture link
+    req.body = pictureToCreate.url; // valid picture link
 
     // Try to create fountain picture
     await simulateRouter(req, res, addFountainPictureFuncs);
@@ -530,7 +526,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
 
     // Picture should not exist
-    const picture = await database.getPictureById(createdPictures[0].id);
+    const picture = await db.getPictureById(createdPictures[0].id);
     expect(picture).to.be.null;
   });
 

@@ -18,7 +18,7 @@ import {IUserContributionQueryParams} from "../profiles/types";
 
 // FOUNTAIN OR BATHROOM (FOB)
 export function createFob(fob: NewFob) : Promise<Fob> {
-  return db.insertInto('fob').values(fob).returningAll().executeTakeFirstOrThrow();
+  return db.insertInto('fob').values(fob as NewFob).returningAll().executeTakeFirstOrThrow();
 }
 
 export function getFob(id: string) : Promise<Fob> {
@@ -48,11 +48,11 @@ export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
   }
 
   if (params.from_date) {
-    query = query.where('created_at', '>=', new Date(params.from_date));
+    query = query.where('created_at', '>=', params.from_date);
   }
 
   if (params.to_date) {
-    query = query.where('created_at', '<=', new Date(params.to_date));
+    query = query.where('created_at', '<=', params.to_date);
   }
 
   return query.selectAll().execute();

@@ -2,14 +2,13 @@ import {
   ColumnType,
   // Generated,
   Insertable,
-  JSONColumnType,
+  // JSONColumnType,
   Selectable,
   Updateable
 } from "kysely";
-import {IBathroomInfo} from "../bathrooms/types";
-import {IFountainInfo} from "../fountains/types";
 import {IHashedPassword, ILocation} from "../utils/types";
 import {IUserProfile} from "../profiles/types";
+import {IFobInfo, IFobRatingDetails} from "../fobs/types";
 
 export interface Database {
   fob: FobTable,
@@ -18,9 +17,8 @@ export interface Database {
   picture: PictureTable
 }
 
-type DbCreatedAt = ColumnType<Date, Date, never>
-type DbUpdatedAt = ColumnType<Date, Date, Date>
-type DbRatingDetail = 1 | 2 | 3 | 4 | 5
+type DbCreatedAt = ColumnType<number, number, never>
+type DbUpdatedAt = ColumnType<number, number, number>
 
 // Should only be used in the "Database" type above, never as a result of a query
 export interface FobTable {
@@ -29,11 +27,12 @@ export interface FobTable {
   id: string
   user_id: string,
   name: string,
-  location: JSONColumnType<ILocation>,
   // You can specify JSON columns using the `JSONColumnType` wrapper.  It is a shorthand for
   // `ColumnType<T, string, string>`, where T is the type of the JSON object/array retrieved from the database,
   // and the insert and update types are always `string` since you're always stringifying insert/update values.
-  info: JSONColumnType<IFountainInfo | IBathroomInfo>
+  // However. I want to insert and update as ILocation here as well, so I'm not using that shorthand.
+  location: ColumnType<ILocation, ILocation, ILocation>,
+  info: ColumnType<IFobInfo, IFobInfo, IFobInfo>
   // You can specify a different type for each operation (select, insert and update) using the
   // `ColumnType<SelectType, InsertType, UpdateType>` wrapper. Here we define a column `created_at`
   // that is selected as a `Date`, can be provided as a Date in inserts and can never be updated
@@ -56,17 +55,7 @@ export interface RatingTable {
   id: string
   fob_id: string
   user_id: string
-  details: JSONColumnType<{
-    pressure: DbRatingDetail
-    taste: DbRatingDetail
-    temperature: DbRatingDetail
-  } | {
-    cleanliness: DbRatingDetail
-    decor: DbRatingDetail
-    drying: DbRatingDetail
-    privacy: DbRatingDetail
-    washing: DbRatingDetail
-  }>
+  details: ColumnType<IFobRatingDetails, IFobRatingDetails, IFobRatingDetails>
   created_at: DbCreatedAt
   updated_at: DbUpdatedAt
 }
@@ -79,8 +68,8 @@ export interface UserTable {
   id: string
   username: string
   email: string
-  hashed_password: JSONColumnType<IHashedPassword>
-  profile: JSONColumnType<IUserProfile>
+  hashed_password: ColumnType<IHashedPassword, IHashedPassword, IHashedPassword>
+  profile: ColumnType<IUserProfile, IUserProfile, IUserProfile>
   created_at: DbCreatedAt
   updated_at: DbUpdatedAt
 }

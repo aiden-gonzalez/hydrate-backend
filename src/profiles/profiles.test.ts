@@ -14,10 +14,9 @@ import {
   updateProfile
 } from "./profilesController";
 import {authenticateRequest} from '../utils/auth';
-import * as database from "../utils/database";
+import * as db from "../db/queries";
 import {IUserContributions, IUserProfile} from "./types";
 import {expect} from "chai";
-import {Bathroom, BathroomRating, Fountain, FountainRating} from "../mongoDB";
 
 function copyTimestamps(obj_a, obj_b) {
   obj_a.created_at = obj_b.created_at;
@@ -70,7 +69,7 @@ describe("PROFILES: getting and updating profiles", () => {
     const res = getResMock();
 
     // First create user in database
-    await database.createUser(user);
+    await db.createUser(user);
 
     // Now try to get the user profile
     await simulateRouter(req, res, getProfileFuncs);
@@ -89,7 +88,7 @@ describe("PROFILES: getting and updating profiles", () => {
     const res = getResMock();
 
     // Create requesting user in database, but not other user
-    await database.createUser(user);
+    await db.createUser(user);
 
     // Try to get the user profile
     await simulateRouter(req, res, updateProfileFuncs);
@@ -110,8 +109,8 @@ describe("PROFILES: getting and updating profiles", () => {
     const res = getResMock();
 
     // Create requesting user and other user in database
-    await database.createUser(user);
-    await database.createUser(otherUser);
+    await db.createUser(user);
+    await db.createUser(otherUser);
 
     // Try to get the user profile
     await simulateRouter(req, res, updateProfileFuncs);
@@ -134,7 +133,7 @@ describe("PROFILES: getting and updating profiles", () => {
     const res = getResMock();
 
     // First create user in database
-    await database.createUser(user);
+    await db.createUser(user);
 
     // Now try to update the user profile
     await simulateRouter(req, res, updateProfileFuncs);
@@ -185,7 +184,7 @@ describe("PROFILES: getting and updating profiles", () => {
     const res = getResMock();
 
     // First create user in database
-    await database.createUser(user);
+    await db.createUser(user);
 
     // Create contributions
     const fountain = getFountain(user.id);
@@ -197,12 +196,12 @@ describe("PROFILES: getting and updating profiles", () => {
       bathroom_ratings: [getBathroomRating(bathroom.id, user.id)],
       pictures: [getPicture(fountain.id, user.id), getPicture(bathroom.id, user.id)]
     }
-    await database.createFob(Fountain, contributions.fountains[0]);
-    await database.createFob(Bathroom, contributions.bathrooms[0]);
-    await database.createRating(FountainRating, contributions.fountain_ratings[0]);
-    await database.createRating(BathroomRating, contributions.bathroom_ratings[0]);
-    await database.createPicture(contributions.pictures[0]);
-    await database.createPicture(contributions.pictures[1]);
+    await db.createFob(contributions.fountains[0]);
+    await db.createFob(contributions.bathrooms[0]);
+    await db.createRating(contributions.fountain_ratings[0]);
+    await db.createRating(contributions.bathroom_ratings[0]);
+    await db.createPicture(contributions.pictures[0]);
+    await db.createPicture(contributions.pictures[1]);
 
     // Now try to get the user contributions
     await simulateRouter(req, res, getContributionsFunc);
