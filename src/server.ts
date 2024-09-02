@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import express from 'express';
-import mongoose from "mongoose";
 import * as BodyParser from "body-parser";
 import * as OpenApiValidator from "express-openapi-validator";
 
@@ -53,14 +52,16 @@ server.listen(port, () => {
   return console.log(`Express is listening at http://localhost:${port}`);
 });
 
-// Connect to mongoDB
+// Connect to postgres
 async function main() {
-  if (process.env.MONGO_ENV == "cloud") {
-    await mongoose.connect(process.env.MONGO_CLOUD_URI);
+  if (process.env.NODE_ENV == "cloud") {
+    // await mongoose.connect(process.env.MONGO_CLOUD_URI);
+    // TODO replace this with postgres cloud connection
   } else {
-    await mongoose.connect(process.env.MONGO_LOCAL_URI);
+    // await mongoose.connect(process.env.MONGO_LOCAL_URI);
+    // TODO replace this with postgres local connection
   }
-  console.log("Connected to mongoDB!");
+  console.log("Connected to postgres!");
 }
 main().catch((err) => console.log(err));
 

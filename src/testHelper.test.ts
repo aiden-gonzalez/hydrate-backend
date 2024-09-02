@@ -1,5 +1,4 @@
 import 'dotenv/config';
-import mongoose from "mongoose";
 import {ILocation, IPicture, IUser} from "./utils/types";
 import {
   generateBathroomId, generateBathroomRatingId,
@@ -14,44 +13,45 @@ import {expect} from "chai";
 import {IFountain, IFountainInfo, IFountainRating, IFountainRatingDetails} from "./fountains/types";
 import {IBathroom, IBathroomInfo, IBathroomRating, IBathroomRatingDetails} from "./bathrooms/types";
 
-// Tell mongoose to use es6 Promise implementation
-mongoose.Promise = global.Promise;
-
 describe("Connect to database and run tests", function () {
   it("Should connect to database", async () => {
-    // mongoose.set('debug', true); // uncomment this to get mongoose debug messages
-    await mongoose.connect(process.env.MONGO_TEST_URI);
-    console.log("Connected to local MongoDB");
-    mongoose.connection.on("error", (error) => {
-      console.warn("Error: ", error);
-    });
-    expect(mongoose.connection.db);
+    // await mongoose.connect(process.env.MONGO_TEST_URI);
+    // TODO connect to postgres
+    console.log("Connected to local postgres");
+    // mongoose.connection.on("error", (error) => {
+    //   console.warn("Error: ", error);
+    // });
+    // expect(mongoose.connection.db);
+    // TODO set up postgres error handling and expect connection
 
     // Comment out to see the documents after testing
     beforeEach((done) => {
-      dropAllCollections(mongoose.connection.db).then(() => {
-        done();
-      });
+      // dropAllCollections(mongoose.connection.db).then(() => {
+      //   done();
+      // });
+      // TODO implement "dropAllTables"
     });
 
     afterEach((done) => {
-      dropAllCollections(mongoose.connection.db).then(() => {
-        done();
-      });
+      // dropAllCollections(mongoose.connection.db).then(() => {
+      //   done();
+      // });
+      // TODO implement "dropAllTables"
     });
   });
 });
 
-async function dropAllCollections(db) {
-  try {
-    const collections = await db.collections()
-    for (const collection of collections) {
-      await collection.drop();
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
+// async function dropAllCollections(db) {
+//   try {
+//     const collections = await db.collections()
+//     for (const collection of collections) {
+//       await collection.drop();
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+// TODO implement "dropAllTables"
 
 // TESTING HELPER FUNCTIONS
 
@@ -146,9 +146,7 @@ export function getPicture (entity_id = generateFountainId(), user_id = generate
     id: generatePictureId(),
     entity_id: entity_id,
     user_id: user_id,
-    info: {
-      url: url
-    }
+    url: url
   }
 }
 

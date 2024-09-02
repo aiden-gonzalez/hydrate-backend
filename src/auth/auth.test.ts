@@ -1,10 +1,10 @@
 import {getReqMock, getResMock, getUser, simulateRouter} from "../testHelper.test";
 import {findUserMiddleware, validatePassword, validateRefresh} from "./authController";
 import * as constants from "../utils/constants";
-import {User} from "../mongoDB";
 import {IAuthRefreshRequest, IAuthRequest} from "./types";
 import {IUser} from "../utils/types";
 import {expect} from "chai";
+import * as db from '../db/queries';
 
 describe("AUTH: logging in user", () => {
   let user : IUser = null;
@@ -35,8 +35,7 @@ describe("AUTH: logging in user", () => {
     const req = getReqMock(null, authRequest);
 
     // Create user before login attempt
-    const userModel = new User(user);
-    await userModel.save();
+    await db.createUser(user);
     await simulateRouter(req, res, authFuncs);
 
     // User should have been found
@@ -49,8 +48,7 @@ describe("AUTH: logging in user", () => {
     const req = getReqMock(null, authRequest);
 
     // Create user before login attempt
-    const userModel = new User(user);
-    await userModel.save();
+    await db.createUser(user);
     await simulateRouter(req, res, authFuncs);
 
     // Try to validate password
@@ -66,8 +64,7 @@ describe("AUTH: logging in user", () => {
     const req = getReqMock(null, authRequest);
 
     // Create user before login attempt
-    const userModel = new User(user);
-    await userModel.save();
+    await db.createUser(user);
     await simulateRouter(req, res, authFuncs);
 
     // Try to validate password
@@ -81,8 +78,7 @@ describe("AUTH: logging in user", () => {
     let req = getReqMock(null, authRequest);
 
     // Create user before login attempt
-    const userModel = new User(user);
-    await userModel.save();
+    await db.createUser(user);
     await simulateRouter(req, res, authFuncs);
 
     // Validate password
