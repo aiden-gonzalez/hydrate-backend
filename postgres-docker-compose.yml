@@ -16,6 +16,8 @@ services:
       POSTGRES_DB: hydrate_db # adminer "Database" field
       POSTGRES_USER: hydrate_admin # adminer "Username" field
       POSTGRES_PASSWORD: secret_password # adminer "Password" field
+    ports:
+      - 5432:5432
 
   adminer:
     image: adminer
