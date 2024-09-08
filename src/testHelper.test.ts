@@ -9,49 +9,31 @@ import {
 } from "./utils/generate";
 import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
-// import {expect} from "chai";
+import {findFobs} from "./db/queries";
+import {migrateToLatest, migrateToNothing} from "./db/migrate";
+import {expect} from "chai";
 import {IFountain, IFountainInfo, IFountainRating, IFountainRatingDetails} from "./fountains/types";
 import {IBathroom, IBathroomInfo, IBathroomRating, IBathroomRatingDetails} from "./bathrooms/types";
 
 describe("Connect to database and run tests", function () {
   it("Should connect to database", async () => {
-    // await mongoose.connect(process.env.MONGO_TEST_URI);
-    // TODO connect to postgres
+    await migrateToLatest();
     console.log("Connected to local postgres");
-    // mongoose.connection.on("error", (error) => {
-    //   console.warn("Error: ", error);
-    // });
-    // expect(mongoose.connection.db);
-    // TODO set up postgres error handling and expect connection
-
+    expect(await findFobs({}));
     // Comment out to see the documents after testing
     beforeEach((done) => {
-      // dropAllCollections(mongoose.connection.db).then(() => {
-      //   done();
-      // });
-      // TODO implement "dropAllTables"
+      migrateToNothing().then(() => {
+        done();
+      });
     });
 
     afterEach((done) => {
-      // dropAllCollections(mongoose.connection.db).then(() => {
-      //   done();
-      // });
-      // TODO implement "dropAllTables"
+      migrateToNothing().then(() => {
+        done();
+      });
     });
   });
 });
-
-// async function dropAllCollections(db) {
-//   try {
-//     const collections = await db.collections()
-//     for (const collection of collections) {
-//       await collection.drop();
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-// TODO implement "dropAllTables"
 
 // TESTING HELPER FUNCTIONS
 
@@ -105,11 +87,11 @@ export function getBathroom (user_id = generateUserId(), name = "bathroom name",
   } as IBathroom;
 }
 
-export function getFountainRating (fountain_id = generateFountainId(), user_id = generateUserId(), details = getFountainRatingDetails()) : IFountainRating {
+export function getFountainRating (fobId = generateFountainId(), userId = generateUserId(), details = getFountainRatingDetails()) : IFountainRating {
   return {
     id: generateFountainRatingId(),
-    fountain_id: fountain_id,
-    user_id: user_id,
+    fob_id: fobId,
+    user_id: userId,
     details: details
   } as IFountainRating;
 }
@@ -122,11 +104,11 @@ export function getFountainRatingDetails (pressure = 3, taste = 3, temperature =
   } as IFountainRatingDetails;
 }
 
-export function getBathroomRating (bathroom_id = generateBathroomId(), user_id = generateUserId(), details = getBathroomRatingDetails()) : IBathroomRating {
+export function getBathroomRating (fobId = generateBathroomId(), userId = generateUserId(), details = getBathroomRatingDetails()) : IBathroomRating {
   return {
     id: generateBathroomRatingId(),
-    bathroom_id: bathroom_id,
-    user_id: user_id,
+    fob_id: fobId,
+    user_id: userId,
     details: details
   } as IBathroomRating;
 }
@@ -141,11 +123,11 @@ export function getBathroomRatingDetails (cleanliness = 3, decor = 3, drying = 3
   } as IBathroomRatingDetails;
 }
 
-export function getPicture (entity_id = generateFountainId(), user_id = generateUserId(), url = "https://www.google.com") : IPicture {
+export function getPicture (fobId = generateFountainId(), userId = generateUserId(), url = "https://www.google.com") : IPicture {
   return {
     id: generatePictureId(),
-    entity_id: entity_id,
-    user_id: user_id,
+    fob_id: fobId,
+    user_id: userId,
     url: url
   }
 }

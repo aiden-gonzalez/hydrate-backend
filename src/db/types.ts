@@ -80,7 +80,7 @@ export type UserUpdate = Updateable<UserTable>
 
 export interface PictureTable {
   id: string
-  entity_id: string
+  fob_id: string
   user_id: string
   url: string
   created_at: DbCreatedAt

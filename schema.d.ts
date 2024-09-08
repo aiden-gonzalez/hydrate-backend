@@ -1008,22 +1008,22 @@ export interface components {
     /**
      * @example {
      *   "id": "some text",
-     *   "fountain_id": "some text",
+     *   "fob_id": "some text",
      *   "user_id": "some text",
      *   "details": {
-     *     "pressure": 2,
-     *     "taste": 6,
-     *     "temperature": 18
+     *     "pressure": 50,
+     *     "taste": 12,
+     *     "temperature": 35
      *   },
-     *   "created_at": 63,
-     *   "updated_at": 27
+     *   "created_at": 10,
+     *   "updated_at": 10
      * }
      */
     FountainRating: {
       /** @description Unique id of fountain rating (technically not necessary but nice to have) */
       id: string;
       /** @description ID of fountain rating is for */
-      fountain_id: string;
+      fob_id: string;
       /** @description ID of user who created rating */
       user_id: string;
       /** @description Details of fountain rating */
@@ -1036,18 +1036,18 @@ export interface components {
     /**
      * @example {
      *   "id": "some text",
-     *   "entity_id": "some text",
+     *   "fob_id": "some text",
      *   "url": "some text",
      *   "user_id": "some text",
-     *   "created_at": 20,
-     *   "updated_at": 89
+     *   "created_at": 9,
+     *   "updated_at": 86
      * }
      */
     Picture: {
       /** @description Unique ID of picture */
       id: string;
       /** @description Fountain or bathroom ID picture is for */
-      entity_id: string;
+      fob_id: string;
       /** @description Url for picture */
       url: string;
       /** @description ID of user that created the picture. */
@@ -1060,24 +1060,24 @@ export interface components {
     /**
      * @example {
      *   "id": "some text",
-     *   "bathroom_id": "some text",
+     *   "fob_id": "some text",
      *   "user_id": "some text",
      *   "details": {
-     *     "cleanliness": 47,
-     *     "decor": 63,
-     *     "drying": 37,
-     *     "privacy": 24,
-     *     "washing": 56
+     *     "cleanliness": 25,
+     *     "decor": 92,
+     *     "drying": 71,
+     *     "privacy": 77,
+     *     "washing": 76
      *   },
-     *   "created_at": 46,
-     *   "updated_at": 7
+     *   "created_at": 19,
+     *   "updated_at": 49
      * }
      */
     BathroomRating: {
       /** @description Unique id of bathroom rating */
       id: string;
       /** @description ID of bathroom rating is for */
-      bathroom_id: string;
+      fob_id: string;
       /** @description ID of user who created bathroom rating */
       user_id: string;
       /** @description Details of bathroom rating */
@@ -1327,122 +1327,138 @@ export interface components {
      *     {
      *       "id": "some text",
      *       "info": {
-     *         "name": "some text",
-     *         "bottle_filler": true,
-     *         "location": {
-     *           "longitude": 57.31,
-     *           "latitude": 60.06
-     *         }
+     *         "bottle_filler": true
      *       },
-     *       "user_id": "some text"
+     *       "user_id": "some text",
+     *       "created_at": 71,
+     *       "updated_at": 64,
+     *       "name": "some text",
+     *       "location": {
+     *         "longitude": 87.62,
+     *         "latitude": 97.01
+     *       }
      *     },
      *     {
      *       "id": "some text",
      *       "info": {
-     *         "name": "some text",
-     *         "bottle_filler": true,
-     *         "location": {
-     *           "longitude": 78.88,
-     *           "latitude": 28.23
-     *         }
+     *         "bottle_filler": true
      *       },
-     *       "user_id": "some text"
+     *       "user_id": "some text",
+     *       "created_at": 79,
+     *       "updated_at": 56,
+     *       "name": "some text",
+     *       "location": {
+     *         "longitude": 87.37,
+     *         "latitude": 8.19
+     *       }
      *     }
      *   ],
      *   "bathrooms": [
      *     {
      *       "id": "some text",
      *       "info": {
-     *         "name": "some text",
      *         "gender": "some text",
      *         "sanitary_products": true,
-     *         "baby_changer": true,
-     *         "location": {
-     *           "longitude": 11.57,
-     *           "latitude": 85.56
-     *         }
+     *         "baby_changer": true
      *       },
-     *       "user_id": "some text"
+     *       "user_id": "some text",
+     *       "created_at": 45,
+     *       "updated_at": 93,
+     *       "name": "some text",
+     *       "location": {
+     *         "longitude": 38.65,
+     *         "latitude": 57
+     *       }
      *     },
      *     {
      *       "id": "some text",
      *       "info": {
-     *         "name": "some text",
      *         "gender": "some text",
      *         "sanitary_products": true,
-     *         "baby_changer": true,
-     *         "location": {
-     *           "longitude": 44.76,
-     *           "latitude": 83.35
-     *         }
+     *         "baby_changer": true
      *       },
-     *       "user_id": "some text"
+     *       "user_id": "some text",
+     *       "created_at": 70,
+     *       "updated_at": 69,
+     *       "name": "some text",
+     *       "location": {
+     *         "longitude": 53.45,
+     *         "latitude": 10.67
+     *       }
      *     }
      *   ],
      *   "fountain_ratings": [
      *     {
      *       "id": "some text",
-     *       "fountain_id": "some text",
+     *       "fob_id": "some text",
      *       "user_id": "some text",
      *       "details": {
-     *         "pressure": 25,
-     *         "taste": 17,
-     *         "temperature": 29
-     *       }
+     *         "pressure": 91,
+     *         "taste": 0,
+     *         "temperature": 95
+     *       },
+     *       "created_at": 76,
+     *       "updated_at": 1
      *     },
      *     {
      *       "id": "some text",
-     *       "fountain_id": "some text",
+     *       "fob_id": "some text",
      *       "user_id": "some text",
      *       "details": {
-     *         "pressure": 41,
-     *         "taste": 2,
-     *         "temperature": 47
-     *       }
+     *         "pressure": 27,
+     *         "taste": 16,
+     *         "temperature": 63
+     *       },
+     *       "created_at": 30,
+     *       "updated_at": 68
      *     }
      *   ],
      *   "bathroom_ratings": [
      *     {
      *       "id": "some text",
-     *       "bathroom_id": "some text",
+     *       "fob_id": "some text",
      *       "user_id": "some text",
      *       "details": {
-     *         "cleanliness": 7,
-     *         "decor": 85,
-     *         "drying": 23,
-     *         "privacy": 57,
-     *         "washing": 1
-     *       }
+     *         "cleanliness": 2,
+     *         "decor": 7,
+     *         "drying": 42,
+     *         "privacy": 65,
+     *         "washing": 96
+     *       },
+     *       "created_at": 72,
+     *       "updated_at": 44
      *     },
      *     {
      *       "id": "some text",
-     *       "bathroom_id": "some text",
+     *       "fob_id": "some text",
      *       "user_id": "some text",
      *       "details": {
-     *         "cleanliness": 28,
-     *         "decor": 7,
-     *         "drying": 74,
-     *         "privacy": 32,
-     *         "washing": 85
-     *       }
+     *         "cleanliness": 74,
+     *         "decor": 49,
+     *         "drying": 13,
+     *         "privacy": 7,
+     *         "washing": 65
+     *       },
+     *       "created_at": 83,
+     *       "updated_at": 20
      *     }
      *   ],
      *   "pictures": [
      *     {
      *       "id": "some text",
-     *       "entity_id": "some text",
-     *       "info": {
-     *         "url": "some text"
-     *       },
-     *       "user_id": "some text"
+     *       "fob_id": "some text",
+     *       "url": "some text",
+     *       "user_id": "some text",
+     *       "created_at": 65,
+     *       "updated_at": 97
      *     },
      *     {
      *       "id": "some text",
-     *       "entity_id": "some text",
-     *       "info": {
-     *         "url": "some text"
-     *       },
-     *       "user_id": "some text"
+     *       "fob_id": "some text",
+     *       "url": "some text",
+     *       "user_id": "some text",
+     *       "created_at": 89,
+     *       "updated_at": 22
      *     }
      *   ]
      * }

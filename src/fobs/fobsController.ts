@@ -144,7 +144,7 @@ export function getFobPictures(req, res) {
 
   // Get fountain pictures
   return new Promise((resolve) => {
-    db.getPicturesForEntity(fobId).then((fobPictures) => {
+    db.getPicturesForFob(fobId).then((fobPictures) => {
       resolve(res.status(HTTP_OK).json(fobPictures))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -162,7 +162,7 @@ export function addFobPicture(req, res) {
   const newPicture : IPicture = {
     id: generatePictureId(),
     user_id: req.user.id,
-    entity_id: fobId,
+    fob_id: fobId,
     url: pictureUrl
   }
   return new Promise((resolve) => {
@@ -249,9 +249,9 @@ export function addFobRating(req, res) {
 
   // Add id
   if (req.isFountain) {
-    (newRating as IFountainRating).fountain_id = fobId;
+    (newRating as IFountainRating).fob_id = fobId;
   } else {
-    (newRating as IBathroomRating).bathroom_id = fobId;
+    (newRating as IBathroomRating).fob_id = fobId;
   }
 
   return new Promise((resolve) => {

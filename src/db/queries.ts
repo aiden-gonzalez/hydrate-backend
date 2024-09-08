@@ -30,7 +30,7 @@ export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
 
   if (params.latitude && params.longitude) {
     if (!params.radius) {
-      // 1 kilometer default radius
+      // 1 kilometer default square radius
       params.radius = 1000;
     }
     const start : ILocation = {
@@ -141,8 +141,8 @@ export function getPictureById(id: string) : Promise<Picture> {
   return db.selectFrom('picture').where('id', '=', id).selectAll().executeTakeFirst();
 }
 
-export function getPicturesForEntity(entityId: string) : Promise<Picture[]> {
-  return db.selectFrom('picture').where('entity_id', '=', entityId).selectAll().execute();
+export function getPicturesForFob(fobId: string) : Promise<Picture[]> {
+  return db.selectFrom('picture').where('fob_id', '=', fobId).selectAll().execute();
 }
 
 export function getPicturesByUser(userId: string) : Promise<Picture[]> {

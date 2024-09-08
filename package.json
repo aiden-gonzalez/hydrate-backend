@@ -5,12 +5,14 @@
   "main": "src/server.ts",
   "scripts": {
     "build": "tsc",
-    "test": "tsc && sudo docker compose -f postgres-docker-compose.yml up -d && export NODE_ENV=test && mocha --recursive --exit",
+    "test": "tsc && sudo docker compose -f test-postgres-docker-compose.yml up -d && export NODE_ENV=test && mocha --recursive --exit",
     "local": "tsc && sudo docker compose -f postgres-docker-compose.yml up -d && export NODE_ENV=local && node dist/server.js",
     "cloud": "tsc && export NODE_ENV=cloud && node dist/server.js",
     "lint": "eslint .",
     "lint_fix": "eslint --fix .",
-    "generate_schema": "npx openapi-typescript ./hydRate.json -o ./schema.d.ts"
+    "generate_schema": "npx openapi-typescript ./hydRate.json -o ./schema.d.ts",
+    "stop_test_db": "sudo docker compose -f test-postgres-docker-compose.yml down",
+    "stop_db": "sudo docker compose -f postgres-docker-compose.yml down"
   },
   "repository": {
     "type": "git",

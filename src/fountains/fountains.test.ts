@@ -97,7 +97,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     // Create fountain ratings
     const fountainRatingOne : IFountainRating = {
       id: generateFountainRatingId(),
-      fountain_id: fountainId,
+      fob_id: fountainId,
       user_id: userId,
       details: {
         pressure: 1,
@@ -107,7 +107,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     }
     const fountainRatingTwo : IFountainRating = {
       id: generateFountainRatingId(),
-      fountain_id: fountainId,
+      fob_id: fountainId,
       user_id: userId,
       details: {
         pressure: 2,
@@ -117,7 +117,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     }
     const fountainRatingThree : IFountainRating = {
       id: generateFountainRatingId(),
-      fountain_id: fountainId,
+      fob_id: fountainId,
       user_id: userId,
       details: {
         pressure: 3,

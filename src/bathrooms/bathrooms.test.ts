@@ -106,7 +106,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     // Create bathroom ratings
     const bathroomRatingOne : IBathroomRating = {
       id: generateBathroomRatingId(),
-      bathroom_id: bathroomId,
+      fob_id: bathroomId,
       user_id: userId,
       details: {
         cleanliness: 1,
@@ -118,7 +118,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     }
     const bathroomRatingTwo : IBathroomRating = {
       id: generateBathroomRatingId(),
-      bathroom_id: bathroomId,
+      fob_id: bathroomId,
       user_id: userId,
       details: {
         cleanliness: 2,
@@ -130,7 +130,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     }
     const bathroomRatingThree : IBathroomRating = {
       id: generateBathroomRatingId(),
-      bathroom_id: bathroomId,
+      fob_id: bathroomId,
       user_id: userId,
       details: {
         cleanliness: 3,
