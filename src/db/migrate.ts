@@ -5,7 +5,7 @@ import {
   FileMigrationProvider,
   NO_MIGRATIONS
 } from 'kysely'
-import {db} from "./database";
+import {getDb} from "./database";
 
 export async function migrateToLatest() {
   await migrateTo();
@@ -16,8 +16,11 @@ export async function migrateToNothing() {
 }
 
 async function migrateTo(migration_name : any = null) {
+  // We want a separate db pool for migration
+  const migrationDb = getDb();
+
   const migrator = new Migrator({
-    db,
+    db: migrationDb,
     provider: new FileMigrationProvider({
       fs,
       path,
@@ -42,5 +45,5 @@ async function migrateTo(migration_name : any = null) {
     process.exit(1);
   }
 
-  await db.destroy();
+  await migrationDb.destroy();
 }

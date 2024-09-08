@@ -10,10 +10,11 @@ import {
 import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
 import {findFobs} from "./db/queries";
-import {migrateToLatest, migrateToNothing} from "./db/migrate";
+import {migrateToLatest} from "./db/migrate";
 import {expect} from "chai";
 import {IFountain, IFountainInfo, IFountainRating, IFountainRatingDetails} from "./fountains/types";
 import {IBathroom, IBathroomInfo, IBathroomRating, IBathroomRatingDetails} from "./bathrooms/types";
+import {getDb} from "./db/database";
 
 describe("Connect to database and run tests", function () {
   it("Should connect to database", async () => {
@@ -22,13 +23,13 @@ describe("Connect to database and run tests", function () {
     expect(await findFobs({}));
     // Comment out to see the documents after testing
     beforeEach((done) => {
-      migrateToNothing().then(() => {
+      deleteAllRows().then(() => {
         done();
       });
     });
 
     afterEach((done) => {
-      migrateToNothing().then(() => {
+      deleteAllRows().then(() => {
         done();
       });
     });
@@ -36,6 +37,16 @@ describe("Connect to database and run tests", function () {
 });
 
 // TESTING HELPER FUNCTIONS
+
+// Using this pool here for deleting all rows
+const db = getDb();
+
+async function deleteAllRows() {
+  await db.deleteFrom('user').execute();
+  await db.deleteFrom('fob').execute();
+  await db.deleteFrom('rating').execute();
+  await db.deleteFrom('picture').execute();
+}
 
 export function getToken (user: IUser) : string {
   return generateToken(user, constants.JWT_ACCESS_EXPIRATION);
