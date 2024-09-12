@@ -21,7 +21,7 @@ describe("Connect to database and run tests", function () {
     await migrateToLatest();
     console.log("Connected to local postgres");
     expect(await findFobs({}));
-    // Comment out to see the documents after testing
+    // Comment out to see the rows after testing
     beforeEach((done) => {
       deleteAllRows().then(() => {
         done();

@@ -18,6 +18,7 @@ import {IUserContributionQueryParams} from "../profiles/types";
 
 // FOUNTAIN OR BATHROOM (FOB)
 export function createFob(fob: NewFob) : Promise<Fob> {
+  // TODO also add entry to fobchange table to record this
   return db.insertInto('fob').values(fob as NewFob).returningAll().executeTakeFirstOrThrow();
 }
 
@@ -59,6 +60,7 @@ export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
 }
 
 export function updateFob(id: string, updateWith: FobUpdate) : Promise<Fob> {
+  // TODO also add entry to fob change table to record this
   return db.updateTable('fob').set(updateWith).where('id', '=', id).returningAll().executeTakeFirst();
 }
 

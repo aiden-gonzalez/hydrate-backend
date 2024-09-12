@@ -47,11 +47,16 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
   // TODO add more unhappy paths? Malformed data, bad responses?
 
-  async function createFountains(user_id = generateUserId()) {
+  async function createFountains(user = null) {
+    // Create user if necessary
+    if (user == null) {
+      user = await db.createUser(await getUser());
+    }
+
     // Create fountains
     const fountainOne : IFountain = {
       id: generateFountainId(),
-      user_id: user_id,
+      user_id: user.id,
       name: "Fountain One",
       location: {
         latitude: 40.42476607308126,
@@ -63,7 +68,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
     const fountainTwo : IFountain = {
       id: generateFountainId(),
-      user_id: user_id,
+      user_id: user.id,
       name: "Fountain Two",
       location: {
         latitude: 40.42486535509428,
@@ -75,7 +80,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
     const fountainThree : IFountain = {
       id: generateFountainId(),
-      user_id: user_id,
+      user_id: user.id,
       name: "Fountain Three",
       location: {
         latitude: 40.425193836261464,
@@ -93,12 +98,22 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     return [createdFountainOne, createdFountainTwo, createdFountainThree];
   }
 
-  async function createFountainRatings (fountainId : string, userId : string) {
+  async function createFountainRatings (user = null, fountain = null) {
+    // First create user if necessary
+    if (user == null) {
+      user = await db.createUser(await getUser());
+    }
+    
+    // Then create bathroom if necessary
+    if (fountain == null) {
+      fountain = await db.createFob(getFountain(user.id));
+    }
+
     // Create fountain ratings
     const fountainRatingOne : IFountainRating = {
       id: generateFountainRatingId(),
-      fob_id: fountainId,
-      user_id: userId,
+      fob_id: fountain.id,
+      user_id: user.id,
       details: {
         pressure: 1,
         taste: 1,
@@ -107,8 +122,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     }
     const fountainRatingTwo : IFountainRating = {
       id: generateFountainRatingId(),
-      fob_id: fountainId,
-      user_id: userId,
+      fob_id: fountain.id,
+      user_id: user.id,
       details: {
         pressure: 2,
         taste: 2,
@@ -117,8 +132,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     }
     const fountainRatingThree : IFountainRating = {
       id: generateFountainRatingId(),
-      fob_id: fountainId,
-      user_id: userId,
+      fob_id: fountain.id,
+      user_id: user.id,
       details: {
         pressure: 3,
         taste: 3,

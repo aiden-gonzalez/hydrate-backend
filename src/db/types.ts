@@ -1,6 +1,6 @@
 import {
   ColumnType,
-  // Generated,
+  Generated,
   Insertable,
   // JSONColumnType,
   Selectable,
@@ -12,6 +12,7 @@ import {IFobInfo, IFobRatingDetails} from "../fobs/types";
 
 export interface Database {
   fob: FobTable,
+  fob_change: FobChangeTable,
   rating: RatingTable,
   user: UserTable,
   picture: PictureTable
@@ -50,6 +51,17 @@ export interface FobTable {
 export type Fob = Selectable<FobTable>
 export type NewFob = Insertable<FobTable>
 export type FobUpdate = Updateable<FobTable>
+
+export interface FobChangeTable {
+  id: Generated<number>,
+  fob_id: string,
+  user_id: string,
+  details: object,
+  changed_at: DbCreatedAt
+}
+
+export type FobChange = Selectable<FobChangeTable>
+export type NewFobChange = Insertable<FobChangeTable>
 
 export interface RatingTable {
   id: string

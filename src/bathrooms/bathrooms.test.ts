@@ -50,12 +50,17 @@ describe("BATHROOMS: CRUD of all kinds", () => {
 
   // TODO add more unhappy paths? Malformed data, bad responses?
 
-  async function createBathrooms(user_id = generateUserId()) {
-    // Create bathrooms
+  async function createBathrooms(user = null) {
+    // Create user if necessary
+    if (user == null) {
+      user = await db.createUser(await getUser());
+    }
+
+    // Then create bathrooms
     const bathroomOne : NewFob = {
       id: generateBathroomId(),
       name: "Bathroom One",
-      user_id: user_id,
+      user_id: user.id,
       location: {
         latitude: 40.42476607308126,
         longitude: -86.9114030295504
@@ -69,7 +74,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const bathroomTwo : NewFob = {
       id: generateBathroomId(),
       name: "Bathroom Two",
-      user_id: user_id,
+      user_id: user.id,
       location: {
         latitude: 40.42486535509428,
         longitude: -86.91207343967577
@@ -83,7 +88,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const bathroomThree : IBathroom = {
       id: generateBathroomId(),
       name: "Bathroom Three",
-      user_id: user_id,
+      user_id: user.id,
       location: {
         latitude: 40.425193836261464,
         longitude: -86.9112570893454
@@ -102,12 +107,22 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     return [createdBathroomOne, createdBathroomTwo, createdBathroomThree];
   }
 
-  async function createBathroomRatings (bathroomId : string, userId : string) {
-    // Create bathroom ratings
+  async function createBathroomRatings (user = null, bathroom = null) {
+    // First create user if necessary
+    if (user == null) {
+      user = await db.createUser(await getUser());
+    }
+    
+    // Then create bathroom if necessary
+    if (bathroom == null) {
+      bathroom = await db.createFob(getBathroom(user.id));
+    }
+
+    // Then create bathroom ratings
     const bathroomRatingOne : IBathroomRating = {
       id: generateBathroomRatingId(),
-      fob_id: bathroomId,
-      user_id: userId,
+      fob_id: bathroom.id,
+      user_id: user.id,
       details: {
         cleanliness: 1,
         decor: 1,
@@ -118,8 +133,8 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     }
     const bathroomRatingTwo : IBathroomRating = {
       id: generateBathroomRatingId(),
-      fob_id: bathroomId,
-      user_id: userId,
+      fob_id: bathroom.id,
+      user_id: user.id,
       details: {
         cleanliness: 2,
         decor: 2,
@@ -130,8 +145,8 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     }
     const bathroomRatingThree : IBathroomRating = {
       id: generateBathroomRatingId(),
-      fob_id: bathroomId,
-      user_id: userId,
+      fob_id: bathroom.id,
+      user_id: user.id,
       details: {
         cleanliness: 3,
         decor: 3,
@@ -620,7 +635,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create bathrooms
-    const createdBathrooms = await createBathrooms();
+    const createdBathrooms = await createBathrooms(user);
 
     // Create a few ratings for a particular bathroom
     const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, user.id);
