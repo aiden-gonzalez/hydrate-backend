@@ -9,6 +9,7 @@ import fountainsRouter from './fountains/fountainsRouter'
 import authRouter from './auth/authRouter';
 import profilesRouter from './profiles/profilesRouter';
 import signupRouter from './signup/signupRouter';
+import {migrateToLatest} from "./db/migrate";
 
 // Server port
 const port = process.env.PORT;
@@ -54,13 +55,7 @@ server.listen(port, () => {
 
 // Connect to postgres
 async function main() {
-  if (process.env.NODE_ENV == "cloud") {
-    // await mongoose.connect(process.env.MONGO_CLOUD_URI);
-    // TODO replace this with postgres cloud connection
-  } else {
-    // await mongoose.connect(process.env.MONGO_LOCAL_URI);
-    // TODO replace this with postgres local connection
-  }
+  await migrateToLatest();
   console.log("Connected to postgres!");
 }
 main().catch((err) => console.log(err));
