@@ -16,7 +16,7 @@ import {
   pictureIdRegex,
   userIdRegex
 } from "./regex";
-import {getPicture, getReqMock, getResMock, getUser} from "../testHelper.test";
+import {getFountain, getPicture, getReqMock, getResMock, getUser} from "../testHelper.test";
 import {IUser} from "./types";
 import {expect} from "chai";
 import * as db from '../db/queries';
@@ -100,7 +100,10 @@ describe("UTIL: creating entries in database", () => {
   });
 
   it("creates a new Picture", async () => {
-    const newPicture = getPicture();
+    // Must first create fountain due to foreign key constraint
+    const newFountain = getFountain();
+    await db.createFob(newFountain);
+    const newPicture = getPicture(newFountain.id);
     try {
       await db.createPicture(newPicture);
     } catch (error) {

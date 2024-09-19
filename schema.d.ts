@@ -75,7 +75,7 @@ export interface paths {
     post: {
       requestBody: {
         content: {
-          "application/json": components["schemas"]["FountainInfo"];
+          "application/json": components["schemas"]["FountainCreationDetails"];
         };
       };
       responses: {
@@ -268,7 +268,7 @@ export interface paths {
     post: {
       requestBody: {
         content: {
-          "application/json": components["schemas"]["BathroomInfo"];
+          "application/json": components["schemas"]["BathroomCreationDetails"];
         };
       };
       responses: {
@@ -1149,14 +1149,14 @@ export interface components {
      *   "info": {
      *     "bottle_filler": true
      *   },
-     *   "user_id": "some text",
-     *   "created_at": 66,
-     *   "updated_at": 99,
+     *   "created_at": 54,
+     *   "updated_at": 52,
      *   "name": "some text",
      *   "location": {
-     *     "longitude": 42.48,
-     *     "latitude": 65.69
-     *   }
+     *     "longitude": 17.64,
+     *     "latitude": 7.68
+     *   },
+     *   "user_id": "some text"
      * }
      */
     Fountain: {
@@ -1164,8 +1164,6 @@ export interface components {
       id: string;
       /** @description Fountain information */
       info: components["schemas"]["FountainInfo"];
-      /** @description ID of user that created the fountain. */
-      user_id: string;
       /** @description Created timestamp.  Unix epoch milliseconds. */
       created_at?: number;
       /** @description Updated timestamp.  Unix epoch milliseconds. */
@@ -1174,6 +1172,8 @@ export interface components {
       name: string;
       /** @description Location of fountain */
       location: components["schemas"]["Location"];
+      /** @description ID of user who created the fountain */
+      user_id: string;
     };
     /**
      * @example {
@@ -1208,14 +1208,14 @@ export interface components {
      *     "sanitary_products": true,
      *     "baby_changer": true
      *   },
-     *   "user_id": "some text",
-     *   "created_at": 96,
-     *   "updated_at": 51,
+     *   "created_at": 61,
+     *   "updated_at": 14,
      *   "name": "some text",
      *   "location": {
-     *     "longitude": 90,
-     *     "latitude": 61.27
-     *   }
+     *     "longitude": 33.98,
+     *     "latitude": 88.94
+     *   },
+     *   "user_id": "some text"
      * }
      */
     Bathroom: {
@@ -1223,8 +1223,6 @@ export interface components {
       id: string;
       /** @description Info for bathroom */
       info: components["schemas"]["BathroomInfo"];
-      /** @description ID of user that created the bathroom. */
-      user_id: string;
       /** @description Created timestamp.  Unix epoch milliseconds. */
       created_at?: number;
       /** @description Updated timestamp.  Unix epoch milliseconds. */
@@ -1233,6 +1231,8 @@ export interface components {
       name: string;
       /** @description Location of bathroom */
       location: components["schemas"]["Location"];
+      /** @description ID of user who created the bathroom */
+      user_id: string;
     };
     /**
      * @description Actual details of bathroom rating
@@ -1474,6 +1474,50 @@ export interface components {
       bathroom_ratings: components["schemas"]["BathroomRating"][];
       /** @description Pictures created by user */
       pictures: components["schemas"]["Picture"][];
+    };
+    /**
+     * @description Information necessary to create a bathroom
+     * @example {
+     *   "name": "some text",
+     *   "location": {
+     *     "longitude": 25.86,
+     *     "latitude": 2.67
+     *   },
+     *   "info": {
+     *     "gender": "some text",
+     *     "sanitary_products": true,
+     *     "baby_changer": true
+     *   }
+     * }
+     */
+    BathroomCreationDetails: {
+      /** @description Name of bathroom */
+      name: string;
+      /** @description Location of bathroom */
+      location: components["schemas"]["Location"];
+      /** @description Info for bathroom */
+      info: components["schemas"]["BathroomInfo"];
+    };
+    /**
+     * @description Information necessary to create a fountain
+     * @example {
+     *   "name": "some text",
+     *   "location": {
+     *     "longitude": 29.12,
+     *     "latitude": 60.61
+     *   },
+     *   "info": {
+     *     "bottle_filler": true
+     *   }
+     * }
+     */
+    FountainCreationDetails: {
+      /** @description Name of fountain */
+      name: string;
+      /** @description Location of fountain */
+      location: components["schemas"]["Location"];
+      /** @description Info for fountain */
+      info: components["schemas"]["FountainInfo"];
     };
   };
   responses: never;

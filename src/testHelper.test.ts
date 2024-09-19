@@ -76,10 +76,10 @@ export function getFountain (user_id = generateUserId(), name  = "fountain name"
   return {
     id: generateFountainId(),
     user_id: user_id,
+    name: name,
+    location: location,
     info: {
-      name: name,
-      bottle_filler: bottle_filler,
-      location: location
+      bottle_filler: bottle_filler
     } as IFountainInfo
   } as IFountain;
 }
@@ -88,12 +88,12 @@ export function getBathroom (user_id = generateUserId(), name = "bathroom name",
   return {
     id: generateBathroomId(),
     user_id: user_id,
+    name: name,
+    location: location,
     info: {
-      name: name,
       gender: gender,
       baby_changer: baby_changer,
-      sanitary_products: sanitary_products,
-      location: location
+      sanitary_products: sanitary_products
     } as IBathroomInfo
   } as IBathroom;
 }

@@ -27,7 +27,7 @@ import {
   updateFobRating
 } from "../fobs/fobsController";
 import {setupBathroomReq} from "./bathroomsRouter";
-import { IBathroom, IBathroomRating, IBathroomRatingDetails } from "./types";
+import {IBathroom, IBathroomCreationDetails, IBathroomRating, IBathroomRatingDetails} from "./types";
 import * as db from "../db/queries";
 import {generateBathroomId, generateBathroomRatingId, generateUserId} from "../utils/generate";
 import {ILocation, IUser} from "../utils/types";
@@ -59,8 +59,8 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     // Then create bathrooms
     const bathroomOne : NewFob = {
       id: generateBathroomId(),
-      name: "Bathroom One",
       user_id: user.id,
+      name: "Bathroom One",
       location: {
         latitude: 40.42476607308126,
         longitude: -86.9114030295504
@@ -73,8 +73,8 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     };
     const bathroomTwo : NewFob = {
       id: generateBathroomId(),
-      name: "Bathroom Two",
       user_id: user.id,
+      name: "Bathroom Two",
       location: {
         latitude: 40.42486535509428,
         longitude: -86.91207343967577
@@ -85,10 +85,10 @@ describe("BATHROOMS: CRUD of all kinds", () => {
         sanitary_products: false
       }
     };
-    const bathroomThree : IBathroom = {
+    const bathroomThree : NewFob = {
       id: generateBathroomId(),
-      name: "Bathroom Three",
       user_id: user.id,
+      name: "Bathroom Three",
       location: {
         latitude: 40.425193836261464,
         longitude: -86.9112570893454
@@ -198,7 +198,11 @@ describe("BATHROOMS: CRUD of all kinds", () => {
 
   it("creates a bathroom with authentication", async () => {
     const bathroomToCreate = getBathroom();
-    const req = getAuthedReqMockForUser(await getUser(), bathroomToCreate.info);
+    const req = getAuthedReqMockForUser(await getUser(), {
+      name: bathroomToCreate.name,
+      location: bathroomToCreate.location,
+      info: bathroomToCreate.info
+    } as IBathroomCreationDetails);
     const res = getResMock();
 
     // Try to create bathroom

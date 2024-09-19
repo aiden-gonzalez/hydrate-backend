@@ -29,8 +29,8 @@ export function getFob(id: string) : Promise<Fob> {
 export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
   let query = db.selectFrom('fob');
 
-  if (params.latitude && params.longitude) {
-    if (!params.radius) {
+  if (params.latitude !== undefined && params.longitude !== undefined) {
+    if (params.radius === undefined) {
       // 1 kilometer default square radius
       params.radius = 1000;
     }
@@ -44,16 +44,32 @@ export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
     query = query.where(sql<boolean>`location->'longitude' between ${botLeft.longitude} and ${topRight.longitude}`);
   }
 
-  if (params.user_id) {
+  if (params.user_id !== undefined) {
     query = query.where('user_id', '=', params.user_id);  // Kysely is immutable, must re-assign
   }
 
-  if (params.from_date) {
+  if (params.from_date !== undefined) {
     query = query.where('created_at', '>=', params.from_date);
   }
 
-  if (params.to_date) {
+  if (params.to_date !== undefined) {
     query = query.where('created_at', '<=', params.to_date);
+  }
+
+  if (params.bottle_filler !== undefined) {
+    query = query.where(sql<boolean>`info->'bottle_filler' = ${params.bottle_filler}`)
+  }
+
+  if (params.baby_changer !== undefined) {
+    query = query.where(sql<boolean>`info->'baby_changer' = ${params.baby_changer}`)
+  }
+
+  if (params.gender !== undefined) {
+    query = query.where(sql<boolean>`info->'gender' = ${params.gender}`)
+  }
+
+  if (params.sanitary_products !== undefined) {
+    query = query.where(sql<boolean>`info->'sanitary_products' = ${params.sanitary_products}`)
   }
 
   return query.selectAll().execute();

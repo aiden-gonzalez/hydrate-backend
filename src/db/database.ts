@@ -42,12 +42,12 @@ export function getDb() : Kysely<Database> {
     }),
     log(event) {
       if (event.level === "error") {
-          console.error("Query failed : ", {
-            durationMs: event.queryDurationMillis,
-            error: event.error,
-            sql: event.query.sql,
-            params: event.query.parameters
-          });
+        console.error("Query failed : ", {
+          durationMs: event.queryDurationMillis,
+          error: event.error,
+          sql: event.query.sql,
+          params: event.query.parameters
+        });
       } 
       // else { // `'query'`
       //   console.log("Query executed : ", {

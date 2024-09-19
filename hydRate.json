@@ -143,7 +143,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/FountainInfo"
+                                "$ref": "#/components/schemas/FountainCreationDetails"
                             }
                         }
                     },
@@ -441,7 +441,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/BathroomInfo"
+                                "$ref": "#/components/schemas/BathroomCreationDetails"
                             }
                         }
                     },
@@ -1674,7 +1674,8 @@
                     "id",
                     "info",
                     "name",
-                    "location"
+                    "location",
+                    "user_id"
                 ],
                 "type": "object",
                 "properties": {
@@ -1701,6 +1702,10 @@
                     "location": {
                         "$ref": "#/components/schemas/Location",
                         "description": "Location of fountain"
+                    },
+                    "user_id": {
+                        "description": "ID of user who created the fountain",
+                        "type": "string"
                     }
                 },
                 "example": {
@@ -1708,13 +1713,14 @@
                     "info": {
                         "bottle_filler": true
                     },
-                    "created_at": 39,
-                    "updated_at": 97,
+                    "created_at": 54,
+                    "updated_at": 52,
                     "name": "some text",
                     "location": {
-                        "longitude": 71.19,
-                        "latitude": 25.96
-                    }
+                        "longitude": 17.64,
+                        "latitude": 7.68
+                    },
+                    "user_id": "some text"
                 }
             },
             "FountainInfo": {
@@ -1768,7 +1774,8 @@
                     "id",
                     "info",
                     "name",
-                    "location"
+                    "location",
+                    "user_id"
                 ],
                 "type": "object",
                 "properties": {
@@ -1795,6 +1802,10 @@
                     "location": {
                         "$ref": "#/components/schemas/Location",
                         "description": "Location of bathroom"
+                    },
+                    "user_id": {
+                        "description": "ID of user who created the bathroom",
+                        "type": "string"
                     }
                 },
                 "example": {
@@ -1804,13 +1815,14 @@
                         "sanitary_products": true,
                         "baby_changer": true
                     },
-                    "created_at": 92,
-                    "updated_at": 91,
+                    "created_at": 61,
+                    "updated_at": 14,
                     "name": "some text",
                     "location": {
-                        "longitude": 72.35,
-                        "latitude": 5.2
-                    }
+                        "longitude": 33.98,
+                        "latitude": 88.94
+                    },
+                    "user_id": "some text"
                 }
             },
             "BathroomRatingDetails": {
@@ -2172,6 +2184,74 @@
                             "updated_at": 22
                         }
                     ]
+                }
+            },
+            "BathroomCreationDetails": {
+                "description": "Information necessary to create a bathroom",
+                "required": [
+                    "name",
+                    "location",
+                    "info"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Name of bathroom",
+                        "type": "string"
+                    },
+                    "location": {
+                        "$ref": "#/components/schemas/Location",
+                        "description": "Location of bathroom"
+                    },
+                    "info": {
+                        "$ref": "#/components/schemas/BathroomInfo",
+                        "description": "Info for bathroom"
+                    }
+                },
+                "example": {
+                    "name": "some text",
+                    "location": {
+                        "longitude": 25.86,
+                        "latitude": 2.67
+                    },
+                    "info": {
+                        "gender": "some text",
+                        "sanitary_products": true,
+                        "baby_changer": true
+                    }
+                }
+            },
+            "FountainCreationDetails": {
+                "description": "Information necessary to create a fountain",
+                "required": [
+                    "name",
+                    "location",
+                    "info"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Name of fountain",
+                        "type": "string"
+                    },
+                    "location": {
+                        "$ref": "#/components/schemas/Location",
+                        "description": "Location of fountain"
+                    },
+                    "info": {
+                        "$ref": "#/components/schemas/FountainInfo",
+                        "description": "Info for fountain"
+                    }
+                },
+                "example": {
+                    "name": "some text",
+                    "location": {
+                        "longitude": 29.12,
+                        "latitude": 60.61
+                    },
+                    "info": {
+                        "bottle_filler": true
+                    }
                 }
             }
         },

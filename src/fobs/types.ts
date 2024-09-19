@@ -1,12 +1,12 @@
 import {
-  IFountain,
+  IFountain, IFountainCreationDetails,
   IFountainInfo,
   IFountainQueryParams,
   IFountainRating,
   IFountainRatingDetails
 } from "../fountains/types";
 import {
-  IBathroom,
+  IBathroom, IBathroomCreationDetails,
   IBathroomInfo,
   IBathroomQueryParams,
   IBathroomRating,
@@ -17,6 +17,7 @@ export type IFob = (IFountain & IBathroom) | {info: IFobInfo};
 export type IFobInfo = IFountainInfo | IBathroomInfo;
 export type IFobRating = (IFountainRating & IBathroomRating) | {details: IFobRatingDetails};
 export type IFobRatingDetails = IFountainRatingDetails | IBathroomRatingDetails;
+export type IFobCreationDetails = IFountainCreationDetails | IBathroomCreationDetails;
 export type IFobQueryParams = IFountainQueryParams | IBathroomQueryParams;
 
 export function isFountain(fob: IFob) : fob is IFountain {

@@ -14,6 +14,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable('fob')
     .addColumn('id', 'text', col => col.primaryKey())
+    .addColumn('user_id', 'text', col => col.notNull()) // no .references() because we don't want a foreign key constraint
     .addColumn('name', 'text')
     .addColumn('location', 'jsonb', col => col.unique().notNull())
     .addColumn('info', 'jsonb', col => col.notNull())
@@ -26,7 +27,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('fob_id', 'text', col => col.references('fob.id').onDelete('cascade').notNull())
     .addColumn('user_id', 'text', col => col.notNull())
     .addColumn('details', 'jsonb', col => col.notNull())
-    .addColumn('changed_at', 'timestamp', col => col.defaultTo(sql`now`).notNull())
+    .addColumn('changed_at', 'timestamp', col => col.defaultTo(sql`now()`).notNull())
     .execute();
   await db.schema
     .createTable('rating')
@@ -51,7 +52,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropTable('picture').execute();
   await db.schema.dropTable('rating').execute();
-  await db.schema.dropTable('fob_history').execute();
+  await db.schema.dropTable('fob_change').execute();
   await db.schema.dropTable('fob').execute();
   await db.schema.dropTable('user').execute();
 }

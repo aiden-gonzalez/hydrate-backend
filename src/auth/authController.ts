@@ -10,7 +10,7 @@ export async function findUserMiddleware (req, res, next) {
 
   // Find user in database
   const user = await db.getUserByEmail(authRequest.user_credentials.email);
-  if (user === null) {
+  if (user === null || user === undefined) {
     return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
   }
 

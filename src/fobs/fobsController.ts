@@ -1,6 +1,5 @@
 import {
-  IFob,
-  IFobInfo,
+  IFob, IFobCreationDetails,
   IFobRating,
   IFobRatingDetails
 } from "./types";
@@ -23,6 +22,7 @@ import {
 } from "../utils/generate";
 import {IBathroomQueryParams, IBathroomRating} from "../bathrooms/types";
 import {IFountainQueryParams, IFountainRating} from "../fountains/types";
+import {NewFob} from "../db/types";
 
 // TODO think about how to set correct status depending on response from database
 // If none are found, should be 404 not found?
@@ -87,14 +87,16 @@ export function getFobs(req, res) {
 
 export function createFob(req, res) {
   // Get fob info from request
-  const fobInfo : IFobInfo = req.body;
+  const fobCreationDetails : IFobCreationDetails = req.body;
 
   // Create fob
   const newFob = {
     id: req.isFountain ? generateFountainId() : generateBathroomId(),
     user_id: req.user.id,
-    info: fobInfo
-  } as IFob;
+    name: fobCreationDetails.name,
+    location: fobCreationDetails.location,
+    info: fobCreationDetails.info
+  } as NewFob;
 
   return new Promise((resolve) => {
     db.createFob(newFob).then((createdFob) => {
