@@ -32,7 +32,7 @@ import * as db from "../db/queries";
 import {generateBathroomId, generateBathroomRatingId, generateUserId} from "../utils/generate";
 import {ILocation, IUser} from "../utils/types";
 import {calculateDistance} from "../utils/calculation";
-import {NewFob} from "../db/types";
+import {Fob, NewFob} from "../db/types";
 
 describe("BATHROOMS: CRUD of all kinds", () => {
   const getBathroomsFuncs = [authenticateRequest, setupBathroomReq, getFobs];
@@ -107,7 +107,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     return [createdBathroomOne, createdBathroomTwo, createdBathroomThree];
   }
 
-  async function createBathroomRatings (user = null, bathroom = null) {
+  async function createBathroomRatings (user : IUser = null, bathroom : Fob = null) {
     // First create user if necessary
     if (user == null) {
       user = await db.createUser(await getUser());
@@ -408,16 +408,14 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     req.params = {
       id: createdBathrooms[0].id
     };
-    req.body = {
-      url: "not a url"
-    }; // invalid picture link
+    req.body = "not a url"; // invalid picture link
 
     // Try to create bathroom picture
     await simulateRouter(req, res, addBathroomPictureFuncs);
 
     // Should have failed with 400
     expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
-    expect(res.message).to.satisfy((message) => message.startsWith("Picture validation failed"));
+    expect(res.message).to.satisfy((message) => message.startsWith("Invalid picture URL!"));
   });
 
   it("creates a bathroom picture", async () => {
@@ -565,7 +563,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
 
     // Picture should not exist
     const picture = await db.getPictureById(createdPictures[0].id);
-    expect(picture).to.be.null;
+    expect(picture).to.be.undefined;
   });
 
   it("can't create bathroom rating without authentication", async () => {
@@ -608,7 +606,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
 
     // Should have failed with bad request
     expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
-    expect(res.message).to.satisfy((message) => message.startsWith("BathroomRating validation failed"));
+    expect(res.message).to.satisfy((message) => message.startsWith("Invalid rating detail value(s)!"));
   });
 
   it("successfully creates a bathroom rating", async () => {
@@ -642,7 +640,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms(user);
 
     // Create a few ratings for a particular bathroom
-    const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, user.id);
+    const createdBathroomRatings = await createBathroomRatings(user, createdBathrooms[0]);
 
     // Set up request
     req.params = {
@@ -665,7 +663,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Add ratings
-    const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, generateUserId());
+    const createdBathroomRatings = await createBathroomRatings(await getUser(), createdBathrooms[0]);
 
     // Set up request
     req.params = {
@@ -689,7 +687,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Add ratings
-    const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, user.id);
+    const createdBathroomRatings = await createBathroomRatings(user, createdBathrooms[0]);
 
     // Set up request
     req.params = {
@@ -712,7 +710,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Create ratings
-    const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, generateUserId());
+    const createdBathroomRatings = await createBathroomRatings(await getUser(), createdBathrooms[0]);
 
     // Specify bathroom rating updates in request
     createdBathroomRatings[0].details = createdBathroomRatings[1].details;
@@ -738,7 +736,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Create ratings
-    const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, user.id);
+    const createdBathroomRatings = await createBathroomRatings(user, createdBathrooms[0]);
 
     // Specify bathroom rating updates in request
     createdBathroomRatings[0].details = createdBathroomRatings[1].details;

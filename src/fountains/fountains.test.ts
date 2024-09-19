@@ -25,11 +25,12 @@ import {
   updateFobRating
 } from "../fobs/fobsController";
 import {setupFountainReq} from "./fountainsRouter";
-import { IFountain, IFountainRating, IFountainRatingDetails } from "./types";
+import {IFountain, IFountainCreationDetails, IFountainRating, IFountainRatingDetails} from "./types";
 import * as db from "../db/queries";
 import {generateFountainId, generateFountainRatingId, generateUserId} from "../utils/generate";
 import {ILocation, IUser} from "../utils/types";
 import {calculateDistance} from "../utils/calculation";
+import {Fob} from "../db/types";
 
 describe("FOUNTAINS: CRUD of all kinds", () => {
   const getFountainsFuncs = [authenticateRequest, setupFountainReq, getFobs];
@@ -98,7 +99,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     return [createdFountainOne, createdFountainTwo, createdFountainThree];
   }
 
-  async function createFountainRatings (user = null, fountain = null) {
+  async function createFountainRatings (user : IUser = null, fountain : Fob = null) {
     // First create user if necessary
     if (user == null) {
       user = await db.createUser(await getUser());
@@ -183,7 +184,11 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
   it("creates a fountain with authentication", async () => {
     const fountainToCreate = getFountain();
-    const req = getAuthedReqMockForUser(await getUser(), fountainToCreate.info);
+    const req = getAuthedReqMockForUser(await getUser(), {
+      name: fountainToCreate.name,
+      location: fountainToCreate.location,
+      info: fountainToCreate.info
+    } as IFountainCreationDetails);
     const res = getResMock();
 
     // Try to create fountain
@@ -394,7 +399,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Should have failed with 400
     expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
-    expect(res.message).to.satisfy((message) => message.startsWith("Picture validation failed"));
+    expect(res.message).to.satisfy((message) => message.startsWith("Invalid picture URL!"));
   });
 
   it("creates a fountain picture", async () => {
@@ -542,7 +547,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Picture should not exist
     const picture = await db.getPictureById(createdPictures[0].id);
-    expect(picture).to.be.null;
+    expect(picture).to.be.undefined;
   });
 
   it("can't create fountain rating without authentication", async () => {
@@ -585,7 +590,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Should have failed with bad request
     expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
-    expect(res.message).to.satisfy((message) => message.startsWith("FountainRating validation failed"));
+    expect(res.message).to.satisfy((message) => message.startsWith("Invalid rating detail value(s)!"));
   });
 
   it("successfully creates a fountain rating", async () => {
@@ -619,7 +624,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Create a few ratings for a particular fountain
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, user.id);
+    const createdFountainRatings = await createFountainRatings(user, createdFountains[0]);
 
     // Set up request
     req.params = {
@@ -642,7 +647,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Add ratings
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, generateUserId());
+    const createdFountainRatings = await createFountainRatings(await getUser(), createdFountains[0]);
 
     // Set up request
     req.params = {
@@ -666,7 +671,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Add ratings
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, user.id);
+    const createdFountainRatings = await createFountainRatings(user, createdFountains[0]);
 
     // Set up request
     req.params = {
@@ -689,7 +694,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Create ratings
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, generateUserId());
+    const createdFountainRatings = await createFountainRatings(await getUser(), createdFountains[0]);
 
     // Specify fountain rating updates in request
     createdFountainRatings[0].details = createdFountainRatings[1].details;
@@ -715,7 +720,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Create ratings
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, user.id);
+    const createdFountainRatings = await createFountainRatings(user, createdFountains[0]);
 
     // Specify fountain rating updates in request
     createdFountainRatings[0].details = createdFountainRatings[1].details;

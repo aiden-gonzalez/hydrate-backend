@@ -1,5 +1,5 @@
 import {
-  getAuthedReqMockForUser, getBathroom, getBathroomRating, getFountain, getFountainRating, getPicture,
+  getAuthedReqMockForUser, getBathroom, getBathroomRating, getFountain, getFountainRating, getLocation, getPicture,
   getReqMock,
   getResMock,
   getUser,
@@ -101,7 +101,7 @@ describe("PROFILES: getting and updating profiles", () => {
   it("fails to update a profile not owned by the requesting user", async () => {
     const user = await getUser();
     const otherUsername = "some_other_username";
-    const otherUser = await getUser(otherUsername);
+    const otherUser = await getUser(otherUsername, "someotheremail@gmail.com");
     const req = getAuthedReqMockForUser(user);
     req.params = {
       username: otherUsername
@@ -189,6 +189,7 @@ describe("PROFILES: getting and updating profiles", () => {
     // Create contributions
     const fountain = getFountain(user.id);
     const bathroom = getBathroom(user.id);
+    bathroom.location = getLocation(40, -86);
     const contributions : IUserContributions = {
       fountains: [fountain],
       bathrooms: [bathroom],

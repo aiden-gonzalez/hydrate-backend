@@ -52,11 +52,11 @@ export function getToken (user: IUser) : string {
   return generateToken(user, constants.JWT_ACCESS_EXPIRATION);
 }
 
-export async function getUser (username  = "username") : Promise<IUser> {
+export async function getUser (username = "username", email = "email@gmail.com") : Promise<IUser> {
   return {
     id: generateUserId(),
     username: username,
-    email: "email@gmail.com",
+    email: email,
     hashed_password: await hashPass("password"),
     profile: {
       full_name: "Aiden Gonzalez",
@@ -65,14 +65,14 @@ export async function getUser (username  = "username") : Promise<IUser> {
   } as IUser;
 }
 
-export function getLocation (latitude  = 40.4237, longitude  = -86.9212) : ILocation {
+export function getLocation (latitude = 40.4237, longitude  = -86.9212) : ILocation {
   return {
     latitude: latitude,
     longitude: longitude
   } as ILocation;
 }
 
-export function getFountain (user_id = generateUserId(), name  = "fountain name", bottle_filler  = false, location : ILocation = getLocation()) : IFountain {
+export function getFountain (user_id = generateUserId(), name = "fountain name", bottle_filler = false, location : ILocation = getLocation()) : IFountain {
   return {
     id: generateFountainId(),
     user_id: user_id,

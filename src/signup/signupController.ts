@@ -18,7 +18,7 @@ export async function createAccount(req, res) {
 
   // Check if user already exists (based on username)
   const dbUser = await db.getUserByUsername(signupRequest.username);
-  if (dbUser !== null) {
+  if (dbUser !== undefined) {
     return res.status(HTTP_FORBIDDEN).send(ERROR_USER_ALREADY_EXISTS);
   }
 

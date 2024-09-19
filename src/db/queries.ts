@@ -8,13 +8,13 @@ import {
   Rating,
   RatingUpdate,
   User,
-  UserContributions, UserUpdate
+  UserUpdate
 } from './types';
-import {IFobQueryParams} from "../fobs/types";
+import {IFobQueryParams, isBathroom, isBathroomRating, isFountain, isFountainRating} from "../fobs/types";
 import {sql} from "kysely";
 import {calculateLocationAtDistance} from "../utils/calculation";
 import {ILocation} from "../utils/types";
-import {IUserContributionQueryParams} from "../profiles/types";
+import {IUserContributionQueryParams, IUserContributions} from "../profiles/types";
 
 // FOUNTAIN OR BATHROOM (FOB)
 export function createFob(fob: NewFob) : Promise<Fob> {
@@ -38,10 +38,12 @@ export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
       latitude: params.latitude,
       longitude: params.longitude
     };
-    const botLeft = calculateLocationAtDistance(start, params.radius, 225);
-    const topRight = calculateLocationAtDistance(start, params.radius, 45);
-    query = query.where(sql<boolean>`location->'latitude' between ${botLeft.latitude} and ${topRight.latitude}`);
-    query = query.where(sql<boolean>`location->'longitude' between ${botLeft.longitude} and ${topRight.longitude}`);
+    const top = calculateLocationAtDistance(start, params.radius, 0);
+    const right = calculateLocationAtDistance(start, params.radius, 90);
+    const bottom = calculateLocationAtDistance(start, params.radius, 180);
+    const left = calculateLocationAtDistance(start, params.radius, 270);
+    query = query.where(sql<boolean>`location->'latitude' between ${bottom.latitude} and ${top.latitude}`);
+    query = query.where(sql<boolean>`location->'longitude' between ${left.longitude} and ${right.longitude}`);
   }
 
   if (params.user_id !== undefined) {
@@ -126,7 +128,7 @@ export function updateUserProfileByUsername(username: string, updateWith : UserU
   return db.updateTable('user').set({profile: updateWith.profile}).where('username', '=', username).returningAll().executeTakeFirst();
 }
 
-export function getUserContributions(userId: string, params: IUserContributionQueryParams) : Promise<UserContributions> {
+export function getUserContributions(userId: string, params: IUserContributionQueryParams) : Promise<IUserContributions> {
   return new Promise((resolve, reject) => {
     const promises = [
       findFobs({...{user_id: userId}, ...params} as IFobQueryParams),
@@ -139,10 +141,12 @@ export function getUserContributions(userId: string, params: IUserContributionQu
       // results[1] will have the results of the second query
       // and so on...
       const response = {
-        fobs: results[0],
-        ratings: results[1],
+        fountains: (results[0] as any).filter((fob) => isFountain(fob)),
+        bathrooms: (results[0] as any).filter((fob) => isBathroom(fob)),
+        fountain_ratings: (results[1] as any).filter((rating) => isFountainRating(rating)),
+        bathroom_ratings: (results[1] as any).filter((rating) => isBathroomRating(rating)),
         pictures: results[2]
-      } as UserContributions;
+      } as IUserContributions;
       resolve(response);
     }).catch((error) => {
       reject(error);

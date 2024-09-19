@@ -50,8 +50,8 @@ export async function updateProfile(req, res) {
   };
 
   return new Promise((resolve) => {
-    db.updateUserProfileByUsername(username, profileUpdate).then((updatedUserProfile) => {
-      resolve(res.status(HTTP_OK).json(updatedUserProfile));
+    db.updateUserProfileByUsername(username, profileUpdate).then((updatedUser) => {
+      resolve(res.status(HTTP_OK).json(updatedUser.profile));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
     });

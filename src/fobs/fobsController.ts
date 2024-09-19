@@ -20,9 +20,10 @@ import {
   generateFountainRatingId,
   generatePictureId
 } from "../utils/generate";
-import {IBathroomQueryParams, IBathroomRating} from "../bathrooms/types";
-import {IFountainQueryParams, IFountainRating} from "../fountains/types";
+import {IBathroomQueryParams, IBathroomRatingDetails} from "../bathrooms/types";
+import {IFountainQueryParams, IFountainRatingDetails} from "../fountains/types";
 import {NewFob} from "../db/types";
+import {ratingDetailValueValidator, urlValidator} from "../utils/validation";
 
 // TODO think about how to set correct status depending on response from database
 // If none are found, should be 404 not found?
@@ -160,6 +161,11 @@ export function addFobPicture(req, res) {
   // Get picture url from request
   const pictureUrl = req.body;
 
+  // Validate url
+  if (!urlValidator(pictureUrl)) {
+    return res.status(HTTP_BAD_REQUEST).send("Invalid picture URL!");
+  }
+
   // Create picture
   const newPicture : IPicture = {
     id: generatePictureId(),
@@ -171,11 +177,7 @@ export function addFobPicture(req, res) {
     db.createPicture(newPicture).then((createdPicture) => {
       resolve(res.status(HTTP_CREATED).json(createdPicture))
     }).catch((error) => {
-      if (error.message && error.stack && error.stack.startsWith("ValidationError")) {
-        resolve(res.status(HTTP_BAD_REQUEST).send(error.message));
-      } else {
-        resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-      }
+      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
     })
   });
 }
@@ -242,19 +244,26 @@ export function addFobRating(req, res) {
   // Get authenticated user id
   const userId = req.user.id;
 
+  // Validate details
+  if (req.isFountain) {
+    const fountainRatingDetails = (ratingDetails as IFountainRatingDetails);
+    if (!ratingDetailValueValidator(fountainRatingDetails.taste) || !ratingDetailValueValidator(fountainRatingDetails.temperature) || !ratingDetailValueValidator(fountainRatingDetails.pressure)) {
+      return res.status(HTTP_BAD_REQUEST).send("Invalid rating detail value(s)!");
+    }
+  } else {
+    const bathroomRatingDetails = (ratingDetails as IBathroomRatingDetails);
+    if (!ratingDetailValueValidator(bathroomRatingDetails.washing) || !ratingDetailValueValidator(bathroomRatingDetails.decor) || !ratingDetailValueValidator(bathroomRatingDetails.cleanliness) || !ratingDetailValueValidator(bathroomRatingDetails.drying) || !ratingDetailValueValidator(bathroomRatingDetails.privacy)) {
+      return res.status(HTTP_BAD_REQUEST).send("Invalid rating detail value(s)!");
+    }
+  }
+
   // Create new fountain rating
   const newRating = {
     id: req.isFountain ? generateFountainRatingId() : generateBathroomRatingId(),
+    fob_id: fobId,
     user_id: userId,
     details: ratingDetails
   } as IFobRating;
-
-  // Add id
-  if (req.isFountain) {
-    (newRating as IFountainRating).fob_id = fobId;
-  } else {
-    (newRating as IBathroomRating).fob_id = fobId;
-  }
 
   return new Promise((resolve) => {
     db.createRating(newRating).then((createdRating) => {
