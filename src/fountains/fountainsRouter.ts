@@ -1,14 +1,11 @@
 import express from "express";
 import * as fobsController from "../fobs/fobsController";
 import {authenticateRequest} from "../utils/auth";
-import {Fountain, FountainRating} from "../mongoDB";
 
 const fountainsRouter = express.Router();
 
 export function setupFountainReq (req, res, next) {
   req.isFountain = true;
-  req.fobModel = Fountain;
-  req.fobRatingModel = FountainRating;
   next();
 }
 

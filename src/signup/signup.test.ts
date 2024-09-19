@@ -1,6 +1,6 @@
 import {getReqMock, getResMock, getUser} from "../testHelper.test";
 import * as constants from "../utils/constants";
-import {User} from "../mongoDB";
+import * as db from '../db/queries';
 import {ISignupRequest} from "./types";
 import {createAccount} from "../signup/signupController";
 import {expect} from "chai";
@@ -23,7 +23,7 @@ describe("SIGNUP: registering a new user", () => {
 
     // Should have worked
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    const newUser = await User.findOne({ username: signupRequest.username }).exec();
+    const newUser = await db.getUserByUsername(signupRequest.username);
     expect(newUser).to.not.equal(null);
     expect(newUser.username).to.equal(signupRequest.username);
     expect(newUser.email).to.equal(signupRequest.user_credentials.email);
@@ -35,8 +35,7 @@ describe("SIGNUP: registering a new user", () => {
     // Create user before create signup
     const newUser = await getUser();
     newUser.username = signupRequest.username;
-    const newUserDocument = new User(newUser);
-    await newUserDocument.save();
+    await db.createUser(newUser);
 
     // Now try to sign up
     await createAccount(req, res);

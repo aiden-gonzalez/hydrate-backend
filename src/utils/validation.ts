@@ -51,3 +51,7 @@ export function fountainIdValidator(fountainId: string) {
 export function bathroomIdValidator(bathroomId: string) {
   return validator.matches(bathroomId, bathroomIdRegex);
 }
+
+export function ratingDetailValueValidator(ratingDetailValue : number) {
+  return Number.isInteger(ratingDetailValue) && ratingDetailValue > 0 && ratingDetailValue < 6;
+}

@@ -1,14 +1,11 @@
 import express from "express";
 import * as fobsController from "../fobs/fobsController";
 import {authenticateRequest} from "../utils/auth";
-import {Bathroom, BathroomRating} from "../mongoDB";
 
 const bathroomsRouter = express.Router();
 
 export function setupBathroomReq (req, res, next) {
   req.isBathroom = true;
-  req.fobModel = Bathroom;
-  req.fobRatingModel = BathroomRating;
   next();
 }
 

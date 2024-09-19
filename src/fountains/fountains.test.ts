@@ -25,12 +25,12 @@ import {
   updateFobRating
 } from "../fobs/fobsController";
 import {setupFountainReq} from "./fountainsRouter";
-import { IFountain, IFountainRating, IFountainRatingDetails } from "./types";
-import * as database from "../utils/database";
+import {IFountain, IFountainCreationDetails, IFountainRating, IFountainRatingDetails} from "./types";
+import * as db from "../db/queries";
 import {generateFountainId, generateFountainRatingId, generateUserId} from "../utils/generate";
 import {ILocation, IUser} from "../utils/types";
-import {Fountain, FountainRating} from "../mongoDB";
 import {calculateDistance} from "../utils/calculation";
+import {Fob} from "../db/types";
 
 describe("FOUNTAINS: CRUD of all kinds", () => {
   const getFountainsFuncs = [authenticateRequest, setupFountainReq, getFobs];
@@ -48,58 +48,73 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
   // TODO add more unhappy paths? Malformed data, bad responses?
 
-  async function createFountains(user_id = generateUserId()) {
+  async function createFountains(user = null) {
+    // Create user if necessary
+    if (user == null) {
+      user = await db.createUser(await getUser());
+    }
+
     // Create fountains
     const fountainOne : IFountain = {
       id: generateFountainId(),
-      user_id: user_id,
+      user_id: user.id,
+      name: "Fountain One",
+      location: {
+        latitude: 40.42476607308126,
+        longitude: -86.9114030295504
+      },
       info: {
-        name: "Fountain One",
         bottle_filler: true,
-        location: {
-          latitude: 40.42476607308126,
-          longitude: -86.9114030295504
-        }
       }
     };
     const fountainTwo : IFountain = {
       id: generateFountainId(),
-      user_id: user_id,
+      user_id: user.id,
+      name: "Fountain Two",
+      location: {
+        latitude: 40.42486535509428,
+        longitude: -86.91207343967577
+      },
       info: {
-        name: "Fountain Two",
         bottle_filler: false,
-        location: {
-          latitude: 40.42486535509428,
-          longitude: -86.91207343967577
-        }
       }
     };
     const fountainThree : IFountain = {
       id: generateFountainId(),
-      user_id: user_id,
+      user_id: user.id,
+      name: "Fountain Three",
+      location: {
+        latitude: 40.425193836261464,
+        longitude: -86.9112570893454
+      },
       info: {
-        name: "Fountain Three",
         bottle_filler: true,
-        location: {
-          latitude: 40.425193836261464,
-          longitude: -86.9112570893454
-        }
       }
     };
 
-    const createdFountainOne = await database.createFob(Fountain, fountainOne);
-    const createdFountainTwo = await database.createFob(Fountain, fountainTwo);
-    const createdFountainThree = await database.createFob(Fountain, fountainThree);
+    const createdFountainOne = await db.createFob(fountainOne);
+    const createdFountainTwo = await db.createFob(fountainTwo);
+    const createdFountainThree = await db.createFob(fountainThree);
 
     return [createdFountainOne, createdFountainTwo, createdFountainThree];
   }
 
-  async function createFountainRatings (fountainId : string, userId : string) {
+  async function createFountainRatings (user : IUser = null, fountain : Fob = null) {
+    // First create user if necessary
+    if (user == null) {
+      user = await db.createUser(await getUser());
+    }
+    
+    // Then create bathroom if necessary
+    if (fountain == null) {
+      fountain = await db.createFob(getFountain(user.id));
+    }
+
     // Create fountain ratings
     const fountainRatingOne : IFountainRating = {
       id: generateFountainRatingId(),
-      fountain_id: fountainId,
-      user_id: userId,
+      fob_id: fountain.id,
+      user_id: user.id,
       details: {
         pressure: 1,
         taste: 1,
@@ -108,8 +123,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     }
     const fountainRatingTwo : IFountainRating = {
       id: generateFountainRatingId(),
-      fountain_id: fountainId,
-      user_id: userId,
+      fob_id: fountain.id,
+      user_id: user.id,
       details: {
         pressure: 2,
         taste: 2,
@@ -118,8 +133,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     }
     const fountainRatingThree : IFountainRating = {
       id: generateFountainRatingId(),
-      fountain_id: fountainId,
-      user_id: userId,
+      fob_id: fountain.id,
+      user_id: user.id,
       details: {
         pressure: 3,
         taste: 3,
@@ -127,9 +142,9 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       } as IFountainRatingDetails
     }
 
-    const createdFountainRatingOne = await database.createRating(FountainRating, fountainRatingOne);
-    const createdFountainRatingTwo = await database.createRating(FountainRating, fountainRatingTwo);
-    const createdFountainRatingThree = await database.createRating(FountainRating, fountainRatingThree);
+    const createdFountainRatingOne = await db.createRating(fountainRatingOne);
+    const createdFountainRatingTwo = await db.createRating(fountainRatingTwo);
+    const createdFountainRatingThree = await db.createRating(fountainRatingThree);
 
     return [createdFountainRatingOne, createdFountainRatingTwo, createdFountainRatingThree];
   }
@@ -140,9 +155,9 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const pictureTwo = getPicture(entityId, userId, "https://www.facebook.com");
     const pictureThree = getPicture(entityId, userId, "https://www.mail.google.com");
 
-    const createdPictureOne = await database.createPicture(pictureOne);
-    const createdPictureTwo = await database.createPicture(pictureTwo);
-    const createdPictureThree = await database.createPicture(pictureThree);
+    const createdPictureOne = await db.createPicture(pictureOne);
+    const createdPictureTwo = await db.createPicture(pictureTwo);
+    const createdPictureThree = await db.createPicture(pictureThree);
 
     return [createdPictureOne, createdPictureTwo, createdPictureThree];
   }
@@ -169,7 +184,11 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
   it("creates a fountain with authentication", async () => {
     const fountainToCreate = getFountain();
-    const req = getAuthedReqMockForUser(await getUser(), fountainToCreate.info);
+    const req = getAuthedReqMockForUser(await getUser(), {
+      name: fountainToCreate.name,
+      location: fountainToCreate.location,
+      info: fountainToCreate.info
+    } as IFountainCreationDetails);
     const res = getResMock();
 
     // Try to create fountain
@@ -244,15 +263,12 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       radius: 40 // in meters
     }
 
-    // ensure index on fountain location (needed for testing since collections get rapidly dropped)
-    await Fountain.ensureIndexes();
-
     // Try to get all fountains within 50 meters of (5, 5)
     await simulateRouter(req, res, getFountainsFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdFountains.filter((fountain) => calculateDistance(fountain.info.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40));
+    expectEntitiesEqual(res.message, createdFountains.filter((fountain) => calculateDistance(fountain.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40));
   });
 
   it ("can't get a particular fountain without authentication", async () => {
@@ -383,7 +399,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Should have failed with 400
     expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
-    expect(res.message).to.satisfy((message) => message.startsWith("Picture validation failed"));
+    expect(res.message).to.satisfy((message) => message.startsWith("Invalid picture URL!"));
   });
 
   it("creates a fountain picture", async () => {
@@ -399,7 +415,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       id: createdFountains[0].id
     };
     const pictureToCreate = getPicture(createdFountains[0].id, user.id);
-    req.body = pictureToCreate.info; // valid picture link
+    req.body = pictureToCreate.url; // valid picture link
 
     // Try to create fountain picture
     await simulateRouter(req, res, addFountainPictureFuncs);
@@ -530,8 +546,8 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
 
     // Picture should not exist
-    const picture = await database.getPictureById(createdPictures[0].id);
-    expect(picture).to.be.null;
+    const picture = await db.getPictureById(createdPictures[0].id);
+    expect(picture).to.be.undefined;
   });
 
   it("can't create fountain rating without authentication", async () => {
@@ -574,7 +590,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
 
     // Should have failed with bad request
     expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
-    expect(res.message).to.satisfy((message) => message.startsWith("FountainRating validation failed"));
+    expect(res.message).to.satisfy((message) => message.startsWith("Invalid rating detail value(s)!"));
   });
 
   it("successfully creates a fountain rating", async () => {
@@ -608,7 +624,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Create a few ratings for a particular fountain
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, user.id);
+    const createdFountainRatings = await createFountainRatings(user, createdFountains[0]);
 
     // Set up request
     req.params = {
@@ -631,7 +647,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Add ratings
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, generateUserId());
+    const createdFountainRatings = await createFountainRatings(await getUser(), createdFountains[0]);
 
     // Set up request
     req.params = {
@@ -655,7 +671,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Add ratings
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, user.id);
+    const createdFountainRatings = await createFountainRatings(user, createdFountains[0]);
 
     // Set up request
     req.params = {
@@ -678,7 +694,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Create ratings
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, generateUserId());
+    const createdFountainRatings = await createFountainRatings(await getUser(), createdFountains[0]);
 
     // Specify fountain rating updates in request
     createdFountainRatings[0].details = createdFountainRatings[1].details;
@@ -704,7 +720,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const createdFountains = await createFountains();
 
     // Create ratings
-    const createdFountainRatings = await createFountainRatings(createdFountains[0].id, user.id);
+    const createdFountainRatings = await createFountainRatings(user, createdFountains[0]);
 
     // Specify fountain rating updates in request
     createdFountainRatings[0].details = createdFountainRatings[1].details;

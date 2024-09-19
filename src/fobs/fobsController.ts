@@ -1,10 +1,9 @@
 import {
-  IFob,
-  IFobInfo,
+  IFob, IFobCreationDetails,
   IFobRating,
   IFobRatingDetails
 } from "./types";
-import * as database from "../utils/database";
+import * as db from "../db/queries";
 import {
   HTTP_BAD_REQUEST,
   HTTP_CREATED,
@@ -13,7 +12,7 @@ import {
   HTTP_INTERNAL_ERROR,
   HTTP_OK
 } from "../utils/constants";
-import { IPicture, IPictureInfo } from "../utils/types";
+import { IPicture } from "../utils/types";
 import {
   generateBathroomId,
   generateBathroomRatingId,
@@ -21,8 +20,10 @@ import {
   generateFountainRatingId,
   generatePictureId
 } from "../utils/generate";
-import {IBathroomQueryParams, IBathroomRating} from "../bathrooms/types";
-import {IFountainQueryParams, IFountainRating} from "../fountains/types";
+import {IBathroomQueryParams, IBathroomRatingDetails} from "../bathrooms/types";
+import {IFountainQueryParams, IFountainRatingDetails} from "../fountains/types";
+import {NewFob} from "../db/types";
+import {ratingDetailValueValidator, urlValidator} from "../utils/validation";
 
 // TODO think about how to set correct status depending on response from database
 // If none are found, should be 404 not found?
@@ -39,7 +40,7 @@ export async function ratingPermissionCheck(req, res, next) {
   const userId = req.user.id;
 
   // Get rating from database
-  const rating = await database.getRating(req.fobRatingModel, ratingId);
+  const rating = await db.getRating(ratingId);
 
   // Check if user owns rating
   if (!rating.user_id == userId) {
@@ -77,7 +78,7 @@ export function getFobs(req, res) {
   }
   // Execute query
   return new Promise((resolve) => {
-    database.queryFob(req.fobModel, queryParams).then((fobs) => {
+    db.findFobs(queryParams).then((fobs) => {
       resolve(res.status(HTTP_OK).json(fobs))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -87,17 +88,19 @@ export function getFobs(req, res) {
 
 export function createFob(req, res) {
   // Get fob info from request
-  const fobInfo : IFobInfo = req.body;
+  const fobCreationDetails : IFobCreationDetails = req.body;
 
   // Create fob
   const newFob = {
     id: req.isFountain ? generateFountainId() : generateBathroomId(),
     user_id: req.user.id,
-    info: fobInfo
-  } as IFob;
+    name: fobCreationDetails.name,
+    location: fobCreationDetails.location,
+    info: fobCreationDetails.info
+  } as NewFob;
 
   return new Promise((resolve) => {
-    database.createFob(req.fobModel, newFob).then((createdFob) => {
+    db.createFob(newFob).then((createdFob) => {
       resolve(res.status(HTTP_CREATED).json(createdFob));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -111,7 +114,7 @@ export function getFobById(req, res) {
 
   // Get fountain
   return new Promise((resolve) => {
-    database.getFob(req.fobModel, fobId).then((fob) => {
+    db.getFob(fobId).then((fob) => {
       resolve(res.status(HTTP_OK).json(fob))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -124,11 +127,13 @@ export function updateFob(req, res) {
   const fobId = req.params.id;
 
   // Get fountain info
-  const fobInfo : IFobInfo = req.body;
+  const fobUpdate : IFob = {
+    info: req.body
+  };
 
   // Update fountain
   return new Promise((resolve) => {
-    database.updateFobById(req.fobModel, fobId, fobInfo).then((fob) => {
+    db.updateFob(fobId, fobUpdate).then((fob) => {
       resolve(res.status(HTTP_OK).json(fob))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -142,7 +147,7 @@ export function getFobPictures(req, res) {
 
   // Get fountain pictures
   return new Promise((resolve) => {
-    database.getPictures(fobId).then((fobPictures) => {
+    db.getPicturesForFob(fobId).then((fobPictures) => {
       resolve(res.status(HTTP_OK).json(fobPictures))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -153,25 +158,26 @@ export function getFobPictures(req, res) {
 export function addFobPicture(req, res) {
   // Get path parameter
   const fobId = req.params.id;
-  // Get picture info from request
-  const pictureInfo : IPictureInfo = req.body;
+  // Get picture url from request
+  const pictureUrl = req.body;
+
+  // Validate url
+  if (!urlValidator(pictureUrl)) {
+    return res.status(HTTP_BAD_REQUEST).send("Invalid picture URL!");
+  }
 
   // Create picture
   const newPicture : IPicture = {
     id: generatePictureId(),
     user_id: req.user.id,
-    entity_id: fobId,
-    info: pictureInfo
+    fob_id: fobId,
+    url: pictureUrl
   }
   return new Promise((resolve) => {
-    database.createPicture(newPicture).then((createdPicture) => {
+    db.createPicture(newPicture).then((createdPicture) => {
       resolve(res.status(HTTP_CREATED).json(createdPicture))
     }).catch((error) => {
-      if (error.message && error.stack && error.stack.startsWith("ValidationError")) {
-        resolve(res.status(HTTP_BAD_REQUEST).send(error.message));
-      } else {
-        resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-      }
+      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
     })
   });
 }
@@ -186,7 +192,7 @@ export function getFobPicture(req, res) {
 
   // Get fountain picture
   return new Promise((resolve) => {
-    database.getPictureById(pictureId).then((fobPicture) => {
+    db.getPictureById(pictureId).then((fobPicture) => {
       resolve(res.status(HTTP_OK).json(fobPicture))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -205,7 +211,7 @@ export function deleteFobPicture(req, res) {
 
   // Delete fountain picture
   return new Promise((resolve) => {
-    database.deletePicture(pictureId).then(() => {
+    db.deletePicture(pictureId).then(() => {
       resolve(res.status(HTTP_OK).send("Successfully removed picture"))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -219,7 +225,7 @@ export function getFobRatings(req, res) {
 
   // Get fountain ratings
   return new Promise((resolve) => {
-    database.getRatings(req.fobRatingModel, fobId).then((fobRatings) => {
+    db.getRatingsForFob(fobId).then((fobRatings) => {
       resolve(res.status(HTTP_OK).json(fobRatings));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -238,22 +244,29 @@ export function addFobRating(req, res) {
   // Get authenticated user id
   const userId = req.user.id;
 
+  // Validate details
+  if (req.isFountain) {
+    const fountainRatingDetails = (ratingDetails as IFountainRatingDetails);
+    if (!ratingDetailValueValidator(fountainRatingDetails.taste) || !ratingDetailValueValidator(fountainRatingDetails.temperature) || !ratingDetailValueValidator(fountainRatingDetails.pressure)) {
+      return res.status(HTTP_BAD_REQUEST).send("Invalid rating detail value(s)!");
+    }
+  } else {
+    const bathroomRatingDetails = (ratingDetails as IBathroomRatingDetails);
+    if (!ratingDetailValueValidator(bathroomRatingDetails.washing) || !ratingDetailValueValidator(bathroomRatingDetails.decor) || !ratingDetailValueValidator(bathroomRatingDetails.cleanliness) || !ratingDetailValueValidator(bathroomRatingDetails.drying) || !ratingDetailValueValidator(bathroomRatingDetails.privacy)) {
+      return res.status(HTTP_BAD_REQUEST).send("Invalid rating detail value(s)!");
+    }
+  }
+
   // Create new fountain rating
   const newRating = {
     id: req.isFountain ? generateFountainRatingId() : generateBathroomRatingId(),
+    fob_id: fobId,
     user_id: userId,
     details: ratingDetails
   } as IFobRating;
 
-  // Add id
-  if (req.isFountain) {
-    (newRating as IFountainRating).fountain_id = fobId;
-  } else {
-    (newRating as IBathroomRating).bathroom_id = fobId;
-  }
-
   return new Promise((resolve) => {
-    database.createRating(req.fobRatingModel, newRating).then((createdRating) => {
+    db.createRating(newRating).then((createdRating) => {
       resolve(res.status(HTTP_CREATED).json(createdRating))
     }).catch((error) => {
       if (error.message && error.stack && error.stack.startsWith("ValidationError")) {
@@ -273,7 +286,7 @@ export function getFobRating(req, res) {
 
   // Get fountain rating
   return new Promise((resolve) => {
-    database.getRating(req.fobRatingModel, ratingId).then((fobRating) => {
+    db.getRating(ratingId).then((fobRating) => {
       resolve(res.status(HTTP_OK).json(fobRating))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
@@ -287,11 +300,13 @@ export function updateFobRating(req, res) {
   // const fountainId = req.params.id;
   const ratingId = req.params.ratingId;
   // Get new rating details from request
-  const ratingDetails : IFobRatingDetails = req.body;
+  const ratingUpdate : IFobRating = {
+    details: req.body
+  };
 
   // Update fountain rating
   return new Promise((resolve) => {
-    database.updateRatingById(req.fobRatingModel, ratingId, ratingDetails).then((fobRating) => {
+    db.updateRating(ratingId, ratingUpdate).then((fobRating) => {
       resolve(res.status(HTTP_OK).json(fobRating))
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));

@@ -1,5 +1,4 @@
 import 'dotenv/config';
-import mongoose from "mongoose";
 import {ILocation, IPicture, IUser} from "./utils/types";
 import {
   generateBathroomId, generateBathroomRatingId,
@@ -10,60 +9,54 @@ import {
 } from "./utils/generate";
 import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
+import {findFobs} from "./db/queries";
+import {migrateToLatest} from "./db/migrate";
 import {expect} from "chai";
 import {IFountain, IFountainInfo, IFountainRating, IFountainRatingDetails} from "./fountains/types";
 import {IBathroom, IBathroomInfo, IBathroomRating, IBathroomRatingDetails} from "./bathrooms/types";
-
-// Tell mongoose to use es6 Promise implementation
-mongoose.Promise = global.Promise;
+import {getDb} from "./db/database";
 
 describe("Connect to database and run tests", function () {
   it("Should connect to database", async () => {
-    // mongoose.set('debug', true); // uncomment this to get mongoose debug messages
-    await mongoose.connect(process.env.MONGO_TEST_URI);
-    console.log("Connected to local MongoDB");
-    mongoose.connection.on("error", (error) => {
-      console.warn("Error: ", error);
-    });
-    expect(mongoose.connection.db);
-
-    // Comment out to see the documents after testing
+    await migrateToLatest();
+    console.log("Connected to local postgres");
+    expect(await findFobs({}));
+    // Comment out to see the rows after testing
     beforeEach((done) => {
-      dropAllCollections(mongoose.connection.db).then(() => {
+      deleteAllRows().then(() => {
         done();
       });
     });
 
     afterEach((done) => {
-      dropAllCollections(mongoose.connection.db).then(() => {
+      deleteAllRows().then(() => {
         done();
       });
     });
   });
 });
 
-async function dropAllCollections(db) {
-  try {
-    const collections = await db.collections()
-    for (const collection of collections) {
-      await collection.drop();
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 // TESTING HELPER FUNCTIONS
+
+// Using this pool here for deleting all rows
+const db = getDb();
+
+async function deleteAllRows() {
+  await db.deleteFrom('user').execute();
+  await db.deleteFrom('fob').execute();
+  await db.deleteFrom('rating').execute();
+  await db.deleteFrom('picture').execute();
+}
 
 export function getToken (user: IUser) : string {
   return generateToken(user, constants.JWT_ACCESS_EXPIRATION);
 }
 
-export async function getUser (username  = "username") : Promise<IUser> {
+export async function getUser (username = "username", email = "email@gmail.com") : Promise<IUser> {
   return {
     id: generateUserId(),
     username: username,
-    email: "email@gmail.com",
+    email: email,
     hashed_password: await hashPass("password"),
     profile: {
       full_name: "Aiden Gonzalez",
@@ -72,21 +65,21 @@ export async function getUser (username  = "username") : Promise<IUser> {
   } as IUser;
 }
 
-export function getLocation (latitude  = 40.4237, longitude  = -86.9212) : ILocation {
+export function getLocation (latitude = 40.4237, longitude  = -86.9212) : ILocation {
   return {
     latitude: latitude,
     longitude: longitude
   } as ILocation;
 }
 
-export function getFountain (user_id = generateUserId(), name  = "fountain name", bottle_filler  = false, location : ILocation = getLocation()) : IFountain {
+export function getFountain (user_id = generateUserId(), name = "fountain name", bottle_filler = false, location : ILocation = getLocation()) : IFountain {
   return {
     id: generateFountainId(),
     user_id: user_id,
+    name: name,
+    location: location,
     info: {
-      name: name,
-      bottle_filler: bottle_filler,
-      location: location
+      bottle_filler: bottle_filler
     } as IFountainInfo
   } as IFountain;
 }
@@ -95,21 +88,21 @@ export function getBathroom (user_id = generateUserId(), name = "bathroom name",
   return {
     id: generateBathroomId(),
     user_id: user_id,
+    name: name,
+    location: location,
     info: {
-      name: name,
       gender: gender,
       baby_changer: baby_changer,
-      sanitary_products: sanitary_products,
-      location: location
+      sanitary_products: sanitary_products
     } as IBathroomInfo
   } as IBathroom;
 }
 
-export function getFountainRating (fountain_id = generateFountainId(), user_id = generateUserId(), details = getFountainRatingDetails()) : IFountainRating {
+export function getFountainRating (fobId = generateFountainId(), userId = generateUserId(), details = getFountainRatingDetails()) : IFountainRating {
   return {
     id: generateFountainRatingId(),
-    fountain_id: fountain_id,
-    user_id: user_id,
+    fob_id: fobId,
+    user_id: userId,
     details: details
   } as IFountainRating;
 }
@@ -122,11 +115,11 @@ export function getFountainRatingDetails (pressure = 3, taste = 3, temperature =
   } as IFountainRatingDetails;
 }
 
-export function getBathroomRating (bathroom_id = generateBathroomId(), user_id = generateUserId(), details = getBathroomRatingDetails()) : IBathroomRating {
+export function getBathroomRating (fobId = generateBathroomId(), userId = generateUserId(), details = getBathroomRatingDetails()) : IBathroomRating {
   return {
     id: generateBathroomRatingId(),
-    bathroom_id: bathroom_id,
-    user_id: user_id,
+    fob_id: fobId,
+    user_id: userId,
     details: details
   } as IBathroomRating;
 }
@@ -141,14 +134,12 @@ export function getBathroomRatingDetails (cleanliness = 3, decor = 3, drying = 3
   } as IBathroomRatingDetails;
 }
 
-export function getPicture (entity_id = generateFountainId(), user_id = generateUserId(), url = "https://www.google.com") : IPicture {
+export function getPicture (fobId = generateFountainId(), userId = generateUserId(), url = "https://www.google.com") : IPicture {
   return {
     id: generatePictureId(),
-    entity_id: entity_id,
-    user_id: user_id,
-    info: {
-      url: url
-    }
+    fob_id: fobId,
+    user_id: userId,
+    url: url
   }
 }
 

@@ -10,15 +10,15 @@ import {
 } from "../utils/constants";
 import {hashPass} from "../utils/auth";
 import {generateUserId} from "../utils/generate";
-import * as database from "../utils/database";
+import * as db from "../db/queries";
 
 export async function createAccount(req, res) {
   // Get signup info
   const signupRequest : ISignupRequest = req.body;
 
   // Check if user already exists (based on username)
-  const dbUser = await database.fetchUserByUsername(signupRequest.username);
-  if (dbUser !== null) {
+  const dbUser = await db.getUserByUsername(signupRequest.username);
+  if (dbUser !== undefined) {
     return res.status(HTTP_FORBIDDEN).send(ERROR_USER_ALREADY_EXISTS);
   }
 
@@ -35,7 +35,7 @@ export async function createAccount(req, res) {
   } as IUser;
 
   return new Promise((resolve) => {
-    database.createUser(newUser).then((createdUser) => {
+    db.createUser(newUser).then((createdUser) => {
       resolve(res.status(HTTP_OK).send(createdUser));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));

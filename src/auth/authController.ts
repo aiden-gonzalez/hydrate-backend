@@ -2,15 +2,15 @@ import {generateToken, isValidPass, validateToken} from "../utils/auth";
 import {IAuthRefreshRequest, IAuthRequest, IAuthSuccessResponse} from "./types";
 import {IUser} from "../utils/types";
 import * as constants from "../utils/constants";
-import * as database from "../utils/database";
+import * as db from "../db/queries";
 
 export async function findUserMiddleware (req, res, next) {
   // Get auth info
   const authRequest : IAuthRequest = req.body;
 
   // Find user in database
-  const user = await database.fetchUserByEmail(authRequest.user_credentials.email);
-  if (user === null) {
+  const user = await db.getUserByEmail(authRequest.user_credentials.email);
+  if (user === null || user === undefined) {
     return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
   }
 

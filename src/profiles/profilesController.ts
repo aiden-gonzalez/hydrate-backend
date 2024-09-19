@@ -1,6 +1,6 @@
-import {IUserContributionQueryParams, IUserProfile} from "./types";
+import {IUserContributionQueryParams} from "./types";
 import {IUser} from "../utils/types";
-import * as database from "../utils/database";
+import * as db from "../db/queries";
 import {
   HTTP_FORBIDDEN,
   HTTP_FORBIDDEN_MESSAGE,
@@ -13,7 +13,7 @@ import {
 
 export async function getUserMiddleware(req, res, next) {
   const username = req.params.username;
-  const user : IUser = await database.fetchUserByUsername(username);
+  const user : IUser = await db.getUserByUsername(username);
   if (user == null) {
     return res.status(HTTP_NOT_FOUND).send(HTTP_NOT_FOUND_MESSAGE);
   }
@@ -40,11 +40,18 @@ export function getProfileForUser(req, res) {
 
 export async function updateProfile(req, res) {
   const username : string = req.params.username;
-  const newProfile : IUserProfile = req.body;
+  // Workaround for kysely weirdness I can't figure out
+  const profileUpdate : IUser = {
+    id: undefined,
+    username: undefined,
+    email: undefined,
+    hashed_password: undefined,
+    profile: req.body
+  };
 
   return new Promise((resolve) => {
-    database.updateUserProfileByUsername(username, newProfile).then((updatedUserProfile) => {
-      resolve(res.status(HTTP_OK).json(updatedUserProfile));
+    db.updateUserProfileByUsername(username, profileUpdate).then((updatedUser) => {
+      resolve(res.status(HTTP_OK).json(updatedUser.profile));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
     });
@@ -55,7 +62,7 @@ export async function getContributionsForUser(req, res) {
   const userId : string = req.dbUser.id;
 
   return new Promise((resolve) => {
-    database.getUserContributionsById(userId, req.query as IUserContributionQueryParams).then((contributions) => {
+    db.getUserContributions(userId, req.query as IUserContributionQueryParams).then((contributions) => {
       resolve(res.status(HTTP_OK).json(contributions));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));

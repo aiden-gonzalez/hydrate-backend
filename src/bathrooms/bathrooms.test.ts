@@ -27,12 +27,12 @@ import {
   updateFobRating
 } from "../fobs/fobsController";
 import {setupBathroomReq} from "./bathroomsRouter";
-import { IBathroom, IBathroomRating, IBathroomRatingDetails } from "./types";
-import * as database from "../utils/database";
+import {IBathroom, IBathroomCreationDetails, IBathroomRating, IBathroomRatingDetails} from "./types";
+import * as db from "../db/queries";
 import {generateBathroomId, generateBathroomRatingId, generateUserId} from "../utils/generate";
 import {ILocation, IUser} from "../utils/types";
-import {Bathroom, BathroomRating} from "../mongoDB";
 import {calculateDistance} from "../utils/calculation";
+import {Fob, NewFob} from "../db/types";
 
 describe("BATHROOMS: CRUD of all kinds", () => {
   const getBathroomsFuncs = [authenticateRequest, setupBathroomReq, getFobs];
@@ -50,64 +50,79 @@ describe("BATHROOMS: CRUD of all kinds", () => {
 
   // TODO add more unhappy paths? Malformed data, bad responses?
 
-  async function createBathrooms(user_id = generateUserId()) {
-    // Create bathrooms
-    const bathroomOne : IBathroom = {
+  async function createBathrooms(user = null) {
+    // Create user if necessary
+    if (user == null) {
+      user = await db.createUser(await getUser());
+    }
+
+    // Then create bathrooms
+    const bathroomOne : NewFob = {
       id: generateBathroomId(),
-      user_id: user_id,
+      user_id: user.id,
+      name: "Bathroom One",
+      location: {
+        latitude: 40.42476607308126,
+        longitude: -86.9114030295504
+      },
       info: {
-        name: "Bathroom One",
         gender: "female",
         baby_changer: true,
-        sanitary_products: false,
-        location: {
-          latitude: 40.42476607308126,
-          longitude: -86.9114030295504
-        }
+        sanitary_products: false
       }
     };
-    const bathroomTwo : IBathroom = {
+    const bathroomTwo : NewFob = {
       id: generateBathroomId(),
-      user_id: user_id,
+      user_id: user.id,
+      name: "Bathroom Two",
+      location: {
+        latitude: 40.42486535509428,
+        longitude: -86.91207343967577
+      },
       info: {
-        name: "Bathroom Two",
         gender: "male",
         baby_changer: true,
-        sanitary_products: false,
-        location: {
-          latitude: 40.42486535509428,
-          longitude: -86.91207343967577
-        }
+        sanitary_products: false
       }
     };
-    const bathroomThree : IBathroom = {
+    const bathroomThree : NewFob = {
       id: generateBathroomId(),
-      user_id: user_id,
+      user_id: user.id,
+      name: "Bathroom Three",
+      location: {
+        latitude: 40.425193836261464,
+        longitude: -86.9112570893454
+      },
       info: {
-        name: "Bathroom Three",
         gender: "female",
         baby_changer: false,
-        sanitary_products: true,
-        location: {
-          latitude: 40.425193836261464,
-          longitude: -86.9112570893454
-        }
+        sanitary_products: true
       }
     };
 
-    const createdBathroomOne = await database.createFob(Bathroom, bathroomOne);
-    const createdBathroomTwo = await database.createFob(Bathroom, bathroomTwo);
-    const createdBathroomThree = await database.createFob(Bathroom, bathroomThree);
+    const createdBathroomOne = await db.createFob(bathroomOne);
+    const createdBathroomTwo = await db.createFob(bathroomTwo);
+    const createdBathroomThree = await db.createFob(bathroomThree);
 
     return [createdBathroomOne, createdBathroomTwo, createdBathroomThree];
   }
 
-  async function createBathroomRatings (bathroomId : string, userId : string) {
-    // Create bathroom ratings
+  async function createBathroomRatings (user : IUser = null, bathroom : Fob = null) {
+    // First create user if necessary
+    if (user == null) {
+      user = await db.createUser(await getUser());
+    }
+    
+    // Then create bathroom if necessary
+    if (bathroom == null) {
+      bathroom = await db.createFob(getBathroom(user.id));
+    }
+
+    // Then create bathroom ratings
     const bathroomRatingOne : IBathroomRating = {
       id: generateBathroomRatingId(),
-      bathroom_id: bathroomId,
-      user_id: userId,
+      fob_id: bathroom.id,
+      user_id: user.id,
       details: {
         cleanliness: 1,
         decor: 1,
@@ -118,8 +133,8 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     }
     const bathroomRatingTwo : IBathroomRating = {
       id: generateBathroomRatingId(),
-      bathroom_id: bathroomId,
-      user_id: userId,
+      fob_id: bathroom.id,
+      user_id: user.id,
       details: {
         cleanliness: 2,
         decor: 2,
@@ -130,8 +145,8 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     }
     const bathroomRatingThree : IBathroomRating = {
       id: generateBathroomRatingId(),
-      bathroom_id: bathroomId,
-      user_id: userId,
+      fob_id: bathroom.id,
+      user_id: user.id,
       details: {
         cleanliness: 3,
         decor: 3,
@@ -141,9 +156,9 @@ describe("BATHROOMS: CRUD of all kinds", () => {
       } as IBathroomRatingDetails
     }
 
-    const createdBathroomRatingOne = await database.createRating(BathroomRating, bathroomRatingOne);
-    const createdBathroomRatingTwo = await database.createRating(BathroomRating, bathroomRatingTwo);
-    const createdBathroomRatingThree = await database.createRating(BathroomRating, bathroomRatingThree);
+    const createdBathroomRatingOne = await db.createRating(bathroomRatingOne);
+    const createdBathroomRatingTwo = await db.createRating(bathroomRatingTwo);
+    const createdBathroomRatingThree = await db.createRating(bathroomRatingThree);
 
     return [createdBathroomRatingOne, createdBathroomRatingTwo, createdBathroomRatingThree];
   }
@@ -154,9 +169,9 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const pictureTwo = getPicture(entityId, userId, "https://www.facebook.com");
     const pictureThree = getPicture(entityId, userId, "https://www.mail.google.com");
 
-    const createdPictureOne = await database.createPicture(pictureOne);
-    const createdPictureTwo = await database.createPicture(pictureTwo);
-    const createdPictureThree = await database.createPicture(pictureThree);
+    const createdPictureOne = await db.createPicture(pictureOne);
+    const createdPictureTwo = await db.createPicture(pictureTwo);
+    const createdPictureThree = await db.createPicture(pictureThree);
 
     return [createdPictureOne, createdPictureTwo, createdPictureThree];
   }
@@ -183,7 +198,11 @@ describe("BATHROOMS: CRUD of all kinds", () => {
 
   it("creates a bathroom with authentication", async () => {
     const bathroomToCreate = getBathroom();
-    const req = getAuthedReqMockForUser(await getUser(), bathroomToCreate.info);
+    const req = getAuthedReqMockForUser(await getUser(), {
+      name: bathroomToCreate.name,
+      location: bathroomToCreate.location,
+      info: bathroomToCreate.info
+    } as IBathroomCreationDetails);
     const res = getResMock();
 
     // Try to create bathroom
@@ -258,15 +277,12 @@ describe("BATHROOMS: CRUD of all kinds", () => {
       radius: 40 // in meters
     }
 
-    // ensure index on bathroom location (needed for testing since collections get rapidly dropped)
-    await Bathroom.ensureIndexes();
-
     // Try to get all bathrooms within 50 meters of (5, 5)
     await simulateRouter(req, res, getBathroomsFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdBathrooms.filter((bathroom) => calculateDistance(bathroom.info.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40));
+    expectEntitiesEqual(res.message, createdBathrooms.filter((bathroom) => calculateDistance(bathroom.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40));
   });
 
   it ("can't get a particular bathroom without authentication", async () => {
@@ -392,16 +408,14 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     req.params = {
       id: createdBathrooms[0].id
     };
-    req.body = {
-      url: "not a url"
-    }; // invalid picture link
+    req.body = "not a url"; // invalid picture link
 
     // Try to create bathroom picture
     await simulateRouter(req, res, addBathroomPictureFuncs);
 
     // Should have failed with 400
     expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
-    expect(res.message).to.satisfy((message) => message.startsWith("Picture validation failed"));
+    expect(res.message).to.satisfy((message) => message.startsWith("Invalid picture URL!"));
   });
 
   it("creates a bathroom picture", async () => {
@@ -417,7 +431,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
       id: createdBathrooms[0].id
     };
     const pictureToCreate = getPicture(createdBathrooms[0].id, user.id);
-    req.body = pictureToCreate.info; // picture info with valid link
+    req.body = pictureToCreate.url; // picture info with valid link
 
     // Try to create bathroom picture
     await simulateRouter(req, res, addBathroomPictureFuncs);
@@ -548,8 +562,8 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
 
     // Picture should not exist
-    const picture = await database.getPictureById(createdPictures[0].id);
-    expect(picture).to.be.null;
+    const picture = await db.getPictureById(createdPictures[0].id);
+    expect(picture).to.be.undefined;
   });
 
   it("can't create bathroom rating without authentication", async () => {
@@ -592,7 +606,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
 
     // Should have failed with bad request
     expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
-    expect(res.message).to.satisfy((message) => message.startsWith("BathroomRating validation failed"));
+    expect(res.message).to.satisfy((message) => message.startsWith("Invalid rating detail value(s)!"));
   });
 
   it("successfully creates a bathroom rating", async () => {
@@ -623,10 +637,10 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create bathrooms
-    const createdBathrooms = await createBathrooms();
+    const createdBathrooms = await createBathrooms(user);
 
     // Create a few ratings for a particular bathroom
-    const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, user.id);
+    const createdBathroomRatings = await createBathroomRatings(user, createdBathrooms[0]);
 
     // Set up request
     req.params = {
@@ -649,7 +663,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Add ratings
-    const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, generateUserId());
+    const createdBathroomRatings = await createBathroomRatings(await getUser(), createdBathrooms[0]);
 
     // Set up request
     req.params = {
@@ -673,7 +687,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Add ratings
-    const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, user.id);
+    const createdBathroomRatings = await createBathroomRatings(user, createdBathrooms[0]);
 
     // Set up request
     req.params = {
@@ -696,7 +710,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Create ratings
-    const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, generateUserId());
+    const createdBathroomRatings = await createBathroomRatings(await getUser(), createdBathrooms[0]);
 
     // Specify bathroom rating updates in request
     createdBathroomRatings[0].details = createdBathroomRatings[1].details;
@@ -722,7 +736,7 @@ describe("BATHROOMS: CRUD of all kinds", () => {
     const createdBathrooms = await createBathrooms();
 
     // Create ratings
-    const createdBathroomRatings = await createBathroomRatings(createdBathrooms[0].id, user.id);
+    const createdBathroomRatings = await createBathroomRatings(user, createdBathrooms[0]);
 
     // Specify bathroom rating updates in request
     createdBathroomRatings[0].details = createdBathroomRatings[1].details;
