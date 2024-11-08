@@ -15,13 +15,15 @@ import {migrateToLatest} from "./db/migrate";
 const port = process.env.PORT;
 
 // Server
-const server = express();
+const https = require("https");
+const http = require("http");
+const app = express();
 
 // Body parser middleware
-server.use(BodyParser.json());
-server.use(BodyParser.urlencoded({ extended: true }));
+app.use(BodyParser.json());
+app.use(BodyParser.urlencoded({ extended: true }));
 // Setup validator middleware (using to validate requests)
-server.use(
+app.use(
   OpenApiValidator.middleware({
     apiSpec: './hydRate.json',
     validateRequests: true, // (default)
@@ -30,7 +32,7 @@ server.use(
 );
 
 // Error handling middleware
-server.use((err, req, res, next) => {
+app.use((err, req, res, next) => {
   // format error
   return res.status(err.status || 500).json({
     message: err.message,
@@ -38,20 +40,29 @@ server.use((err, req, res, next) => {
   });
 });
 
-server.use('/api/', bathroomsRouter);
-server.use('/api/', fountainsRouter);
-server.use('/api/', authRouter);
-server.use('/api/', profilesRouter);
-server.use('/api/', signupRouter);
+app.use('/api/', bathroomsRouter);
+app.use('/api/', fountainsRouter);
+app.use('/api/', authRouter);
+app.use('/api/', profilesRouter);
+app.use('/api/', signupRouter);
 
 // Base endpoint
-server.get('/', (req, res) => {
+app.get('/', (req, res) => {
   return res.send('Server OK');
 });
 
-server.listen(port, () => {
-  return console.log(`Express is listening at http://localhost:${port}`);
-});
+// Https stuff
+const fs = require('node:fs');
+
+const options = {
+  key: fs.readFileSync('./private-key.pem'),
+  cert: fs.readFileSync('./certificate.pem'),
+};
+
+http.createServer(app).listen(port);
+console.log("Express is listening on port", port);
+https.createServer(options, app).listen('3001');
+console.log("Https express is listening on port 3001");
 
 // Connect to postgres
 async function main() {
@@ -60,4 +71,4 @@ async function main() {
 }
 main().catch((err) => console.log(err));
 
-module.exports = server;
+module.exports = app;
