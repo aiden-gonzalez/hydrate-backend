@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres
-    hostname: localhost # adminer "Server" field
+    hostname: localhost # (use actual IP) for adminer "Server" field
     container_name: hydrate_postgres
     # restart: always
     # set shared memory limit when using docker-compose
@@ -13,9 +13,9 @@ services:
     #    tmpfs:
     #      size: 134217728 # 128*2^20 bytes = 128Mb
     environment:
-      POSTGRES_DB: hydrate_db # adminer "Database" field
       POSTGRES_USER: hydrate_admin # adminer "Username" field
       POSTGRES_PASSWORD: secret_password # adminer "Password" field
+      POSTGRES_DB: hydrate_db # adminer "Database" field
     ports:
       - 5432:5432
 
