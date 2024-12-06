@@ -1,5 +1,8 @@
 import {Kysely, sql} from 'kysely';
 
+const epochType = 'bigint';
+const epochSql = sql`(EXTRACT(EPOCH FROM NOW())::double precision*1000)::bigint`;
+
 export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable('user')
@@ -8,8 +11,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('email', 'text', col => col.unique().notNull())
     .addColumn('hashed_password', 'jsonb', col => col.notNull())
     .addColumn('profile', 'jsonb', col => col.notNull())
-    .addColumn('created_at', 'timestamp', col => col.defaultTo(sql`now()`).notNull())
-    .addColumn('updated_at', 'timestamp', col => col.defaultTo(sql`now()`).notNull())
+    .addColumn('created_at', epochType, col => col.defaultTo(epochSql).notNull())
+    .addColumn('updated_at', epochType, col => col.defaultTo(epochSql).notNull())
     .execute();
   await db.schema
     .createTable('fob')
@@ -18,8 +21,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('name', 'text')
     .addColumn('location', 'jsonb', col => col.unique().notNull())
     .addColumn('info', 'jsonb', col => col.notNull())
-    .addColumn('created_at', 'timestamp', col => col.defaultTo(sql`now()`).notNull())
-    .addColumn('updated_at', 'timestamp', col => col.defaultTo(sql`now()`).notNull())
+    .addColumn('created_at', epochType, col => col.defaultTo(epochSql).notNull())
+    .addColumn('updated_at', epochType, col => col.defaultTo(epochSql).notNull())
     .execute();
   await db.schema
     .createTable('fob_change')
@@ -27,7 +30,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('fob_id', 'text', col => col.references('fob.id').onDelete('cascade').notNull())
     .addColumn('user_id', 'text', col => col.notNull())
     .addColumn('details', 'jsonb', col => col.notNull())
-    .addColumn('changed_at', 'timestamp', col => col.defaultTo(sql`now()`).notNull())
+    .addColumn('changed_at', epochType, col => col.defaultTo(epochSql).notNull())
     .execute();
   await db.schema
     .createTable('rating')
@@ -35,8 +38,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('fob_id', 'text', col => col.references('fob.id').onDelete('cascade').notNull())
     .addColumn('user_id', 'text', col => col.notNull()) // no .references() because we don't want a foreign key constraint
     .addColumn('details', 'jsonb', col => col.notNull())
-    .addColumn('created_at', 'timestamp', col => col.defaultTo(sql`now()`).notNull())
-    .addColumn('updated_at', 'timestamp', col => col.defaultTo(sql`now()`).notNull())
+    .addColumn('created_at', epochType, col => col.defaultTo(epochSql).notNull())
+    .addColumn('updated_at', epochType, col => col.defaultTo(epochSql).notNull())
     .execute();
   await db.schema
     .createTable('picture')
@@ -44,8 +47,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('fob_id', 'text', col => col.references('fob.id').onDelete('cascade').notNull())
     .addColumn('user_id', 'text', col => col.notNull()) // no .references() because we don't want a foreign key constraint
     .addColumn('url', 'text', col => col.notNull())
-    .addColumn('created_at', 'timestamp', (col) => col.defaultTo(sql`now()`).notNull())
-    .addColumn('updated_at', 'timestamp', (col) => col.defaultTo(sql`now()`).notNull())
+    .addColumn('created_at', epochType, (col) => col.defaultTo(epochSql).notNull())
+    .addColumn('updated_at', epochType, (col) => col.defaultTo(epochSql).notNull())
     .execute();
 }
 

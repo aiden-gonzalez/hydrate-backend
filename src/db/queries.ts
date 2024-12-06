@@ -109,7 +109,7 @@ export function updateRating(id: string, updateWith: RatingUpdate) : Promise<Rat
 
 // USER
 export function createUser(user: NewUser) : Promise<User> {
-  return db.insertInto('user').values(user).returningAll().executeTakeFirstOrThrow();
+  return parseTimestampsPromise(db.insertInto('user').values(user).returningAll().executeTakeFirstOrThrow());
 }
 
 export function getUserById(id: string) : Promise<User> {
@@ -173,4 +173,14 @@ export function getPicturesByUser(userId: string) : Promise<Picture[]> {
 
 export function deletePicture(id: string) : Promise<Picture> {
   return db.deleteFrom('picture').where('id', '=', id).returningAll().executeTakeFirst();
+}
+
+export function parseTimestampsPromise(item : Promise<any>) : Promise<any> {
+  return new Promise((resolve, reject) => {
+    item.then((result) => {
+      result.created_at = parseInt(result.created_at);
+      result.updated_at = parseInt(result.updated_at);
+      resolve(result);
+    }).catch((error) => reject(error));
+  });
 }
