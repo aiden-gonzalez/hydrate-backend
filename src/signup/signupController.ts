@@ -2,7 +2,8 @@ import {ISignupRequest} from "./types";
 import {IUserProfile} from "../profiles/types";
 import { IUser } from "../utils/types";
 import {
-  ERROR_USER_ALREADY_EXISTS,
+  ERROR_USER_WITH_EMAIL_ALREADY_EXISTS,
+  ERROR_USER_WITH_USERNAME_ALREADY_EXISTS,
   HTTP_FORBIDDEN,
   HTTP_INTERNAL_ERROR,
   HTTP_OK,
@@ -16,10 +17,16 @@ export async function createAccount(req, res) {
   // Get signup info
   const signupRequest : ISignupRequest = req.body;
 
-  // Check if user already exists (based on username)
-  const dbUser = await db.getUserByUsername(signupRequest.username);
-  if (dbUser !== undefined) {
-    return res.status(HTTP_FORBIDDEN).send(ERROR_USER_ALREADY_EXISTS);
+  // Check if user already exists by username
+  const dbUserByUsername = await db.getUserByUsername(signupRequest.username);
+  if (dbUserByUsername !== undefined) {
+    return res.status(HTTP_FORBIDDEN).send(ERROR_USER_WITH_USERNAME_ALREADY_EXISTS);
+  }
+
+  // Check if user already exists by email
+  const dbUserByEmail = await db.getUserByEmail(signupRequest.user_credentials.email);
+  if (dbUserByEmail !== undefined) {
+    return res.status(HTTP_FORBIDDEN).send(ERROR_USER_WITH_EMAIL_ALREADY_EXISTS);
   }
 
   // Create user in database

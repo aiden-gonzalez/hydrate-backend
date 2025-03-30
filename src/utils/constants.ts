@@ -14,7 +14,8 @@ export const HTTP_NOT_FOUND_MESSAGE = "Resource not found";
 export const HTTP_INTERNAL_ERROR_MESSAGE = "Internal error";
 
 // Other error messages
-export const ERROR_USER_ALREADY_EXISTS = "User with that username already exists";
+export const ERROR_USER_WITH_EMAIL_ALREADY_EXISTS = "User with that email address already exists";
+export const ERROR_USER_WITH_USERNAME_ALREADY_EXISTS = "User with that username already exists";
 
 // HTTP headers
 export const HTTP_AUTHORIZATION_HEADER  = "Authorization";
