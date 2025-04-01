@@ -51,7 +51,7 @@ function getAuthSuccessResponse(user : IUser) : IAuthSuccessResponse {
     access_token: generateToken(user, constants.JWT_ACCESS_EXPIRATION),
     refresh_token: generateToken(user, constants.JWT_REFRESH_EXPIRATION),
     token_type: constants.JWT_TYPE,
-    expires: constants.JWT_ACCESS_EXPIRATION,
+    expires: Math.round((new Date()).getTime() / 1000) + constants.JWT_ACCESS_EXPIRATION,
     username: user.username
   };
 }
