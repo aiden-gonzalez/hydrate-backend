@@ -1377,12 +1377,10 @@
                         "type": "string"
                     },
                     "hashed_password": {
-                        "$ref": "#/components/schemas/HashedPassword",
-                        "description": "Hash of user password for authentication"
+                        "$ref": "#/components/schemas/HashedPassword"
                     },
                     "profile": {
-                        "$ref": "#/components/schemas/UserProfile",
-                        "description": "User profile"
+                        "$ref": "#/components/schemas/UserProfile"
                     },
                     "id": {
                         "description": "Unique user id (not technically necessary but helpful)",
@@ -1458,8 +1456,7 @@
                         "type": "string"
                     },
                     "details": {
-                        "$ref": "#/components/schemas/FountainRatingDetails",
-                        "description": "Details of fountain rating"
+                        "$ref": "#/components/schemas/FountainRatingDetails"
                     },
                     "created_at": {
                         "description": "Created timestamp.  Unix epoch milliseconds.",
@@ -1550,8 +1547,7 @@
                         "type": "string"
                     },
                     "details": {
-                        "$ref": "#/components/schemas/BathroomRatingDetails",
-                        "description": "Details of bathroom rating"
+                        "$ref": "#/components/schemas/BathroomRatingDetails"
                     },
                     "created_at": {
                         "description": "Created timestamp.  Unix epoch milliseconds.",
@@ -1656,8 +1652,7 @@
                         "type": "string"
                     },
                     "user_credentials": {
-                        "$ref": "#/components/schemas/UserCredentials",
-                        "description": "Set of new credentials for new user"
+                        "$ref": "#/components/schemas/UserCredentials"
                     }
                 },
                 "example": {
@@ -1684,8 +1679,7 @@
                         "type": "string"
                     },
                     "info": {
-                        "$ref": "#/components/schemas/FountainInfo",
-                        "description": "Fountain information"
+                        "$ref": "#/components/schemas/FountainInfo"
                     },
                     "created_at": {
                         "description": "Created timestamp.  Unix epoch milliseconds.",
@@ -1700,8 +1694,7 @@
                         "type": "string"
                     },
                     "location": {
-                        "$ref": "#/components/schemas/Location",
-                        "description": "Location of fountain"
+                        "$ref": "#/components/schemas/Location"
                     },
                     "user_id": {
                         "description": "ID of user who created the fountain",
@@ -1784,8 +1777,7 @@
                         "type": "string"
                     },
                     "info": {
-                        "$ref": "#/components/schemas/BathroomInfo",
-                        "description": "Info for bathroom"
+                        "$ref": "#/components/schemas/BathroomInfo"
                     },
                     "created_at": {
                         "description": "Created timestamp.  Unix epoch milliseconds.",
@@ -1800,8 +1792,7 @@
                         "type": "string"
                     },
                     "location": {
-                        "$ref": "#/components/schemas/Location",
-                        "description": "Location of bathroom"
+                        "$ref": "#/components/schemas/Location"
                     },
                     "user_id": {
                         "description": "ID of user who created the bathroom",
@@ -1987,8 +1978,7 @@
                 "type": "object",
                 "properties": {
                     "user_credentials": {
-                        "$ref": "#/components/schemas/UserCredentials",
-                        "description": "Credentials for user"
+                        "$ref": "#/components/schemas/UserCredentials"
                     }
                 },
                 "example": {
@@ -2200,12 +2190,10 @@
                         "type": "string"
                     },
                     "location": {
-                        "$ref": "#/components/schemas/Location",
-                        "description": "Location of bathroom"
+                        "$ref": "#/components/schemas/Location"
                     },
                     "info": {
-                        "$ref": "#/components/schemas/BathroomInfo",
-                        "description": "Info for bathroom"
+                        "$ref": "#/components/schemas/BathroomInfo"
                     }
                 },
                 "example": {
@@ -2235,12 +2223,10 @@
                         "type": "string"
                     },
                     "location": {
-                        "$ref": "#/components/schemas/Location",
-                        "description": "Location of fountain"
+                        "$ref": "#/components/schemas/Location"
                     },
                     "info": {
-                        "$ref": "#/components/schemas/FountainInfo",
-                        "description": "Info for fountain"
+                        "$ref": "#/components/schemas/FountainInfo"
                     }
                 },
                 "example": {
