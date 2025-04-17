@@ -1,10 +1,10 @@
 import { Database } from "./types";
-import { Pool } from 'pg'
+import * as pg from 'pg'
 import { Kysely, PostgresDialect } from 'kysely'
 
-export function getPgPool () : Pool {
+export function getPgPool () : pg.Pool {
   if (process.env.NODE_ENV == "cloud") {
-    return new Pool({
+    return new pg.Pool({
       database: process.env.CLOUD_PG_DB,
       host: process.env.CLOUD_PG_HOST,
       user: process.env.CLOUD_PG_USER,
@@ -13,7 +13,7 @@ export function getPgPool () : Pool {
       max: 10
     });
   } else if (process.env.NODE_ENV == "local") {
-    return new Pool({
+    return new pg.Pool({
       database: process.env.LOCAL_PG_DB,
       host: process.env.LOCAL_PG_HOST,
       user: process.env.LOCAL_PG_USER,
@@ -22,7 +22,7 @@ export function getPgPool () : Pool {
       max: 10
     });
   } else if (process.env.NODE_ENV == "test") {
-    return new Pool({
+    return new pg.Pool({
       database: process.env.TEST_PG_DB,
       host: process.env.TEST_PG_HOST,
       user: process.env.TEST_PG_USER,
@@ -34,6 +34,9 @@ export function getPgPool () : Pool {
     throw new Error("Invalid NODE_ENV, cannot create postgres Pool!");
   }
 }
+
+// This is supposed to fix updated_at and created_at coming out as strings but it doesn't
+pg.types.setTypeParser(pg.types.builtins.NUMERIC, (value: any) => parseFloat(value));
 
 export function getDb() : Kysely<Database> {
   return new Kysely<Database>({
