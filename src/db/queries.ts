@@ -19,11 +19,11 @@ import {IUserContributionQueryParams, IUserContributions} from "../profiles/type
 // FOUNTAIN OR BATHROOM (FOB)
 export function createFob(fob: NewFob) : Promise<Fob> {
   // TODO also add entry to fobchange table to record this
-  return db.insertInto('fob').values(fob as NewFob).returningAll().executeTakeFirstOrThrow();
+  return parseTimestampsPromise(db.insertInto('fob').values(fob as NewFob).returningAll().executeTakeFirstOrThrow());
 }
 
 export function getFob(id: string) : Promise<Fob> {
-  return db.selectFrom('fob').where('id', '=', id).selectAll().executeTakeFirst();
+  return parseTimestampsPromise(db.selectFrom('fob').where('id', '=', id).selectAll().executeTakeFirst());
 }
 
 export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
@@ -74,12 +74,12 @@ export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
     query = query.where(sql<boolean>`info->'sanitary_products' = ${params.sanitary_products}`)
   }
 
-  return query.selectAll().execute();
+  return parseArrayTimestampsPromise(query.selectAll().execute());
 }
 
 export function updateFob(id: string, updateWith: FobUpdate) : Promise<Fob> {
   // TODO also add entry to fob change table to record this
-  return db.updateTable('fob').set(updateWith).where('id', '=', id).returningAll().executeTakeFirst();
+  return parseTimestampsPromise(db.updateTable('fob').set(updateWith).where('id', '=', id).returningAll().executeTakeFirst());
 }
 
 export function deleteFob(id: string) : Promise<Fob> {
@@ -181,6 +181,18 @@ export function parseTimestampsPromise(item : Promise<any>) : Promise<any> {
       result.created_at = parseInt(result.created_at);
       result.updated_at = parseInt(result.updated_at);
       resolve(result);
+    }).catch((error) => reject(error));
+  });
+}
+
+export function parseArrayTimestampsPromise(itemArray: Promise<any[]>) : Promise<any[]> {
+  return new Promise((resolve, reject) => {
+    itemArray.then((result) => {
+      return result.map((item) => {
+        item.created_at = parseInt(item.created_at);
+        item.updated_at = parseInt(item.updated_at);
+        return item;
+      });
     }).catch((error) => reject(error));
   });
 }
