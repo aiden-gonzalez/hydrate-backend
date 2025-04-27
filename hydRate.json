@@ -1670,8 +1670,7 @@
                     "info",
                     "name",
                     "location",
-                    "user_id",
-                    "average_rating"
+                    "user_id"
                 ],
                 "type": "object",
                 "properties": {
@@ -1774,8 +1773,7 @@
                     "info",
                     "name",
                     "location",
-                    "user_id",
-                    "average_rating"
+                    "user_id"
                 ],
                 "type": "object",
                 "properties": {

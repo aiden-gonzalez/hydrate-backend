@@ -1169,7 +1169,7 @@ export interface components {
       /** @description ID of user who created the fountain */
       user_id: string;
       /** @description Average user rating (0-5) of fountain */
-      average_rating: number;
+      average_rating?: number;
     };
     /**
      * @example {
@@ -1229,7 +1229,7 @@ export interface components {
       /** @description ID of user who created the bathroom */
       user_id: string;
       /** @description Average user rating (0-5) of fountain */
-      average_rating: number;
+      average_rating?: number;
     };
     /**
      * @description Actual details of bathroom rating
