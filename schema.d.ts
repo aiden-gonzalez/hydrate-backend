@@ -982,9 +982,7 @@ export interface components {
       username: string;
       /** @description Email address of user */
       email: string;
-      /** @description Hash of user password for authentication */
       hashed_password: components["schemas"]["HashedPassword"];
-      /** @description User profile */
       profile: components["schemas"]["UserProfile"];
       /** @description Unique user id (not technically necessary but helpful) */
       id: string;
@@ -1026,7 +1024,6 @@ export interface components {
       fob_id: string;
       /** @description ID of user who created rating */
       user_id: string;
-      /** @description Details of fountain rating */
       details: components["schemas"]["FountainRatingDetails"];
       /** @description Created timestamp.  Unix epoch milliseconds. */
       created_at?: number;
@@ -1080,7 +1077,6 @@ export interface components {
       fob_id: string;
       /** @description ID of user who created bathroom rating */
       user_id: string;
-      /** @description Details of bathroom rating */
       details: components["schemas"]["BathroomRatingDetails"];
       /** @description Created timestamp.  Unix epoch milliseconds. */
       created_at?: number;
@@ -1139,7 +1135,6 @@ export interface components {
     SignupRequest: {
       /** @description New username for new user */
       username: string;
-      /** @description Set of new credentials for new user */
       user_credentials: components["schemas"]["UserCredentials"];
     };
     /**
@@ -1156,13 +1151,13 @@ export interface components {
      *     "longitude": 17.64,
      *     "latitude": 7.68
      *   },
-     *   "user_id": "some text"
+     *   "user_id": "some text",
+     *   "average_rating": 3.5
      * }
      */
     Fountain: {
       /** @description Unique ID of fountain */
       id: string;
-      /** @description Fountain information */
       info: components["schemas"]["FountainInfo"];
       /** @description Created timestamp.  Unix epoch milliseconds. */
       created_at?: number;
@@ -1170,10 +1165,11 @@ export interface components {
       updated_at?: number;
       /** @description Name of fountain */
       name: string;
-      /** @description Location of fountain */
       location: components["schemas"]["Location"];
       /** @description ID of user who created the fountain */
       user_id: string;
+      /** @description Average user rating (0-5) of fountain */
+      average_rating: number;
     };
     /**
      * @example {
@@ -1215,13 +1211,13 @@ export interface components {
      *     "longitude": 33.98,
      *     "latitude": 88.94
      *   },
-     *   "user_id": "some text"
+     *   "user_id": "some text",
+     *   "average_rating": 3.5
      * }
      */
     Bathroom: {
       /** @description Unique ID of bathroom */
       id: string;
-      /** @description Info for bathroom */
       info: components["schemas"]["BathroomInfo"];
       /** @description Created timestamp.  Unix epoch milliseconds. */
       created_at?: number;
@@ -1229,10 +1225,11 @@ export interface components {
       updated_at?: number;
       /** @description Name of bathroom */
       name: string;
-      /** @description Location of bathroom */
       location: components["schemas"]["Location"];
       /** @description ID of user who created the bathroom */
       user_id: string;
+      /** @description Average user rating (0-5) of fountain */
+      average_rating: number;
     };
     /**
      * @description Actual details of bathroom rating
@@ -1317,7 +1314,6 @@ export interface components {
      * }
      */
     AuthRequest: {
-      /** @description Credentials for user */
       user_credentials: components["schemas"]["UserCredentials"];
     };
     /**
@@ -1493,9 +1489,7 @@ export interface components {
     BathroomCreationDetails: {
       /** @description Name of bathroom */
       name: string;
-      /** @description Location of bathroom */
       location: components["schemas"]["Location"];
-      /** @description Info for bathroom */
       info: components["schemas"]["BathroomInfo"];
     };
     /**
@@ -1514,9 +1508,7 @@ export interface components {
     FountainCreationDetails: {
       /** @description Name of fountain */
       name: string;
-      /** @description Location of fountain */
       location: components["schemas"]["Location"];
-      /** @description Info for fountain */
       info: components["schemas"]["FountainInfo"];
     };
   };
