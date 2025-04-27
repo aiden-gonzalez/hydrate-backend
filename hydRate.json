@@ -1670,7 +1670,8 @@
                     "info",
                     "name",
                     "location",
-                    "user_id"
+                    "user_id",
+                    "average_rating"
                 ],
                 "type": "object",
                 "properties": {
@@ -1699,6 +1700,10 @@
                     "user_id": {
                         "description": "ID of user who created the fountain",
                         "type": "string"
+                    },
+                    "average_rating": {
+                        "description": "Average user rating (0-5) of fountain",
+                        "type": "number"
                     }
                 },
                 "example": {
@@ -1713,7 +1718,8 @@
                         "longitude": 17.64,
                         "latitude": 7.68
                     },
-                    "user_id": "some text"
+                    "user_id": "some text",
+                    "average_rating": 3.5
                 }
             },
             "FountainInfo": {
@@ -1768,7 +1774,8 @@
                     "info",
                     "name",
                     "location",
-                    "user_id"
+                    "user_id",
+                    "average_rating"
                 ],
                 "type": "object",
                 "properties": {
@@ -1797,6 +1804,10 @@
                     "user_id": {
                         "description": "ID of user who created the bathroom",
                         "type": "string"
+                    },
+                    "average_rating": {
+                        "description": "Average user rating (0-5) of fountain",
+                        "type": "number"
                     }
                 },
                 "example": {
@@ -1813,7 +1824,8 @@
                         "longitude": 33.98,
                         "latitude": 88.94
                     },
-                    "user_id": "some text"
+                    "user_id": "some text",
+                    "average_rating": 3.5
                 }
             },
             "BathroomRatingDetails": {
