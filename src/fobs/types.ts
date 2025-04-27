@@ -18,7 +18,7 @@ export type IFobInfo = IFountainInfo | IBathroomInfo;
 export type IFobRating = (IFountainRating & IBathroomRating) | {details: IFobRatingDetails};
 export type IFobRatingDetails = IFountainRatingDetails | IBathroomRatingDetails;
 export type IFobCreationDetails = IFountainCreationDetails | IBathroomCreationDetails;
-export type IFobQueryParams = IFountainQueryParams & IBathroomQueryParams;
+export type IFobQueryParams = IFountainQueryParams & IBathroomQueryParams & {isFountain?: boolean};
 
 export function isFountain(fob: IFob) : fob is IFountain {
   return (fob as IFountain).info.bottle_filler !== undefined;

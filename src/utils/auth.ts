@@ -19,18 +19,18 @@ export function validateToken(token: string) : Promise<IUser> {
   });
 }
 
-export function authenticateRequest (req, res, next) {
+export async function authenticateRequest (req, res, next) {
   const token = req.get("Authorization");
-  if (token == null) return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
+  if (token == null)
+    return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
 
-  return new Promise((resolve) => {
-    validateToken(token).then((tokenUser) => {
-      req.user = tokenUser;
-      resolve(next());
-    }).catch((error) => {
-      resolve(res.sendStatus(constants.HTTP_UNAUTHORIZED).send(error));
-    });
-  });
+  try {
+    const tokenUser = await validateToken(token);
+    req.user = tokenUser;
+    next();
+  } catch (error) {
+    res.sendStatus(constants.HTTP_UNAUTHORIZED).send(error);
+  }
 }
 
 export function hashPass (password : string) : Promise<IHashedPassword> {
