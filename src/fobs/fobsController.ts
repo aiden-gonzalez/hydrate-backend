@@ -51,7 +51,7 @@ export async function ratingPermissionCheck(req, res, next) {
   return next();
 }
 
-export function getFobs(req, res) {
+export async function getFobs(req, res) {
   let queryParams;
   if (req.isFountain) {
     queryParams = {
@@ -76,17 +76,17 @@ export function getFobs(req, res) {
       to_date: req.query?.to_date
     } as IBathroomQueryParams;
   }
+
   // Execute query
-  return new Promise((resolve) => {
-    db.findFobs(queryParams).then((fobs) => {
-      resolve(res.status(HTTP_OK).json(fobs))
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    });
-  });
+  try {
+    const fobs = await db.findFobs(queryParams);
+    res.status(HTTP_OK).json(fobs);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
-export function createFob(req, res) {
+export async function createFob(req, res) {
   // Get fob info from request
   const fobCreationDetails : IFobCreationDetails = req.body;
 
@@ -99,30 +99,28 @@ export function createFob(req, res) {
     info: fobCreationDetails.info
   } as NewFob;
 
-  return new Promise((resolve) => {
-    db.createFob(newFob).then((createdFob) => {
-      resolve(res.status(HTTP_CREATED).json(createdFob));
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    });
-  });
+  try {
+    const createdFob = await db.createFob(newFob);
+    res.status(HTTP_CREATED).json(createdFob);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
-export function getFobById(req, res) {
+export async function getFobById(req, res) {
   // Get path parameter
   const fobId = req.params.id;
 
   // Get fountain
-  return new Promise((resolve) => {
-    db.getFob(fobId).then((fob) => {
-      resolve(res.status(HTTP_OK).json(fob))
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
-  });
+  try {
+    const fob = await db.getFob(fobId);
+    res.status(HTTP_OK).json(fob);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
-export function updateFob(req, res) {
+export async function updateFob(req, res) {
   // Get path parameter
   const fobId = req.params.id;
 
@@ -132,30 +130,28 @@ export function updateFob(req, res) {
   };
 
   // Update fountain
-  return new Promise((resolve) => {
-    db.updateFob(fobId, fobUpdate).then((fob) => {
-      resolve(res.status(HTTP_OK).json(fob))
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
-  });
+  try {
+    const fob = await db.updateFob(fobId, fobUpdate);
+    res.status(HTTP_OK).json(fob);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
-export function getFobPictures(req, res) {
+export async function getFobPictures(req, res) {
   // Get path parameter
   const fobId = req.params.id;
 
   // Get fountain pictures
-  return new Promise((resolve) => {
-    db.getPicturesForFob(fobId).then((fobPictures) => {
-      resolve(res.status(HTTP_OK).json(fobPictures))
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
-  });
+  try {
+    const fobPictures = await db.getPicturesForFob(fobId);
+    res.status(HTTP_OK).json(fobPictures);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
-export function addFobPicture(req, res) {
+export async function addFobPicture(req, res) {
   // Get path parameter
   const fobId = req.params.id;
   // Get picture url from request
@@ -173,16 +169,16 @@ export function addFobPicture(req, res) {
     fob_id: fobId,
     url: pictureUrl
   }
-  return new Promise((resolve) => {
-    db.createPicture(newPicture).then((createdPicture) => {
-      resolve(res.status(HTTP_CREATED).json(createdPicture))
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
-  });
+
+  try {
+    const createdPicture = await db.createPicture(newPicture);
+    res.status(HTTP_CREATED).json(createdPicture);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
-export function getFobPicture(req, res) {
+export async function getFobPicture(req, res) {
   // Get path parameters
   // TODO fountainID is not considered here. This means that any fountainId could be passed in
   // and the picture would still be fetched if it exists. Depending on how potential future
@@ -191,16 +187,15 @@ export function getFobPicture(req, res) {
   const pictureId = req.params.pictureId;
 
   // Get fountain picture
-  return new Promise((resolve) => {
-    db.getPictureById(pictureId).then((fobPicture) => {
-      resolve(res.status(HTTP_OK).json(fobPicture))
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
-  });
+  try {
+    const fobPicture = await db.getPictureById(pictureId);
+    res.status(HTTP_OK).json(fobPicture);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
-export function deleteFobPicture(req, res) {
+export async function deleteFobPicture(req, res) {
   // Get path parameters
   // TODO do we care if the picture doesn't actually belong to the fountain which is specified?
   // Currently we don't check that the picture belongs to the fountain before deleting it.
@@ -210,30 +205,28 @@ export function deleteFobPicture(req, res) {
   const pictureId = req.params.pictureId;
 
   // Delete fountain picture
-  return new Promise((resolve) => {
-    db.deletePicture(pictureId).then(() => {
-      resolve(res.status(HTTP_OK).send("Successfully removed picture"))
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
-  });
+  try {
+    await db.deletePicture(pictureId);
+    res.status(HTTP_OK).send("Successfully removed picture");
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
-export function getFobRatings(req, res) {
+export async function getFobRatings(req, res) {
   // Get path parameter
   const fobId = req.params.id;
 
   // Get fountain ratings
-  return new Promise((resolve) => {
-    db.getRatingsForFob(fobId).then((fobRatings) => {
-      resolve(res.status(HTTP_OK).json(fobRatings));
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
-  })
+  try {
+    const fobRatings = await db.getRatingsForFob(fobId);
+    res.status(HTTP_OK).json(fobRatings);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
-export function addFobRating(req, res) {
+export async function addFobRating(req, res) {
   // TODO we can create a rating for fountains and users that don't exist, can't we?
   // this is probably not a good thing :(
   // TODO one user can add unlimited ratings for the same fountain. Also not good :(
@@ -265,36 +258,34 @@ export function addFobRating(req, res) {
     details: ratingDetails
   } as IFobRating;
 
-  return new Promise((resolve) => {
-    db.createRating(newRating).then((createdRating) => {
-      resolve(res.status(HTTP_CREATED).json(createdRating))
-    }).catch((error) => {
-      if (error.message && error.stack && error.stack.startsWith("ValidationError")) {
-        resolve(res.status(HTTP_BAD_REQUEST).send(error.message));
-      } else {
-        resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-      }
-    });
-  });
+  try {
+    const createdRating = await db.createRating(newRating);
+    res.status(HTTP_CREATED).json(createdRating);
+  } catch (error) {
+    if (error.message && error.stack && error.stack.startsWith("ValidationError")) {
+      res.status(HTTP_BAD_REQUEST).send(error.message);
+    } else {
+      res.status(HTTP_INTERNAL_ERROR).send(error);
+    }
+  }
 }
 
-export function getFobRating(req, res) {
+export async function getFobRating(req, res) {
   // Get path parameters
   // TODO fountainId is not considered here, same potential issue as with pictures?
   // const fountainId = req.params.id;
   const ratingId = req.params.ratingId;
 
   // Get fountain rating
-  return new Promise((resolve) => {
-    db.getRating(ratingId).then((fobRating) => {
-      resolve(res.status(HTTP_OK).json(fobRating))
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
-  });
+  try {
+    const fobRating = await db.getRating(ratingId);
+    res.status(HTTP_OK).json(fobRating);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
-export function updateFobRating(req, res) {
+export async function updateFobRating(req, res) {
   // Get path parameters
   // TODO fountainId is not considered here, same potential issue as with pictures?
   // const fountainId = req.params.id;
@@ -305,11 +296,10 @@ export function updateFobRating(req, res) {
   };
 
   // Update fountain rating
-  return new Promise((resolve) => {
-    db.updateRating(ratingId, ratingUpdate).then((fobRating) => {
-      resolve(res.status(HTTP_OK).json(fobRating))
-    }).catch((error) => {
-      resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
-    })
-  });
+  try {
+    const fobRating = await db.updateRating(ratingId, ratingUpdate);
+    res.status(HTTP_OK).json(fobRating);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
