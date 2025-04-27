@@ -1,5 +1,7 @@
 import {
-  IFob, IFobCreationDetails,
+  IFob,
+  IFobCreationDetails,
+  IFobQueryParams,
   IFobRating,
   IFobRatingDetails
 } from "./types";
@@ -20,8 +22,8 @@ import {
   generateFountainRatingId,
   generatePictureId
 } from "../utils/generate";
-import {IBathroomQueryParams, IBathroomRatingDetails} from "../bathrooms/types";
-import {IFountainQueryParams, IFountainRatingDetails} from "../fountains/types";
+import {IBathroomRatingDetails} from "../bathrooms/types";
+import {IFountainRatingDetails} from "../fountains/types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator, urlValidator} from "../utils/validation";
 
@@ -52,29 +54,23 @@ export async function ratingPermissionCheck(req, res, next) {
 }
 
 export async function getFobs(req, res) {
-  let queryParams;
+  const queryParams = {
+    latitude: req.query?.latitude,
+    longitude: req.query?.longitude,
+    radius: req.query?.radius,
+    user_id: req.query?.user_id,
+    from_date: req.query?.from_date,
+    to_date: req.query?.to_date
+  } as IFobQueryParams;
+
   if (req.isFountain) {
-    queryParams = {
-      bottle_filler: req.query?.bottle_filler,
-      latitude: req.query?.latitude,
-      longitude: req.query?.longitude,
-      radius: req.query?.radius,
-      user_id: req.query?.user_id,
-      from_date: req.query?.from_date,
-      to_date: req.query?.to_date
-    } as IFountainQueryParams;
+    queryParams.isFountain = true;
+    queryParams.bottle_filler = req.query?.bottle_filler ?? undefined;
   } else {
-    queryParams = {
-      baby_changer: req.query?.baby_changer,
-      sanitary_products: req.query?.sanitary_products,
-      gender: req.query?.gender,
-      latitude: req.query?.latitude,
-      longitude: req.query?.longitude,
-      radius: req.query?.radius,
-      user_id: req.query?.user_id,
-      from_date: req.query?.from_date,
-      to_date: req.query?.to_date
-    } as IBathroomQueryParams;
+    queryParams.isFountain = false;
+    queryParams.baby_changer = req.query?.baby_changer ?? undefined;
+    queryParams.sanitary_products = req.query?.sanitary_products ?? undefined;
+    queryParams.gender = req.query?.gender ?? undefined;
   }
 
   // Execute query

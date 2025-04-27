@@ -15,6 +15,7 @@ import {sql} from "kysely";
 import {calculateLocationAtDistance} from "../utils/calculation";
 import {ILocation} from "../utils/types";
 import {IUserContributionQueryParams, IUserContributions} from "../profiles/types";
+import * as constants from "../utils/constants";
 
 // FOUNTAIN OR BATHROOM (FOB)
 export function createFob(fob: NewFob) : Promise<Fob> {
@@ -28,6 +29,10 @@ export function getFob(id: string) : Promise<Fob> {
 
 export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
   let query = db.selectFrom('fob');
+
+  if(params.isFountain !== undefined) {
+    query = query.where('id', 'like', (params.isFountain ? constants.FOUNTAIN_ID_PREFIX : constants.BATHROOM_ID_PREFIX) + '%');
+  }
 
   if (params.latitude !== undefined && params.longitude !== undefined) {
     if (params.radius === undefined) {
