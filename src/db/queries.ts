@@ -188,11 +188,11 @@ export function parseTimestampsPromise(item : Promise<any>) : Promise<any> {
 export function parseArrayTimestampsPromise(itemArray: Promise<any[]>) : Promise<any[]> {
   return new Promise((resolve, reject) => {
     itemArray.then((result) => {
-      return result.map((item) => {
+      resolve(result.map((item) => {
         item.created_at = parseInt(item.created_at);
         item.updated_at = parseInt(item.updated_at);
         return item;
-      });
+      }));
     }).catch((error) => reject(error));
   });
 }
