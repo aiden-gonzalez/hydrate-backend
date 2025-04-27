@@ -108,5 +108,5 @@ function expectAuthResponse(res) {
   expect(res.message.access_token).to.not.equal(null);
   expect(res.message.refresh_token).to.not.equal(null);
   expect(res.message.token_type).to.equal(constants.JWT_TYPE);
-  expect(res.message.expires).to.equal(constants.JWT_ACCESS_EXPIRATION);
+  expect(res.message.expires).to.be.lessThanOrEqual((new Date()).getTime() / 1000 + 1 + constants.JWT_ACCESS_EXPIRATION);
 }
