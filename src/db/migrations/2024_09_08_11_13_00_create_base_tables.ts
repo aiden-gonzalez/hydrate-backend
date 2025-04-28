@@ -50,9 +50,20 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('created_at', epochType, (col) => col.defaultTo(epochSql).notNull())
     .addColumn('updated_at', epochType, (col) => col.defaultTo(epochSql).notNull())
     .execute();
+  db.schema
+    .createView('fob_with_avg_rating').as(sql`
+      SELECT
+        fob.*,
+        avg((value)::float) AS average_rating
+      FROM fob
+        LEFT JOIN rating ON rating.fob_id = fob.id
+        CROSS JOIN LATERAL jsonb_each(rating.details)
+      GROUP BY fob.id`
+    );
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
+  await db.schema.dropView('fob_with_avg_rating').execute();
   await db.schema.dropTable('picture').execute();
   await db.schema.dropTable('rating').execute();
   await db.schema.dropTable('fob_change').execute();

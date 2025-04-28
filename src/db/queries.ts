@@ -28,7 +28,7 @@ export function getFob(id: string) : Promise<Fob> {
 }
 
 export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
-  let query = db.selectFrom('fob');
+  let query = db.selectFrom('fob_with_rating')
 
   if(params.isFountain !== undefined) {
     query = query.where('id', 'like', (params.isFountain ? constants.FOUNTAIN_ID_PREFIX : constants.BATHROOM_ID_PREFIX) + '%');

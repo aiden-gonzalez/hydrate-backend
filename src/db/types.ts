@@ -15,7 +15,8 @@ export interface Database {
   fob_change: FobChangeTable,
   rating: RatingTable,
   user: UserTable,
-  picture: PictureTable
+  picture: PictureTable,
+  fob_with_rating: FobWithRatingView
 }
 
 type DbCreatedAt = ColumnType<number, number, never>
@@ -51,6 +52,19 @@ export interface FobTable {
 export type Fob = Selectable<FobTable>
 export type NewFob = Insertable<FobTable>
 export type FobUpdate = Updateable<FobTable>
+
+export interface FobWithRatingView {
+  id: string,
+  user_id: string,
+  name: string,
+  location: ColumnType<ILocation, ILocation, ILocation>,
+  info: ColumnType<IFobInfo,  IFobInfo, IFobInfo>,
+  created_at: DbCreatedAt,
+  updated_at: DbUpdatedAt,
+  average_rating: number
+}
+
+export type FobWithRating = Selectable<FobWithRatingView>
 
 export interface FobChangeTable {
   id: Generated<number>
