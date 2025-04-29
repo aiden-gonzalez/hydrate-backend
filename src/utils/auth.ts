@@ -29,7 +29,7 @@ export async function authenticateRequest (req, res, next) {
     req.user = tokenUser;
     next();
   } catch (error) {
-    res.sendStatus(constants.HTTP_UNAUTHORIZED).send(error);
+    res.status(constants.HTTP_UNAUTHORIZED).send(error);
   }
 }
 
