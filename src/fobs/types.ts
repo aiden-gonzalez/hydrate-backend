@@ -1,37 +1,39 @@
-import {
-  IFountain, IFountainCreationDetails,
-  IFountainInfo,
-  IFountainQueryParams,
-  IFountainRating,
-  IFountainRatingDetails
-} from "../fountains/types";
-import {
-  IBathroom, IBathroomCreationDetails,
-  IBathroomInfo,
-  IBathroomQueryParams,
-  IBathroomRating,
-  IBathroomRatingDetails
-} from "../bathrooms/types";
+import {paths, components} from "../../schema";
+import * as constants from "../utils/constants";
 
-export type IFob = (IFountain & IBathroom) | {info: IFobInfo};
+export enum FobType {
+  Fountain,
+  Bathroom
+}
+
+// Fountains
+export type IFountainInfo = components["schemas"]["FountainInfo"];
+export type IFountainRatingDetails = components["schemas"]["FountainRatingDetails"];
+
+// Bathrooms
+export type IBathroomInfo = components["schemas"]["BathroomInfo"];
+export type IBathroomRatingDetails = components["schemas"]["BathroomRatingDetails"];
+
+// Fobs
+export type IFob = components["schemas"]["Fob"];
 export type IFobInfo = IFountainInfo | IBathroomInfo;
-export type IFobRating = (IFountainRating & IBathroomRating) | {details: IFobRatingDetails};
-export type IFobRatingDetails = IFountainRatingDetails | IBathroomRatingDetails;
-export type IFobCreationDetails = IFountainCreationDetails | IBathroomCreationDetails;
-export type IFobQueryParams = IFountainQueryParams & IBathroomQueryParams & {isFountain?: boolean};
+export type IRating = components["schemas"]["Rating"];
+export type IRatingDetails = IFountainRatingDetails | IBathroomRatingDetails;
+export type IFobCreationDetails = components["schemas"]["FobCreationDetails"];
+export type IFobQueryParams =  paths["/api/fobs"]["get"]["parameters"]["query"];
 
-export function isFountain(fob: IFob) : fob is IFountain {
-  return (fob as IFountain).info.bottle_filler !== undefined;
+export function isFountain(fob: IFob) {
+  return fob.id.startsWith(constants.FOUNTAIN_ID_PREFIX);
 }
 
-export function isBathroom(fob: IFob) : fob is IBathroom {
-  return (fob as IBathroom).info.sanitary_products !== undefined;
+export function isBathroom(fob: IFob) {
+  return fob.id.startsWith(constants.BATHROOM_ID_PREFIX);
 }
 
-export function isFountainRating(fobRating: IFobRating) : fobRating is IFountainRating {
-  return (fobRating as IFountainRating).details.taste !== undefined;
+export function isFountainRating(fobRating: IRating) {
+  return fobRating.id.startsWith(constants.FOUNTAIN_RATING_ID_PREFIX);
 }
 
-export function isBathroomRating(fobRating : IFobRating) : fobRating is IBathroomRating {
-  return (fobRating as IBathroomRating).details.washing !== undefined;
+export function isBathroomRating(fobRating : IRating) {
+  return fobRating.id.startsWith(constants.BATHROOM_RATING_ID_PREFIX);
 }

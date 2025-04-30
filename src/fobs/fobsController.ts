@@ -2,8 +2,8 @@ import {
   IFob,
   IFobCreationDetails,
   IFobQueryParams,
-  IFobRating,
-  IFobRatingDetails
+  IRating,
+  IRatingDetails
 } from "./types";
 import * as db from "../db/queries";
 import {
@@ -229,7 +229,7 @@ export async function addFobRating(req, res) {
   // Get path parameter
   const fobId = req.params.id;
   // Get rating details from request
-  const ratingDetails : IFobRatingDetails = req.body;
+  const ratingDetails : IRatingDetails = req.body;
   // Get authenticated user id
   const userId = req.user.id;
 
@@ -252,7 +252,7 @@ export async function addFobRating(req, res) {
     fob_id: fobId,
     user_id: userId,
     details: ratingDetails
-  } as IFobRating;
+  } as IRating;
 
   try {
     const createdRating = await db.createRating(newRating);
@@ -287,7 +287,7 @@ export async function updateFobRating(req, res) {
   // const fountainId = req.params.id;
   const ratingId = req.params.ratingId;
   // Get new rating details from request
-  const ratingUpdate : IFobRating = {
+  const ratingUpdate : IRating = {
     details: req.body
   };
 

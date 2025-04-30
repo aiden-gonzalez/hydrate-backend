@@ -8,7 +8,7 @@ import {
 } from "kysely";
 import {IHashedPassword, ILocation} from "../utils/types";
 import {IUserProfile} from "../profiles/types";
-import {IFobInfo, IFobRatingDetails} from "../fobs/types";
+import {IFobInfo, IRatingDetails} from "../fobs/types";
 
 export interface Database {
   fob: FobTable,
@@ -81,7 +81,7 @@ export interface RatingTable {
   id: string
   fob_id: string
   user_id: string
-  details: ColumnType<IFobRatingDetails, IFobRatingDetails, IFobRatingDetails>
+  details: ColumnType<IRatingDetails, IRatingDetails, IRatingDetails>
   created_at: DbCreatedAt
   updated_at: DbUpdatedAt
 }
