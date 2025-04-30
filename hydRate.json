@@ -976,53 +976,6 @@
                     "updated_at": 1672617600000
                 }
             },
-            "FountainRating": {
-                "description": "",
-                "required": [
-                    "id",
-                    "fob_id",
-                    "user_id",
-                    "details"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "description": "Unique id of fountain rating (technically not necessary but nice to have)",
-                        "type": "string"
-                    },
-                    "fob_id": {
-                        "description": "ID of fountain rating is for",
-                        "type": "string"
-                    },
-                    "user_id": {
-                        "description": "ID of user who created rating",
-                        "type": "string"
-                    },
-                    "details": {
-                        "$ref": "#/components/schemas/FountainRatingDetails"
-                    },
-                    "created_at": {
-                        "description": "Created timestamp.  Unix epoch milliseconds.",
-                        "type": "integer"
-                    },
-                    "updated_at": {
-                        "description": "Updated timestamp.  Unix epoch milliseconds.",
-                        "type": "integer"
-                    }
-                },
-                "example": {
-                    "id": "some text",
-                    "fob_id": "some text",
-                    "user_id": "some text",
-                    "details": {
-                        "pressure": 50,
-                        "taste": 12,
-                        "temperature": 35
-                    },
-                    "created_at": 10,
-                    "updated_at": 10
-                }
-            },
             "Picture": {
                 "description": "",
                 "required": [
@@ -1065,55 +1018,6 @@
                     "user_id": "some text",
                     "created_at": 9,
                     "updated_at": 86
-                }
-            },
-            "BathroomRating": {
-                "description": "",
-                "required": [
-                    "id",
-                    "fob_id",
-                    "user_id",
-                    "details"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "description": "Unique id of bathroom rating",
-                        "type": "string"
-                    },
-                    "fob_id": {
-                        "description": "ID of bathroom rating is for",
-                        "type": "string"
-                    },
-                    "user_id": {
-                        "description": "ID of user who created bathroom rating",
-                        "type": "string"
-                    },
-                    "details": {
-                        "$ref": "#/components/schemas/BathroomRatingDetails"
-                    },
-                    "created_at": {
-                        "description": "Created timestamp.  Unix epoch milliseconds.",
-                        "type": "integer"
-                    },
-                    "updated_at": {
-                        "description": "Updated timestamp.  Unix epoch milliseconds.",
-                        "type": "integer"
-                    }
-                },
-                "example": {
-                    "id": "some text",
-                    "fob_id": "some text",
-                    "user_id": "some text",
-                    "details": {
-                        "cleanliness": 25,
-                        "decor": 92,
-                        "drying": 71,
-                        "privacy": 77,
-                        "washing": 76
-                    },
-                    "created_at": 19,
-                    "updated_at": 49
                 }
             },
             "UserCredentials": {
