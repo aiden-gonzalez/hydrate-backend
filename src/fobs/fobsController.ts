@@ -1,6 +1,6 @@
 import {
-  IFob,
   IFobCreationDetails,
+  IFobInfo,
   IFobQueryParams,
   IRating,
   IRatingDetails
@@ -111,9 +111,7 @@ export async function updateFob(req, res) {
   const fobId = req.params.id;
 
   // Get fob info
-  const fobUpdate : IFob = {
-    info: req.body
-  };
+  const fobUpdate : IFobInfo = req.body;
 
   // Update fob
   try {
@@ -277,9 +275,7 @@ export async function updateFobRating(req, res) {
   // const fountainId = req.params.id;
   const ratingId = req.params.ratingId;
   // Get new rating details from request
-  const ratingUpdate : IRating = {
-    details: req.body
-  };
+  const ratingUpdate : IRatingDetails = req.body;
 
   // Update fountain rating
   try {

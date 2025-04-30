@@ -10,7 +10,16 @@ import {
   User,
   UserUpdate
 } from './types';
-import {IFobQueryParams, isBathroom, isBathroomRating, isFountain, isFountainRating} from "../fobs/types";
+import {
+  FobType,
+  IFobInfo,
+  IFobQueryParams,
+  IRatingDetails,
+  isBathroom,
+  isBathroomRating,
+  isFountain,
+  isFountainRating
+} from "../fobs/types";
 import {sql} from "kysely";
 import {calculateLocationAtDistance} from "../utils/calculation";
 import {ILocation} from "../utils/types";
@@ -30,8 +39,8 @@ export function getFob(id: string) : Promise<Fob> {
 export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
   let query = db.selectFrom('fob_with_rating')
 
-  if(params.isFountain !== undefined) {
-    query = query.where('id', 'like', (params.isFountain ? constants.FOUNTAIN_ID_PREFIX : constants.BATHROOM_ID_PREFIX) + '%');
+  if(params.type !== undefined) {
+    query = query.where('id', 'like', (params.type == FobType.Fountain ? constants.FOUNTAIN_ID_PREFIX : constants.BATHROOM_ID_PREFIX) + '%');
   }
 
   if (params.latitude !== undefined && params.longitude !== undefined) {
@@ -63,28 +72,33 @@ export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
     query = query.where('created_at', '<=', params.to_date);
   }
 
-  if (params.bottle_filler !== undefined) {
-    query = query.where(sql<boolean>`info->'bottle_filler' = ${params.bottle_filler}`)
-  }
-
-  if (params.baby_changer !== undefined) {
-    query = query.where(sql<boolean>`info->'baby_changer' = ${params.baby_changer}`)
-  }
-
-  if (params.gender !== undefined) {
-    query = query.where(sql<boolean>`info->'gender' = ${params.gender}`)
-  }
-
-  if (params.sanitary_products !== undefined) {
-    query = query.where(sql<boolean>`info->'sanitary_products' = ${params.sanitary_products}`)
-  }
+  // These were removed when the api spec refactor happened. If I find a way to include them again,
+  // that'd be pretty nice.
+  // if (params.bottle_filler !== undefined) {
+  //   query = query.where(sql<boolean>`info->'bottle_filler' = ${params.bottle_filler}`)
+  // }
+  //
+  // if (params.baby_changer !== undefined) {
+  //   query = query.where(sql<boolean>`info->'baby_changer' = ${params.baby_changer}`)
+  // }
+  //
+  // if (params.gender !== undefined) {
+  //   query = query.where(sql<boolean>`info->'gender' = ${params.gender}`)
+  // }
+  //
+  // if (params.sanitary_products !== undefined) {
+  //   query = query.where(sql<boolean>`info->'sanitary_products' = ${params.sanitary_products}`)
+  // }
 
   return parseArrayTimestampsPromise(query.selectAll().execute());
 }
 
-export function updateFob(id: string, updateWith: FobUpdate) : Promise<Fob> {
+export function updateFob(id: string, updateWith: IFobInfo) : Promise<Fob> {
   // TODO also add entry to fob change table to record this
-  return parseTimestampsPromise(db.updateTable('fob').set(updateWith).where('id', '=', id).returningAll().executeTakeFirst());
+  const update : FobUpdate = {
+    info: updateWith
+  };
+  return parseTimestampsPromise(db.updateTable('fob').set(update).where('id', '=', id).returningAll().executeTakeFirst());
 }
 
 export function deleteFob(id: string) : Promise<Fob> {
@@ -108,8 +122,11 @@ export function getRatingsByUser(userId: string) : Promise<Rating[]> {
   return db.selectFrom('rating').where('user_id', '=', userId).selectAll().execute();
 }
 
-export function updateRating(id: string, updateWith: RatingUpdate) : Promise<Rating> {
-  return db.updateTable('rating').set(updateWith).where('id', '=', id).returningAll().executeTakeFirst();
+export function updateRating(id: string, updateWith: IRatingDetails) : Promise<Rating> {
+  const update : RatingUpdate = {
+    details: updateWith
+  };
+  return db.updateTable('rating').set(update).where('id', '=', id).returningAll().executeTakeFirst();
 }
 
 // USER

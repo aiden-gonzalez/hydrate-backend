@@ -2,8 +2,8 @@ import {paths, components} from "../../schema";
 import * as constants from "../utils/constants";
 
 export enum FobType {
-  Fountain,
-  Bathroom
+  Fountain = "fountain",
+  Bathroom = "bathroom"
 }
 
 // Fountains
