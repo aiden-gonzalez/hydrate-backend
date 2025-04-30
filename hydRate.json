@@ -407,81 +407,6 @@
                 }
             ]
         },
-        "/api/bathrooms/{id}": {
-            "summary": "Primary endpoint for retrieving (GET) and updating (PUT) a bathroom.",
-            "get": {
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Bathroom"
-                                }
-                            }
-                        },
-                        "description": "Successful request, return bathroom."
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Insufficient auth"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Get bathroom"
-            },
-            "put": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/BathroomInfo"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Bathroom"
-                                }
-                            }
-                        },
-                        "description": "Bathroom successfully updated!"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Update bathroom info for a particular bathroom"
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "schema": {
-                        "type": "string"
-                    },
-                    "in": "path",
-                    "required": true
-                }
-            ]
-        },
         "/api/bathrooms/{id}/pictures": {
             "summary": "Add, retrieve, and delete bathroom pictures",
             "get": {
@@ -965,25 +890,28 @@
                 }
             ]
         },
-        "/api/fountains/{id}": {
-            "summary": "Primary endpoint for retrieving (GET) and updating (PUT) a fountain.",
+        "/api/fobs/{id}": {
+            "summary": "Primary endpoint for retrieving (GET) and updating (PUT) a Fob.",
             "get": {
                 "responses": {
                     "200": {
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Fountain"
+                                    "$ref": "#/components/schemas/Fob"
                                 }
                             }
                         },
-                        "description": "Successful request, return fountain."
+                        "description": "Successful request, return Fob."
                     },
                     "400": {
                         "description": "Bad request"
                     },
                     "403": {
                         "description": "Insufficient auth"
+                    },
+                    "404": {
+                        "description": "Fob not found"
                     }
                 },
                 "security": [
@@ -991,14 +919,14 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Get fountain"
+                "summary": "Get Fob by ID"
             },
             "put": {
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/FountainInfo"
+                                "$ref": "#/components/schemas/Fob"
                             }
                         }
                     },
@@ -1009,17 +937,20 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Fountain"
+                                    "$ref": "#/components/schemas/Fob"
                                 }
                             }
                         },
-                        "description": "Fountain successfully updated!"
+                        "description": "Fob successfully updated!"
                     },
                     "400": {
                         "description": "Bad request"
                     },
                     "403": {
-                        "description": "Authentication failed"
+                        "description": "Insufficient auth"
+                    },
+                    "404": {
+                        "description": "Fob not found"
                     }
                 },
                 "security": [
@@ -1027,11 +958,12 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Update fountain info for a particular fountain"
+                "summary": "Update Fob info for a particular Fob"
             },
             "parameters": [
                 {
                     "name": "id",
+                    "description": "ID of the Fob",
                     "schema": {
                         "type": "string"
                     },
