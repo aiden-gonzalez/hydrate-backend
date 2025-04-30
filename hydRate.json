@@ -331,82 +331,6 @@
                 }
             ]
         },
-        "/api/bathrooms/{id}/ratings/{ratingId}": {
-            "get": {
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BathroomRating"
-                                }
-                            }
-                        },
-                        "description": "Successful request, return rating"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Get a particular rating for a particular bathroom"
-            },
-            "put": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/BathroomRatingDetails"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BathroomRating"
-                                }
-                            }
-                        },
-                        "description": "Bathroom rating successfully updated!"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Update bathroom rating"
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "schema": {
-                        "type": "string"
-                    },
-                    "in": "path",
-                    "required": true
-                },
-                {
-                    "name": "ratingId",
-                    "schema": {
-                        "type": "string"
-                    },
-                    "in": "path",
-                    "required": true
-                }
-            ]
-        },
         "/api/fobs/{id}/pictures": {
             "summary": "Add, retrieve, and delete pictures for a Fob",
             "get": {
@@ -672,18 +596,28 @@
                 }
             ]
         },
-        "/api/fountains/{id}/ratings/{ratingId}": {
+        "/api/fobs/{id}/ratings/{ratingId}": {
+            "summary": "Primary endpoint for retrieving (GET) and updating (PUT) a specific Fob rating",
             "get": {
                 "responses": {
                     "200": {
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FountainRating"
+                                    "$ref": "#/components/schemas/FobRating"
                                 }
                             }
                         },
-                        "description": "Successful request, return fountain rating"
+                        "description": "Successful request, return Fob rating"
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    },
+                    "404": {
+                        "description": "Rating with provided ID not found!"
                     }
                 },
                 "security": [
@@ -691,14 +625,14 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Get a particular rating for a particular fountain"
+                "summary": "Get a specific rating for a Fob"
             },
             "put": {
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/FountainRatingDetails"
+                                "$ref": "#/components/schemas/FobRating"
                             }
                         }
                     },
@@ -709,17 +643,20 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FountainRating"
+                                    "$ref": "#/components/schemas/FobRating"
                                 }
                             }
                         },
-                        "description": "Fountain rating successfully updated!"
+                        "description": "Fob rating successfully updated!"
                     },
                     "400": {
-                        "description": "Bad request"
+                        "description": "Malformed request"
                     },
-                    "403": {
-                        "description": "Authentication failed"
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    },
+                    "404": {
+                        "description": "Rating with provided ID not found!"
                     }
                 },
                 "security": [
@@ -727,11 +664,12 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Update fountain rating"
+                "summary": "Update a specific rating for a Fob"
             },
             "parameters": [
                 {
                     "name": "id",
+                    "description": "ID of the Fob",
                     "schema": {
                         "type": "string"
                     },
@@ -740,6 +678,7 @@
                 },
                 {
                     "name": "ratingId",
+                    "description": "ID of the rating",
                     "schema": {
                         "type": "string"
                     },
