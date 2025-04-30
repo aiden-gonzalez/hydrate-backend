@@ -527,7 +527,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/FobRating"
+                                        "$ref": "#/components/schemas/Rating"
                                     }
                                 }
                             }
@@ -553,7 +553,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/FobRating"
+                                "$ref": "#/components/schemas/Rating"
                             }
                         }
                     },
@@ -564,7 +564,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FobRating"
+                                    "$ref": "#/components/schemas/Rating"
                                 }
                             }
                         },
@@ -604,7 +604,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FobRating"
+                                    "$ref": "#/components/schemas/Rating"
                                 }
                             }
                         },
@@ -632,7 +632,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/FobRating"
+                                "$ref": "#/components/schemas/Rating"
                             }
                         }
                     },
@@ -643,7 +643,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FobRating"
+                                    "$ref": "#/components/schemas/Rating"
                                 }
                             }
                         },
@@ -925,7 +925,7 @@
                     "picture_link": "some text"
                 }
             },
-            "FobRating": {
+            "Rating": {
                 "description": "Rating for a Fob",
                 "required": [
                     "id",
@@ -1249,64 +1249,6 @@
                     }
                 }
             },
-            "Fountain": {
-                "description": "Basic fountain information",
-                "required": [
-                    "id",
-                    "info",
-                    "name",
-                    "location",
-                    "user_id"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "description": "Unique ID of fountain",
-                        "type": "string"
-                    },
-                    "info": {
-                        "$ref": "#/components/schemas/FountainInfo"
-                    },
-                    "created_at": {
-                        "description": "Created timestamp.  Unix epoch milliseconds.",
-                        "type": "integer"
-                    },
-                    "updated_at": {
-                        "description": "Updated timestamp.  Unix epoch milliseconds.",
-                        "type": "integer"
-                    },
-                    "name": {
-                        "description": "Name of fountain",
-                        "type": "string"
-                    },
-                    "location": {
-                        "$ref": "#/components/schemas/Location"
-                    },
-                    "user_id": {
-                        "description": "ID of user who created the fountain",
-                        "type": "string"
-                    },
-                    "average_rating": {
-                        "description": "Average user rating (0-5) of fountain",
-                        "type": "number"
-                    }
-                },
-                "example": {
-                    "id": "some text",
-                    "info": {
-                        "bottle_filler": true
-                    },
-                    "created_at": 54,
-                    "updated_at": 52,
-                    "name": "some text",
-                    "location": {
-                        "longitude": 17.64,
-                        "latitude": 7.68
-                    },
-                    "user_id": "some text",
-                    "average_rating": 3.5
-                }
-            },
             "FountainInfo": {
                 "description": "",
                 "required": [
@@ -1350,66 +1292,6 @@
                     "gender": "some text",
                     "sanitary_products": true,
                     "baby_changer": true
-                }
-            },
-            "Bathroom": {
-                "description": "Bathroom",
-                "required": [
-                    "id",
-                    "info",
-                    "name",
-                    "location",
-                    "user_id"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "description": "Unique ID of bathroom",
-                        "type": "string"
-                    },
-                    "info": {
-                        "$ref": "#/components/schemas/BathroomInfo"
-                    },
-                    "created_at": {
-                        "description": "Created timestamp.  Unix epoch milliseconds.",
-                        "type": "integer"
-                    },
-                    "updated_at": {
-                        "description": "Updated timestamp.  Unix epoch milliseconds.",
-                        "type": "integer"
-                    },
-                    "name": {
-                        "description": "Name of bathroom",
-                        "type": "string"
-                    },
-                    "location": {
-                        "$ref": "#/components/schemas/Location"
-                    },
-                    "user_id": {
-                        "description": "ID of user who created the bathroom",
-                        "type": "string"
-                    },
-                    "average_rating": {
-                        "description": "Average user rating (0-5) of fountain",
-                        "type": "number"
-                    }
-                },
-                "example": {
-                    "id": "some text",
-                    "info": {
-                        "gender": "some text",
-                        "sanitary_products": true,
-                        "baby_changer": true
-                    },
-                    "created_at": 61,
-                    "updated_at": 14,
-                    "name": "some text",
-                    "location": {
-                        "longitude": 33.98,
-                        "latitude": 88.94
-                    },
-                    "user_id": "some text",
-                    "average_rating": 3.5
                 }
             },
             "BathroomRatingDetails": {
@@ -1606,7 +1488,7 @@
                         "description": "Fob ratings created by user",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/FobRating"
+                            "$ref": "#/components/schemas/Rating"
                         }
                     },
                     "pictures": {
