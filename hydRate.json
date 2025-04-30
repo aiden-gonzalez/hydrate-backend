@@ -1663,6 +1663,49 @@
                     }
                 }
             },
+            "Fob": {
+                "description": "Fountain or bathroom information",
+                "required": [
+                    "id",
+                    "info",
+                    "name",
+                    "location",
+                    "user_id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Unique ID of fountain",
+                        "type": "string"
+                    },
+                    "info": {
+                        "description": "Info about the Fob, can be either FountainInfo or BathroomInfo",
+                        "oneOf": [
+                            { "$ref": "#/components/schemas/FountainInfo" },
+                            { "$ref": "#/components/schemas/BathroomInfo" }
+                        ]
+                    },
+                    "created_at": {
+                        "description": "Created timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
+                    },
+                    "updated_at": {
+                        "description": "Updated timestamp.  Unix epoch milliseconds.",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Name of fountain",
+                        "type": "string"
+                    },
+                    "location": {
+                        "$ref": "#/components/schemas/Location"
+                    },
+                    "user_id": {
+                        "description": "ID of user who created the fountain",
+                        "type": "string"
+                    }
+                }
+            },
             "Fountain": {
                 "description": "Basic fountain information",
                 "required": [
