@@ -4,8 +4,7 @@ import * as BodyParser from "body-parser";
 import * as OpenApiValidator from "express-openapi-validator";
 
 // Routers
-import bathroomsRouter from "./bathrooms/bathroomsRouter";
-import fountainsRouter from './fountains/fountainsRouter'
+import fobsRouter from "./fobs/fobsRouter";
 import authRouter from './auth/authRouter';
 import profilesRouter from './profiles/profilesRouter';
 import signupRouter from './signup/signupRouter';
@@ -40,8 +39,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.use('/api/', bathroomsRouter);
-app.use('/api/', fountainsRouter);
+app.use('/api/', fobsRouter);
 app.use('/api/', authRouter);
 app.use('/api/', profilesRouter);
 app.use('/api/', signupRouter);

@@ -1,0 +1,68 @@
+import express from "express";
+import * as fobsController from "./fobsController";
+import {authenticateRequest} from "../utils/auth";
+
+const fobsRouter = express.Router();
+
+// fobs
+fobsRouter.get('/fobs',
+  authenticateRequest, // authenticate request
+  fobsController.getFobs // get fobs
+); // Get fobs
+fobsRouter.post('/fobs',
+  authenticateRequest, // authenticate request
+  fobsController.createFob // create new fob
+); // Create fob
+
+// fobs/:id
+fobsRouter.get('/fobs/:id',
+  authenticateRequest, // authenticate request
+  fobsController.getFobById // get fob
+); // Get fob
+fobsRouter.put('/fobs/:id',
+  authenticateRequest, // authenticate request
+  fobsController.updateFob // update fob
+); // Update fob
+
+// fobs/:id/pictures
+fobsRouter.get('/fobs/:id/pictures',
+  authenticateRequest, // authenticate request
+  fobsController.getFobPictures // get fob pictures
+); // Get pictures for fob
+fobsRouter.post('/fobs/:id/pictures',
+  authenticateRequest, // authenticate request
+  fobsController.addFobPicture // create a new fob picture
+); // Create picture for fob
+
+// fobs/:id/pictures/:pictureId
+fobsRouter.get('/fobs/:id/pictures/:pictureId',
+  authenticateRequest, // authenticate request
+  fobsController.getFobPicture // get fob picture
+); // Get picture for fob
+fobsRouter.delete('/fobs/:id/pictures/:pictureId',
+  authenticateRequest, // authenticate request
+  fobsController.deleteFobPicture // delete fob picture
+); // Delete picture for fob
+
+// fobs/:id/ratings
+fobsRouter.get('/fobs/:id/ratings',
+  authenticateRequest, // authenticate request
+  fobsController.getFobRatings // get fob ratings
+); // Get fob ratings
+fobsRouter.post('/fobs/:id/ratings',
+  authenticateRequest, // authenticate request
+  fobsController.addFobRating // create new fob rating
+); // Create new fob rating
+
+// fobs/:id/ratings/:ratingId
+fobsRouter.get('/fobs/:id/ratings/:ratingId',
+  authenticateRequest, // authenticate request
+  fobsController.getFobRating // get fob rating
+); // Get fob rating
+fobsRouter.put('/fobs/:id/ratings/:ratingId',
+  authenticateRequest, // authenticate request
+  fobsController.ratingPermissionCheck, // make sure user is allowed to update this rating
+  fobsController.updateFobRating // update fob rating by id
+); // Update fob rating
+
+export default fobsRouter;
