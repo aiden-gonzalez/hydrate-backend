@@ -22,8 +22,7 @@ import {
   generateFountainRatingId,
   generatePictureId
 } from "../utils/generate";
-import {IBathroomRatingDetails} from "../bathrooms/types";
-import {IFountainRatingDetails} from "../fountains/types";
+import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator, urlValidator} from "../utils/validation";
 
@@ -55,6 +54,7 @@ export async function ratingPermissionCheck(req, res, next) {
 
 export async function getFobs(req, res) {
   const queryParams = {
+    type: req.query?.type,
     latitude: req.query?.latitude,
     longitude: req.query?.longitude,
     radius: req.query?.radius,
@@ -62,16 +62,6 @@ export async function getFobs(req, res) {
     from_date: req.query?.from_date,
     to_date: req.query?.to_date
   } as IFobQueryParams;
-
-  if (req.isFountain) {
-    queryParams.isFountain = true;
-    queryParams.bottle_filler = req.query?.bottle_filler ?? undefined;
-  } else {
-    queryParams.isFountain = false;
-    queryParams.baby_changer = req.query?.baby_changer ?? undefined;
-    queryParams.sanitary_products = req.query?.sanitary_products ?? undefined;
-    queryParams.gender = req.query?.gender ?? undefined;
-  }
 
   // Execute query
   try {
@@ -120,12 +110,12 @@ export async function updateFob(req, res) {
   // Get path parameter
   const fobId = req.params.id;
 
-  // Get fountain info
+  // Get fob info
   const fobUpdate : IFob = {
     info: req.body
   };
 
-  // Update fountain
+  // Update fob
   try {
     const fob = await db.updateFob(fobId, fobUpdate);
     res.status(HTTP_OK).json(fob);
