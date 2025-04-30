@@ -253,7 +253,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserProfile"
+                                    "$ref": "#/components/schemas/Profile"
                                 }
                             }
                         },
@@ -281,7 +281,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserProfile"
+                                "$ref": "#/components/schemas/Profile"
                             }
                         }
                     },
@@ -292,7 +292,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserProfile"
+                                    "$ref": "#/components/schemas/Profile"
                                 }
                             }
                         },
@@ -872,7 +872,7 @@
                         "$ref": "#/components/schemas/HashedPassword"
                     },
                     "profile": {
-                        "$ref": "#/components/schemas/UserProfile"
+                        "$ref": "#/components/schemas/Profile"
                     },
                     "id": {
                         "description": "Unique user id (not technically necessary but helpful)",
@@ -903,7 +903,7 @@
                     "updated_at": 3
                 }
             },
-            "UserProfile": {
+            "Profile": {
                 "description": "",
                 "required": [
                     "full_name",
