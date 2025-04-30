@@ -407,8 +407,8 @@
                 }
             ]
         },
-        "/api/bathrooms/{id}/pictures": {
-            "summary": "Add, retrieve, and delete bathroom pictures",
+        "/api/fobs/{id}/pictures": {
+            "summary": "Add, retrieve, and delete pictures for a Fob",
             "get": {
                 "parameters": [
                     {
@@ -417,7 +417,8 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "in": "query"
+                        "in": "query",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -441,7 +442,7 @@
                         "description": "Authentication/authorization failed"
                     },
                     "404": {
-                        "description": "Picture of bathroom with provided offset does not exist!"
+                        "description": "Picture of Fob with provided offset does not exist!"
                     }
                 },
                 "security": [
@@ -449,8 +450,8 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Get bathroom photos",
-                "description": "Fetches all if no offset provided.  Otherwise fetches just that photo."
+                "summary": "Get pictures for a Fob",
+                "description": "Fetches all pictures if no offset is provided. Otherwise, fetches just the picture at the specified offset."
             },
             "post": {
                 "requestBody": {
@@ -487,11 +488,12 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Add bathroom picture (link only, file hosting will have to be handled separately)"
+                "summary": "Add a picture for a Fob"
             },
             "parameters": [
                 {
                     "name": "id",
+                    "description": "ID of the Fob",
                     "schema": {
                         "type": "string"
                     },
@@ -500,7 +502,7 @@
                 }
             ]
         },
-        "/api/bathrooms/{id}/pictures/{pictureId}": {
+        "/api/fobs/{id}/pictures/{pictureId}": {
             "get": {
                 "responses": {
                     "200": {
@@ -512,180 +514,12 @@
                             }
                         },
                         "description": "Successful request, return picture"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Get a particular picture for a particular bathroom"
-            },
-            "delete": {
-                "responses": {
-                    "200": {
-                        "description": "Successfully removed picture!"
-                    },
-                    "400": {
-                        "description": "Malformed request (missing ID?)"
-                    },
-                    "403": {
-                        "description": "Authorization/authentication failed!"
-                    },
-                    "404": {
-                        "description": "Picture with provided ID not found!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Delete a bathroom picture"
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "schema": {
-                        "type": "string"
-                    },
-                    "in": "path",
-                    "required": true
-                },
-                {
-                    "name": "pictureId",
-                    "schema": {
-                        "type": "string"
-                    },
-                    "in": "path",
-                    "required": true
-                }
-            ]
-        },
-        "/api/fountains/{id}/pictures": {
-            "summary": "Add, retrieve, and delete fountain pictures",
-            "get": {
-                "parameters": [
-                    {
-                        "name": "offset",
-                        "description": "Offset of photo to fetch (first picture is 0)",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Picture"
-                                    }
-                                }
-                            }
-                        },
-                        "description": "Successful pictures request"
-                    },
-                    "400": {
-                        "description": "Malformed request (may be missing required parameters)"
-                    },
-                    "401": {
-                        "description": "Authentication/authorization failed"
-                    },
-                    "404": {
-                        "description": "Picture of fountain with provided offset does not exist!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Get fountain photos",
-                "description": "Fetches all if no offset provided.  Otherwise fetches just that photo."
-            },
-            "post": {
-                "requestBody": {
-                    "description": "Picture link",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Picture"
-                                }
-                            }
-                        },
-                        "description": "Successfully added picture!"
                     },
                     "400": {
                         "description": "Malformed request"
                     },
                     "401": {
                         "description": "Authentication/authorization failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Add fountain picture (link only, file hosting will have to be handled separately)"
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "schema": {
-                        "type": "string"
-                    },
-                    "in": "path",
-                    "required": true
-                }
-            ]
-        },
-        "/api/fountains/{id}/pictures/{pictureId}": {
-            "get": {
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Picture"
-                                }
-                            }
-                        },
-                        "description": "Successful request, return picture"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Get a particular picture for a particular fountain"
-            },
-            "delete": {
-                "responses": {
-                    "200": {
-                        "description": "Successfully removed picture!"
-                    },
-                    "400": {
-                        "description": "Malformed request (missing ID?)"
-                    },
-                    "403": {
-                        "description": "Authorization/authentication failed!"
                     },
                     "404": {
                         "description": "Picture with provided ID not found!"
@@ -696,11 +530,34 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Delete a fountain picture"
+                "summary": "Get a specific picture for a Fob"
+            },
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "Successfully removed picture!"
+                    },
+                    "400": {
+                        "description": "Malformed request (missing ID?)"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed!"
+                    },
+                    "404": {
+                        "description": "Picture with provided ID not found!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
+                "summary": "Delete a specific picture for a Fob"
             },
             "parameters": [
                 {
                     "name": "id",
+                    "description": "ID of the Fob",
                     "schema": {
                         "type": "string"
                     },
@@ -709,6 +566,7 @@
                 },
                 {
                     "name": "pictureId",
+                    "description": "ID of the picture",
                     "schema": {
                         "type": "string"
                     },
