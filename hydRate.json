@@ -1772,8 +1772,8 @@
                     ]
                 }
             },
-            "BathroomCreationDetails": {
-                "description": "Information necessary to create a bathroom",
+            "FobCreationDetails": {
+                "description": "Information necessary to create a Fob",
                 "required": [
                     "name",
                     "location",
@@ -1782,54 +1782,25 @@
                 "type": "object",
                 "properties": {
                     "name": {
-                        "description": "Name of bathroom",
+                        "description": "Name of the Fob",
                         "type": "string"
                     },
                     "location": {
                         "$ref": "#/components/schemas/Location"
                     },
                     "info": {
-                        "$ref": "#/components/schemas/BathroomInfo"
+                        "description": "Details about the Fob",
+                        "oneOf": [
+                            { "$ref": "#/components/schemas/FountainInfo" },
+                            { "$ref": "#/components/schemas/BathroomInfo" }
+                        ]
                     }
                 },
                 "example": {
-                    "name": "some text",
+                    "name": "Example Fob",
                     "location": {
                         "longitude": 25.86,
                         "latitude": 2.67
-                    },
-                    "info": {
-                        "gender": "some text",
-                        "sanitary_products": true,
-                        "baby_changer": true
-                    }
-                }
-            },
-            "FountainCreationDetails": {
-                "description": "Information necessary to create a fountain",
-                "required": [
-                    "name",
-                    "location",
-                    "info"
-                ],
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "description": "Name of fountain",
-                        "type": "string"
-                    },
-                    "location": {
-                        "$ref": "#/components/schemas/Location"
-                    },
-                    "info": {
-                        "$ref": "#/components/schemas/FountainInfo"
-                    }
-                },
-                "example": {
-                    "name": "some text",
-                    "location": {
-                        "longitude": 29.12,
-                        "latitude": 60.61
                     },
                     "info": {
                         "bottle_filler": true
