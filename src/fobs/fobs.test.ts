@@ -1,7 +1,9 @@
 import {authenticateRequest} from "../utils/auth";
 import {
-  getAuthedReqMockForUser,
-  getFountain, getFountainRatingDetails, getPicture,
+  getAuthedReqMockForUser, getBathroom,
+  getFountain,
+  getFountainRatingDetails,
+  getPicture,
   getReqMock,
   getResMock,
   getUser,
@@ -23,42 +25,53 @@ import {
   addFobRating,
   getFobRating,
   updateFobRating
-} from "../fobs/fobsController";
-import {setupFountainReq} from "./fountainsRouter";
-import {IFountain, IFountainCreationDetails, IFountainRating, IFountainRatingDetails} from "./types";
+} from "./fobsController";
+import {
+  IFob,
+  IFobCreationDetails,
+  IRating,
+  IFountainRatingDetails,
+  IFountainInfo, IBathroomRatingDetails
+} from "./types";
 import * as db from "../db/queries";
-import {generateFountainId, generateFountainRatingId, generateUserId} from "../utils/generate";
+import {
+  generateFountainId,
+  generateFountainRatingId,
+  generateBathroomId,
+  generateUserId,
+  generateBathroomRatingId
+} from "../utils/generate";
 import {ILocation, IUser} from "../utils/types";
 import {calculateDistance} from "../utils/calculation";
-import {Fob} from "../db/types";
+import {Fob, NewFob} from "../db/types";
 
-describe("FOUNTAINS: CRUD of all kinds", () => {
-  const getFountainsFuncs = [authenticateRequest, setupFountainReq, getFobs];
-  const createFountainFuncs = [authenticateRequest, setupFountainReq, createFob];
-  const getFountainFuncs = [authenticateRequest, setupFountainReq, getFobById];
-  const updateFountainFuncs = [authenticateRequest, setupFountainReq, updateFob];
-  const getFountainPicturesFuncs = [authenticateRequest, setupFountainReq, getFobPictures];
-  const addFountainPictureFuncs = [authenticateRequest, setupFountainReq, addFobPicture];
-  const getFountainPictureFuncs = [authenticateRequest, setupFountainReq, getFobPicture];
-  const deleteFountainPictureFuncs = [authenticateRequest, setupFountainReq, deleteFobPicture];
-  const getFountainRatingsFuncs = [authenticateRequest, setupFountainReq, getFobRatings];
-  const addFountainRatingFuncs = [authenticateRequest, setupFountainReq, addFobRating];
-  const getFountainRatingFuncs = [authenticateRequest, setupFountainReq, getFobRating];
-  const updateFountainRatingFuncs = [authenticateRequest, setupFountainReq, ratingPermissionCheck, updateFobRating];
+describe("FOBS: CRUD of all kinds", () => {
+  const getFobsFuncs = [authenticateRequest, getFobs];
+  const createFobFuncs = [authenticateRequest, createFob];
+  const getFobFuncs = [authenticateRequest, getFobById];
+  const updateFobFuncs = [authenticateRequest, updateFob];
+  const getFobPicturesFuncs = [authenticateRequest, getFobPictures];
+  const addFobPictureFuncs = [authenticateRequest, addFobPicture];
+  const getFobPictureFuncs = [authenticateRequest, getFobPicture];
+  const deleteFobPictureFuncs = [authenticateRequest, deleteFobPicture];
+  const getFobRatingsFuncs = [authenticateRequest, getFobRatings];
+  const addFobRatingFuncs = [authenticateRequest, addFobRating];
+  const getFobRatingFuncs = [authenticateRequest, getFobRating];
+  const updateFobRatingFuncs = [authenticateRequest, ratingPermissionCheck, updateFobRating];
 
   // TODO add more unhappy paths? Malformed data, bad responses?
 
-  async function createFountains(user = null) {
+  async function createFobs(user = null) {
     // Create user if necessary
     if (user == null) {
       user = await db.createUser(await getUser());
     }
 
     // Create fountains
-    const fountainOne : IFountain = {
+    const fountainOne : IFob = {
       id: generateFountainId(),
       user_id: user.id,
-      name: "Fountain One",
+      name: "Fob One",
       location: {
         latitude: 40.42476607308126,
         longitude: -86.9114030295504
@@ -67,10 +80,10 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
         bottle_filler: true,
       }
     };
-    const fountainTwo : IFountain = {
+    const fountainTwo : IFob = {
       id: generateFountainId(),
       user_id: user.id,
-      name: "Fountain Two",
+      name: "Fob Two",
       location: {
         latitude: 40.42486535509428,
         longitude: -86.91207343967577
@@ -79,10 +92,10 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
         bottle_filler: false,
       }
     };
-    const fountainThree : IFountain = {
+    const fountainThree : IFob = {
       id: generateFountainId(),
       user_id: user.id,
-      name: "Fountain Three",
+      name: "Fob Three",
       location: {
         latitude: 40.425193836261464,
         longitude: -86.9112570893454
@@ -92,28 +105,75 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       }
     };
 
-    const createdFountainOne = await db.createFob(fountainOne);
-    const createdFountainTwo = await db.createFob(fountainTwo);
-    const createdFountainThree = await db.createFob(fountainThree);
+    // Create bathrooms
+    const bathroomOne : NewFob = {
+      id: generateBathroomId(),
+      user_id: user.id,
+      name: "Bathroom One",
+      location: {
+        latitude: 40.42476607308126,
+        longitude: -86.9114030295504
+      },
+      info: {
+        gender: "female",
+        baby_changer: true,
+        sanitary_products: false
+      }
+    };
+    const bathroomTwo : NewFob = {
+      id: generateBathroomId(),
+      user_id: user.id,
+      name: "Bathroom Two",
+      location: {
+        latitude: 40.42486535509428,
+        longitude: -86.91207343967577
+      },
+      info: {
+        gender: "male",
+        baby_changer: true,
+        sanitary_products: false
+      }
+    };
+    const bathroomThree : NewFob = {
+      id: generateBathroomId(),
+      user_id: user.id,
+      name: "Bathroom Three",
+      location: {
+        latitude: 40.425193836261464,
+        longitude: -86.9112570893454
+      },
+      info: {
+        gender: "female",
+        baby_changer: false,
+        sanitary_products: true
+      }
+    };
 
-    return [createdFountainOne, createdFountainTwo, createdFountainThree];
+    const createdFobOne = await db.createFob(fountainOne);
+    const createdFobTwo = await db.createFob(fountainTwo);
+    const createdFobThree = await db.createFob(fountainThree);
+    const createdFobFour = await db.createFob(bathroomOne);
+    const createdFobFive = await db.createFob(bathroomTwo);
+    const createdFobSix = await db.createFob(bathroomThree);
+
+    return [createdFobOne, createdFobTwo, createdFobThree, createdFobFour, createdFobFive, createdFobSix];
   }
 
-  async function createFountainRatings (user : IUser = null, fountain : Fob = null) {
+  async function createRatings (user : IUser = null, fob : Fob = null) {
     // First create user if necessary
     if (user == null) {
       user = await db.createUser(await getUser());
     }
     
-    // Then create bathroom if necessary
-    if (fountain == null) {
-      fountain = await db.createFob(getFountain(user.id));
+    // Then create fob if necessary
+    if (fob == null) {
+      fob = await db.createFob(getFountain(user.id));
     }
 
-    // Create fountain ratings
-    const fountainRatingOne : IFountainRating = {
+    // Create fob ratings
+    const fountainRatingOne : IRating = {
       id: generateFountainRatingId(),
-      fob_id: fountain.id,
+      fob_id: fob.id,
       user_id: user.id,
       details: {
         pressure: 1,
@@ -121,9 +181,9 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
         temperature: 1
       } as IFountainRatingDetails
     }
-    const fountainRatingTwo : IFountainRating = {
+    const fountainRatingTwo : IRating = {
       id: generateFountainRatingId(),
-      fob_id: fountain.id,
+      fob_id: fob.id,
       user_id: user.id,
       details: {
         pressure: 2,
@@ -131,9 +191,9 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
         temperature: 2
       } as IFountainRatingDetails
     }
-    const fountainRatingThree : IFountainRating = {
+    const fountainRatingThree : IRating = {
       id: generateFountainRatingId(),
-      fob_id: fountain.id,
+      fob_id: fob.id,
       user_id: user.id,
       details: {
         pressure: 3,
@@ -142,11 +202,67 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       } as IFountainRatingDetails
     }
 
-    const createdFountainRatingOne = await db.createRating(fountainRatingOne);
-    const createdFountainRatingTwo = await db.createRating(fountainRatingTwo);
-    const createdFountainRatingThree = await db.createRating(fountainRatingThree);
+    const createdFobRatingOne = await db.createRating(fountainRatingOne);
+    const createdFobRatingTwo = await db.createRating(fountainRatingTwo);
+    const createdFobRatingThree = await db.createRating(fountainRatingThree);
 
-    return [createdFountainRatingOne, createdFountainRatingTwo, createdFountainRatingThree];
+    return [createdFobRatingOne, createdFobRatingTwo, createdFobRatingThree];
+  }
+
+  async function createBathroomRatings (user : IUser = null, bathroom : Fob = null) {
+    // First create user if necessary
+    if (user == null) {
+      user = await db.createUser(await getUser());
+    }
+
+    // Then create bathroom if necessary
+    if (bathroom == null) {
+      bathroom = await db.createFob(getBathroom(user.id));
+    }
+
+    // Then create bathroom ratings
+    const bathroomRatingOne : IRating = {
+      id: generateBathroomRatingId(),
+      fob_id: bathroom.id,
+      user_id: user.id,
+      details: {
+        cleanliness: 1,
+        decor: 1,
+        drying: 1,
+        privacy: 1,
+        washing: 1
+      } as IBathroomRatingDetails
+    }
+    const bathroomRatingTwo : IRating = {
+      id: generateBathroomRatingId(),
+      fob_id: bathroom.id,
+      user_id: user.id,
+      details: {
+        cleanliness: 2,
+        decor: 2,
+        drying: 2,
+        privacy: 2,
+        washing: 2
+      } as IBathroomRatingDetails
+    }
+    const bathroomRatingThree : IRating = {
+      id: generateBathroomRatingId(),
+      fob_id: bathroom.id,
+      user_id: user.id,
+      details: {
+        cleanliness: 3,
+        decor: 3,
+        drying: 3,
+        privacy: 3,
+        washing: 3
+      } as IBathroomRatingDetails
+    }
+
+    const createdBathroomRatingOne = await db.createRating(bathroomRatingOne);
+    const createdBathroomRatingTwo = await db.createRating(bathroomRatingTwo);
+    const createdBathroomRatingThree = await db.createRating(bathroomRatingThree);
+
+    return [createdBathroomRatingOne, createdBathroomRatingTwo, createdBathroomRatingThree];
   }
 
   async function createPictures(entityId : string, userId : string) {
@@ -170,12 +286,12 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     }
   }
 
-  it("can't create a fountain without authentication", async () => {
+  it("can't create a fob without authentication", async () => {
     const req = getReqMock(null, getFountain().info);
     const res = getResMock();
 
     // Try to create fountain
-    await simulateRouter(req, res, createFountainFuncs);
+    await simulateRouter(req, res, createFobFuncs);
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
@@ -188,11 +304,11 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       name: fountainToCreate.name,
       location: fountainToCreate.location,
       info: fountainToCreate.info
-    } as IFountainCreationDetails);
+    } as IFobCreationDetails);
     const res = getResMock();
 
     // Try to create fountain
-    await simulateRouter(req, res, createFountainFuncs);
+    await simulateRouter(req, res, createFobFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_CREATED);
@@ -204,7 +320,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Try to get fountains
-    await simulateRouter(req, res, getFountainsFuncs);
+    await simulateRouter(req, res, getFobsFuncs);
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
@@ -217,14 +333,14 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Try to get all fountains
-    await simulateRouter(req, res, getFountainsFuncs);
+    await simulateRouter(req, res, getFobsFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdFountains);
+    expectEntitiesEqual(res.message, createdFobs);
   });
 
   it("gets all fountains with bottle fillers", async () => {
@@ -233,7 +349,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Set up query
     req.query = {
@@ -241,20 +357,20 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
 
     // Try to get all fountains with bottle fillers
-    await simulateRouter(req, res, getFountainsFuncs);
+    await simulateRouter(req, res, getFobsFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdFountains.filter((fountain) => (fountain as IFountain).info.bottle_filler));
+    expectEntitiesEqual(res.message, createdFobs.filter((fountain) => ((fountain as IFob).info as IFountainInfo).bottle_filler));
   });
 
-  it ("gets all fountains within a certain radius of a point", async () => {
+  it ("gets all bathrooms within a certain radius of a point", async () => {
     const user : IUser = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
-    // Create fountains
-    const createdFountains = await createFountains();
+    // Create bathrooms
+    const createdBathrooms = await createFobs();
 
     // Set up query
     req.query = {
@@ -263,71 +379,71 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
       radius: 40 // in meters
     }
 
-    // Try to get all fountains within 50 meters of (5, 5)
-    await simulateRouter(req, res, getFountainsFuncs);
+    // Try to get all bathrooms within 50 meters of (5, 5)
+    await simulateRouter(req, res, getFobFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdFountains.filter((fountain) => calculateDistance(fountain.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40));
+    expectEntitiesEqual(res.message, createdBathrooms.filter((bathroom) => calculateDistance(bathroom.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40));
   });
 
-  it ("can't get a particular fountain without authentication", async () => {
+  it ("can't get a particular bathroom without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
 
-    // Create fountains
-    const createdFountains = await createFountains();
+    // Create bathrooms
+    const createdBathrooms = await createFobs();
 
     // Specify an ID in request
     req.params = {
-      id: createdFountains[0].id
+      id: createdBathrooms[0].id
     };
 
-    // Try to get fountain
-    await simulateRouter(req, res, getFountainFuncs);
+    // Try to get bathroom
+    await simulateRouter(req, res, getFobFuncs);
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
     expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
-  it ("gets a particular fountain", async () => {
+  it ("gets a particular bathroom", async () => {
     const user : IUser = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
-    // Create fountains
-    const createdFountains = await createFountains();
+    // Create bathrooms
+    const createdBathrooms = await createFobs();
 
     // Specify an ID in request
     req.params = {
-      id: createdFountains[0].id
+      id: createdBathrooms[0].id
     };
 
-    // Try to get fountain
-    await simulateRouter(req, res, getFountainFuncs);
+    // Try to get bathroom
+    await simulateRouter(req, res, getFobFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expect(createdFountains[0]).to.deep.equal(res.message);
+    expect(createdBathrooms[0]).to.deep.equal(res.message);
   });
 
-  it ("can't update a fountain without authentication", async () => {
+  it ("can't update a bathroom without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
 
-    // Create fountains
-    const createdFountains = await createFountains();
+    // Create bathrooms
+    const createdBathrooms = await createFobs();
 
-    // Specify fountain updates in request
-    createdFountains[0].info = createdFountains[1].info;
+    // Specify bathroom updates in request
+    createdBathrooms[0].info = createdBathrooms[1].info;
     req.params = {
-      id: createdFountains[0].id
+      id: createdBathrooms[0].id
     };
-    req.body = createdFountains[0].info;
+    req.body = createdBathrooms[0].info;
 
-    // Try to update fountain
-    await simulateRouter(req, res, updateFountainFuncs);
+    // Try to update bathroom
+    await simulateRouter(req, res, updateFobFuncs);
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
@@ -340,23 +456,23 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Specify fountain updates in request
-    createdFountains[0].info = createdFountains[1].info;
+    createdFobs[0].info = createdFobs[1].info;
     req.params = {
-      id: createdFountains[0].id
+      id: createdFobs[0].id
     };
-    req.body = createdFountains[0].info;
+    req.body = createdFobs[0].info;
 
     // Try to update fountain
-    await simulateRouter(req, res, updateFountainFuncs);
+    await simulateRouter(req, res, updateFobFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
     // Copy new updated at
-    createdFountains[0].updated_at = res.message.updated_at;
-    expect(createdFountains[0]).to.deep.equal(res.message);
+    createdFobs[0].updated_at = res.message.updated_at;
+    expect(createdFobs[0]).to.deep.equal(res.message);
   });
 
   it("can't create a fountain picture without authentication", async () => {
@@ -364,16 +480,16 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Set up picture to create
     req.params = {
-      id: createdFountains[0].id
+      id: createdFobs[0].id
     };
     req.body = "https://www.google.com"; // picture link
 
     // Try to create fountain picture
-    await simulateRouter(req, res, addFountainPictureFuncs);
+    await simulateRouter(req, res, addFobPictureFuncs);
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
@@ -386,16 +502,16 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Set up picture to create
     req.params = {
-      id: createdFountains[0].id
+      id: createdFobs[0].id
     };
     req.body = "not a url"; // invalid picture link
 
     // Try to create fountain picture
-    await simulateRouter(req, res, addFountainPictureFuncs);
+    await simulateRouter(req, res, addFobPictureFuncs);
 
     // Should have failed with 400
     expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
@@ -408,17 +524,17 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Set up picture to create
     req.params = {
-      id: createdFountains[0].id
+      id: createdFobs[0].id
     };
-    const pictureToCreate = getPicture(createdFountains[0].id, user.id);
+    const pictureToCreate = getPicture(createdFobs[0].id, user.id);
     req.body = pictureToCreate.url; // valid picture link
 
     // Try to create fountain picture
-    await simulateRouter(req, res, addFountainPictureFuncs);
+    await simulateRouter(req, res, addFobPictureFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_CREATED);
@@ -434,42 +550,42 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Add pictures
-    await createPictures(createdFountains[0].id, generateUserId());
+    await createPictures(createdFobs[0].id, generateUserId());
 
     // Set up request
     req.params = {
-      id: createdFountains[0].id
+      id: createdFobs[0].id
     };
 
     // Try to get pictures
-    await simulateRouter(req, res, getFountainPicturesFuncs);
+    await simulateRouter(req, res, getFobPicturesFuncs);
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
     expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
-  it("gets fountain pictures", async () => {
+  it("gets bathroom pictures", async () => {
     const user = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
-    // Create fountains
-    const createdFountains = await createFountains();
+    // Create bathrooms
+    const createdBathrooms = await createFobs();
 
     // Add pictures
-    const createdPictures = await createPictures(createdFountains[0].id, user.id);
+    const createdPictures = await createPictures(createdBathrooms[0].id, user.id);
 
     // Set up request
     req.params = {
-      id: createdFountains[0].id
+      id: createdBathrooms[0].id
     };
 
     // Try to get pictures
-    await simulateRouter(req, res, getFountainPicturesFuncs);
+    await simulateRouter(req, res, getFobPicturesFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
@@ -480,11 +596,11 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const req = getReqMock();
     const res = getResMock();
 
-    // Create fountains
-    const createdFountains = await createFountains();
+    // Create bathrooms
+    const createdBathrooms = await createFobs();
 
     // Add pictures
-    const createdPictures = await createPictures(createdFountains[0].id, generateUserId());
+    const createdPictures = await createPictures(createdBathrooms[0].id, generateUserId());
 
     // Set up request
     req.params = {
@@ -492,7 +608,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
 
     // Try to get picture
-    await simulateRouter(req, res, getFountainPictureFuncs);
+    await simulateRouter(req, res, getFobPictureFuncs);
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
@@ -504,11 +620,11 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
-    // Create fountains
-    const createdFountains = await createFountains();
+    // Create bathrooms
+    const createdBathrooms = await createFobs();
 
     // Add pictures
-    const createdPictures = await createPictures(createdFountains[0].id, user.id);
+    const createdPictures = await createPictures(createdBathrooms[0].id, user.id);
 
     // Set up request
     req.params = {
@@ -516,7 +632,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
 
     // Try to get picture
-    await simulateRouter(req, res, getFountainPictureFuncs);
+    await simulateRouter(req, res, getFobPictureFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
@@ -529,10 +645,10 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Add pictures
-    const createdPictures = await createPictures(createdFountains[0].id, user.id);
+    const createdPictures = await createPictures(createdFobs[0].id, user.id);
 
     // Set up request
     req.params = {
@@ -540,7 +656,7 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     };
 
     // Try to delete picture
-    await simulateRouter(req, res, deleteFountainPictureFuncs);
+    await simulateRouter(req, res, deleteFobPictureFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
@@ -555,16 +671,16 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Set up request
     req.params = {
-      id: createdFountains[0].id
+      id: createdFobs[0].id
     };
     req.body = getFountainRatingDetails();
 
     // Try to add rating
-    await simulateRouter(req, res, addFountainRatingFuncs);
+    await simulateRouter(req, res, addFobRatingFuncs);
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
@@ -577,16 +693,16 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Set up request
     req.params = {
-      id: createdFountains[0].id
+      id: createdFobs[0].id
     };
     req.body = getFountainRatingDetails(10, -5, 0);
 
     // Try to add rating
-    await simulateRouter(req, res, addFountainRatingFuncs);
+    await simulateRouter(req, res, addFobRatingFuncs);
 
     // Should have failed with bad request
     expect(res.sentStatus).to.equal(constants.HTTP_BAD_REQUEST);
@@ -599,91 +715,91 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Set up request
     req.params = {
-      id: createdFountains[0].id
+      id: createdFobs[0].id
     };
     req.body = getFountainRatingDetails();
 
     // Try to add rating
-    await simulateRouter(req, res, addFountainRatingFuncs);
+    await simulateRouter(req, res, addFobRatingFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_CREATED);
     expectEntitiesEqual(res.message.details, req.body);
   });
 
-  it("successfully gets all ratings for a particular fountain", async () => {
+  it("successfully gets all ratings for a particular bathroom", async () => {
     const user = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
-    // Create fountains
-    const createdFountains = await createFountains();
+    // Create bathrooms
+    const createdBathrooms = await createFobs(user);
 
-    // Create a few ratings for a particular fountain
-    const createdFountainRatings = await createFountainRatings(user, createdFountains[0]);
+    // Create a few ratings for a particular bathroom
+    const createdBathroomRatings = await createBathroomRatings(user, createdBathrooms[0]);
 
     // Set up request
     req.params = {
-      id: createdFountains[0].id
+      id: createdBathrooms[0].id
     };
 
     // Try to get ratings
-    await simulateRouter(req, res, getFountainRatingsFuncs);
+    await simulateRouter(req, res, getFobRatingsFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdFountainRatings);
+    expectEntitiesEqual(res.message, createdBathroomRatings);
   });
 
-  it("can't get a particular fountain rating without authentication", async () => {
+  it("can't get a particular bathroom rating without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
 
-    // Create fountains
-    const createdFountains = await createFountains();
+    // Create bathrooms
+    const createdBathrooms = await createFobs();
 
     // Add ratings
-    const createdFountainRatings = await createFountainRatings(await getUser(), createdFountains[0]);
+    const createdBathroomRatings = await createBathroomRatings(await getUser(), createdBathrooms[0]);
 
     // Set up request
     req.params = {
-      ratingId: createdFountainRatings[0].id
+      ratingId: createdBathroomRatings[0].id
     };
 
-    // Try to get fountain rating
-    await simulateRouter(req, res, getFountainRatingFuncs);
+    // Try to get bathroom rating
+    await simulateRouter(req, res, getFobRatingFuncs);
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
     expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
-  it("successfully gets a particular fountain rating", async () => {
+  it("successfully gets a particular bathroom rating", async () => {
     const user = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
-    // Create fountains
-    const createdFountains = await createFountains();
+    // Create bathrooms
+    const createdBathrooms = await createFobs();
 
     // Add ratings
-    const createdFountainRatings = await createFountainRatings(user, createdFountains[0]);
+    const createdBathroomRatings = await createBathroomRatings(user, createdBathrooms[0]);
 
     // Set up request
     req.params = {
-      ratingId: createdFountainRatings[0].id
+      ratingId: createdBathroomRatings[0].id
     };
 
-    // Try to get fountain rating
-    await simulateRouter(req, res, getFountainRatingFuncs);
+    // Try to get bathroom rating
+    await simulateRouter(req, res, getFobRatingFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdFountainRatings[0]);
+    expectEntitiesEqual(res.message, createdBathroomRatings[0]);
   });
 
   it ("can't update a fountain rating without authentication", async () => {
@@ -691,20 +807,20 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Create ratings
-    const createdFountainRatings = await createFountainRatings(await getUser(), createdFountains[0]);
+    const createdFobRatings = await createRatings(await getUser(), createdFobs[0]);
 
     // Specify fountain rating updates in request
-    createdFountainRatings[0].details = createdFountainRatings[1].details;
+    createdFobRatings[0].details = createdFobRatings[1].details;
     req.params = {
-      ratingId: createdFountainRatings[0].id
+      ratingId: createdFobRatings[0].id
     };
-    req.body = createdFountainRatings[0].details;
+    req.body = createdFobRatings[0].details;
 
     // Try to update fountain rating
-    await simulateRouter(req, res, updateFountainRatingFuncs);
+    await simulateRouter(req, res, updateFobRatingFuncs);
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
@@ -717,25 +833,27 @@ describe("FOUNTAINS: CRUD of all kinds", () => {
     const res = getResMock();
 
     // Create fountains
-    const createdFountains = await createFountains();
+    const createdFobs = await createFobs();
 
     // Create ratings
-    const createdFountainRatings = await createFountainRatings(user, createdFountains[0]);
+    const createdFobRatings = await createRatings(user, createdFobs[0]);
 
     // Specify fountain rating updates in request
-    createdFountainRatings[0].details = createdFountainRatings[1].details;
+    createdFobRatings[0].details = createdFobRatings[1].details;
     req.params = {
-      ratingId: createdFountainRatings[0].id
+      ratingId: createdFobRatings[0].id
     };
-    req.body = createdFountainRatings[0].details;
+    req.body = createdFobRatings[0].details;
 
     // Try to update fountain rating
-    await simulateRouter(req, res, updateFountainRatingFuncs);
+    await simulateRouter(req, res, updateFobRatingFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
     // Copy new updated at
-    createdFountainRatings[0].updated_at = res.message.updated_at;
-    expect(createdFountainRatings[0]).to.deep.equal(res.message);
+    createdFobRatings[0].updated_at = res.message.updated_at;
+    expect(createdFobRatings[0]).to.deep.equal(res.message);
   });
+
+
 });
