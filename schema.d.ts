@@ -27,26 +27,20 @@ export interface paths {
       };
     };
   };
-  "/api/fountains": {
-    /** Get a group of fountains (query) */
+  "/api/fobs": {
+    /** Get a group of Fobs (query) */
     get: {
       parameters: {
         query?: {
-          /**
-           * @description Longitude to fetch fountains around.
-           * If provided, must also provide latitude!
-           */
-          longitude?: number;
-          /**
-           * @description Latitude to fetch fountains around.
-           * If provided, must provide longitude!
-           */
+          /** @description Filter Fobs by type (fountain or bathroom) */
+          type?: "fountain" | "bathroom";
+          /** @description Latitude to fetch Fobs around. If provided, must provide longitude! */
           latitude?: number;
-          /** @description Filter fountains by bottle_filler property */
-          bottle_filler?: boolean;
-          /** @description Radius to fetch fountains within (in meters) */
+          /** @description Longitude to fetch Fobs around. If provided, must also provide latitude! */
+          longitude?: number;
+          /** @description Radius to fetch Fobs within (in meters) */
           radius?: number;
-          /** @description ID of user that created the fountain(s) */
+          /** @description ID of user that created the Fob(s) */
           user_id?: string;
           /** @description Filter fountains to those created on or after this date.  Unix epoch milliseconds timestamp. */
           from_date?: number;
@@ -55,37 +49,37 @@ export interface paths {
         };
       };
       responses: {
-        /** @description Successful query.  Return array of fountains. */
+        /** @description Successful query. Return array of Fobs. */
         200: {
           content: {
-            "application/json": components["schemas"]["Fountain"][];
+            "application/json": components["schemas"]["Fob"][];
           };
         };
         /** @description Bad request */
         400: {
           content: never;
         };
-        /** @description Authentication failed! */
+        /** @description Authentication failed */
         403: {
           content: never;
         };
       };
     };
-    /** Add a fountain */
+    /** Add a Fob */
     post: {
       requestBody: {
         content: {
-          "application/json": components["schemas"]["FountainCreationDetails"];
+          "application/json": components["schemas"]["Fob"];
         };
       };
       responses: {
-        /** @description Successfully added fountain! */
+        /** @description Successfully added Fob! */
         201: {
           content: {
-            "application/json": components["schemas"]["Fountain"];
+            "application/json": components["schemas"]["Fob"];
           };
         };
-        /** @description Malformed request! Missing some information or not in right format. */
+        /** @description Malformed request! Missing some information or not in the right format. */
         400: {
           content: never;
         };
@@ -160,7 +154,7 @@ export interface paths {
         /** @description Successfully fetched user profile */
         200: {
           content: {
-            "application/json": components["schemas"]["UserProfile"];
+            "application/json": components["schemas"]["Profile"];
           };
         };
         /** @description Malformed request (missing username?) */
@@ -186,14 +180,14 @@ export interface paths {
       };
       requestBody: {
         content: {
-          "application/json": components["schemas"]["UserProfile"];
+          "application/json": components["schemas"]["Profile"];
         };
       };
       responses: {
         /** @description Successfully updated user profile! */
         200: {
           content: {
-            "application/json": components["schemas"]["UserProfile"];
+            "application/json": components["schemas"]["Profile"];
           };
         };
         /** @description Malformed request! */
@@ -216,264 +210,10 @@ export interface paths {
       };
     };
   };
-  "/api/bathrooms": {
-    /** Get a group of bathrooms (query) */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Longitude to fetch bathrooms around.
-           * If provided, must also provide latitude!
-           */
-          longitude?: number;
-          /**
-           * @description Latitude to fetch bathrooms around.
-           * If provided, must provide longitude!
-           */
-          latitude?: number;
-          /** @description Radius to fetch bathrooms within (in meters) */
-          radius?: number;
-          /** @description Filter bathrooms by baby_changer property */
-          baby_changer?: boolean;
-          /** @description Filter bathrooms by gender property */
-          gender?: string;
-          /** @description Filter bathrooms by sanitary_products property */
-          sanitary_products?: boolean;
-          /** @description ID of user that created the bathroom(s) */
-          user_id?: string;
-          /** @description Filter bathrooms to those created on or after this date.  Unix epoch milliseconds timestamp. */
-          from_date?: number;
-          /** @description Filter bathrooms to those created before or on this date.  Unix epoch milliseconds timestamp. */
-          to_date?: number;
-        };
-      };
-      responses: {
-        /** @description Successful query.  Return array of bathrooms. */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Bathroom"][];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
-    /** Create (add) a bathroom */
-    post: {
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["BathroomCreationDetails"];
-        };
-      };
-      responses: {
-        /** @description Successfully added bathroom! */
-        201: {
-          content: {
-            "application/json": components["schemas"]["Bathroom"];
-          };
-        };
-        /** @description Malformed request! Missing some information or not in right format. */
-        400: {
-          content: never;
-        };
-        /** @description Access token incorrect / insufficient / expired! */
-        401: {
-          content: never;
-        };
-      };
-    };
-  };
-  "/api/bathrooms/{id}/ratings": {
-    /** Get ratings for a particular bathroom */
-    get: {
-      parameters: {
-        query?: {
-          /** @description Optional pagination: Size of pages to fetch (number of ratings per page) */
-          page_size?: number;
-          /** @description Optional pagination: Offset of page to fetch (default is 0, max is 100) */
-          page_offset?: number;
-        };
-        path: {
-          id: string;
-        };
-      };
-      responses: {
-        /** @description Successful query.  Return array of bathroom ratings. */
-        200: {
-          content: {
-            "application/json": components["schemas"]["BathroomRating"][];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
-    /** Add a bathroom rating */
-    post: {
-      parameters: {
-        path: {
-          id: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["BathroomRatingDetails"];
-        };
-      };
-      responses: {
-        /** @description Successfully added bathroom rating! */
-        201: {
-          content: {
-            "application/json": components["schemas"]["BathroomRating"];
-          };
-        };
-        /** @description Malformed request! Missing some information or not in right format. */
-        400: {
-          content: never;
-        };
-        /** @description Access token incorrect / insufficient / expired! */
-        401: {
-          content: never;
-        };
-      };
-    };
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-  };
-  "/api/bathrooms/{id}/ratings/{ratingId}": {
-    /** Get a particular rating for a particular bathroom */
-    get: {
-      parameters: {
-        path: {
-          id: string;
-          ratingId: string;
-        };
-      };
-      responses: {
-        /** @description Successful request, return rating */
-        200: {
-          content: {
-            "application/json": components["schemas"]["BathroomRating"];
-          };
-        };
-      };
-    };
-    /** Update bathroom rating */
-    put: {
-      parameters: {
-        path: {
-          id: string;
-          ratingId: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["BathroomRatingDetails"];
-        };
-      };
-      responses: {
-        /** @description Bathroom rating successfully updated! */
-        200: {
-          content: {
-            "application/json": components["schemas"]["BathroomRating"];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
-    parameters: {
-      path: {
-        id: string;
-        ratingId: string;
-      };
-    };
-  };
-  "/api/bathrooms/{id}": {
-    /** Get bathroom */
-    get: {
-      parameters: {
-        path: {
-          id: string;
-        };
-      };
-      responses: {
-        /** @description Successful request, return bathroom. */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Bathroom"];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Insufficient auth */
-        403: {
-          content: never;
-        };
-      };
-    };
-    /** Update bathroom info for a particular bathroom */
-    put: {
-      parameters: {
-        path: {
-          id: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["BathroomInfo"];
-        };
-      };
-      responses: {
-        /** @description Bathroom successfully updated! */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Bathroom"];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: never;
-        };
-        /** @description Authentication failed */
-        403: {
-          content: never;
-        };
-      };
-    };
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-  };
-  "/api/bathrooms/{id}/pictures": {
+  "/api/fobs/{id}/pictures": {
     /**
-     * Get bathroom photos
-     * @description Fetches all if no offset provided.  Otherwise fetches just that photo.
+     * Get pictures for a Fob
+     * @description Fetches all pictures if no offset is provided. Otherwise, fetches just the picture at the specified offset.
      */
     get: {
       parameters: {
@@ -482,6 +222,7 @@ export interface paths {
           offset?: number;
         };
         path: {
+          /** @description ID of the Fob */
           id: string;
         };
       };
@@ -500,16 +241,17 @@ export interface paths {
         401: {
           content: never;
         };
-        /** @description Picture of bathroom with provided offset does not exist! */
+        /** @description Picture of Fob with provided offset does not exist! */
         404: {
           content: never;
         };
       };
     };
-    /** Add bathroom picture (link only, file hosting will have to be handled separately) */
+    /** Add a picture for a Fob */
     post: {
       parameters: {
         path: {
+          /** @description ID of the Fob */
           id: string;
         };
       };
@@ -538,114 +280,25 @@ export interface paths {
     };
     parameters: {
       path: {
+        /** @description ID of the Fob */
         id: string;
       };
     };
   };
-  "/api/bathrooms/{id}/pictures/{pictureId}": {
-    /** Get a particular picture for a particular bathroom */
+  "/api/fobs/{id}/pictures/{pictureId}": {
+    /** Get a specific picture for a Fob */
     get: {
       parameters: {
         path: {
+          /** @description ID of the Fob */
           id: string;
+          /** @description ID of the picture */
           pictureId: string;
         };
       };
       responses: {
         /** @description Successful request, return picture */
         200: {
-          content: {
-            "application/json": components["schemas"]["Picture"];
-          };
-        };
-      };
-    };
-    /** Delete a bathroom picture */
-    delete: {
-      parameters: {
-        path: {
-          id: string;
-          pictureId: string;
-        };
-      };
-      responses: {
-        /** @description Successfully removed picture! */
-        200: {
-          content: never;
-        };
-        /** @description Malformed request (missing ID?) */
-        400: {
-          content: never;
-        };
-        /** @description Authorization/authentication failed! */
-        403: {
-          content: never;
-        };
-        /** @description Picture with provided ID not found! */
-        404: {
-          content: never;
-        };
-      };
-    };
-    parameters: {
-      path: {
-        id: string;
-        pictureId: string;
-      };
-    };
-  };
-  "/api/fountains/{id}/pictures": {
-    /**
-     * Get fountain photos
-     * @description Fetches all if no offset provided.  Otherwise fetches just that photo.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /** @description Offset of photo to fetch (first picture is 0) */
-          offset?: number;
-        };
-        path: {
-          id: string;
-        };
-      };
-      responses: {
-        /** @description Successful pictures request */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Picture"][];
-          };
-        };
-        /** @description Malformed request (may be missing required parameters) */
-        400: {
-          content: never;
-        };
-        /** @description Authentication/authorization failed */
-        401: {
-          content: never;
-        };
-        /** @description Picture of fountain with provided offset does not exist! */
-        404: {
-          content: never;
-        };
-      };
-    };
-    /** Add fountain picture (link only, file hosting will have to be handled separately) */
-    post: {
-      parameters: {
-        path: {
-          id: string;
-        };
-      };
-      /** @description Picture link */
-      requestBody: {
-        content: {
-          "application/json": string;
-        };
-      };
-      responses: {
-        /** @description Successfully added picture! */
-        201: {
           content: {
             "application/json": components["schemas"]["Picture"];
           };
@@ -658,37 +311,19 @@ export interface paths {
         401: {
           content: never;
         };
-      };
-    };
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-  };
-  "/api/fountains/{id}/pictures/{pictureId}": {
-    /** Get a particular picture for a particular fountain */
-    get: {
-      parameters: {
-        path: {
-          id: string;
-          pictureId: string;
-        };
-      };
-      responses: {
-        /** @description Successful request, return picture */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Picture"];
-          };
+        /** @description Picture with provided ID not found! */
+        404: {
+          content: never;
         };
       };
     };
-    /** Delete a fountain picture */
+    /** Delete a specific picture for a Fob */
     delete: {
       parameters: {
         path: {
+          /** @description ID of the Fob */
           id: string;
+          /** @description ID of the picture */
           pictureId: string;
         };
       };
@@ -701,8 +336,8 @@ export interface paths {
         400: {
           content: never;
         };
-        /** @description Authorization/authentication failed! */
-        403: {
+        /** @description Authentication/authorization failed! */
+        401: {
           content: never;
         };
         /** @description Picture with provided ID not found! */
@@ -713,13 +348,15 @@ export interface paths {
     };
     parameters: {
       path: {
+        /** @description ID of the Fob */
         id: string;
+        /** @description ID of the picture */
         pictureId: string;
       };
     };
   };
-  "/api/fountains/{id}/ratings": {
-    /** Get ratings for a particular fountain */
+  "/api/fobs/{id}/ratings": {
+    /** Get ratings for a particular Fob */
     get: {
       parameters: {
         query?: {
@@ -729,14 +366,15 @@ export interface paths {
           page_offset?: number;
         };
         path: {
+          /** @description ID of the Fob */
           id: string;
         };
       };
       responses: {
-        /** @description Successful query.  Return array of fountain ratings. */
+        /** @description Successful query. Return array of Fob ratings. */
         200: {
           content: {
-            "application/json": components["schemas"]["FountainRating"][];
+            "application/json": components["schemas"]["Rating"][];
           };
         };
         /** @description Bad request */
@@ -749,26 +387,27 @@ export interface paths {
         };
       };
     };
-    /** Add a fountain rating */
+    /** Add a Fob rating */
     post: {
       parameters: {
         path: {
+          /** @description ID of the Fob */
           id: string;
         };
       };
       requestBody: {
         content: {
-          "application/json": components["schemas"]["FountainRatingDetails"];
+          "application/json": components["schemas"]["Rating"];
         };
       };
       responses: {
-        /** @description Successfully added fountain rating! */
+        /** @description Successfully added Fob rating! */
         201: {
           content: {
-            "application/json": components["schemas"]["FountainRating"];
+            "application/json": components["schemas"]["Rating"];
           };
         };
-        /** @description Malformed request! Missing some information or not in right format. */
+        /** @description Malformed request! Missing some information or not in the right format. */
         400: {
           content: never;
         };
@@ -780,78 +419,102 @@ export interface paths {
     };
     parameters: {
       path: {
+        /** @description ID of the Fob */
         id: string;
       };
     };
   };
-  "/api/fountains/{id}/ratings/{ratingId}": {
-    /** Get a particular rating for a particular fountain */
+  "/api/fobs/{id}/ratings/{ratingId}": {
+    /** Get a specific rating for a Fob */
     get: {
       parameters: {
         path: {
+          /** @description ID of the Fob */
           id: string;
+          /** @description ID of the rating */
           ratingId: string;
         };
       };
       responses: {
-        /** @description Successful request, return fountain rating */
+        /** @description Successful request, return Fob rating */
         200: {
           content: {
-            "application/json": components["schemas"]["FountainRating"];
+            "application/json": components["schemas"]["Rating"];
           };
+        };
+        /** @description Malformed request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication/authorization failed */
+        401: {
+          content: never;
+        };
+        /** @description Rating with provided ID not found! */
+        404: {
+          content: never;
         };
       };
     };
-    /** Update fountain rating */
+    /** Update a specific rating for a Fob */
     put: {
       parameters: {
         path: {
+          /** @description ID of the Fob */
           id: string;
+          /** @description ID of the rating */
           ratingId: string;
         };
       };
       requestBody: {
         content: {
-          "application/json": components["schemas"]["FountainRatingDetails"];
+          "application/json": components["schemas"]["Rating"];
         };
       };
       responses: {
-        /** @description Fountain rating successfully updated! */
+        /** @description Fob rating successfully updated! */
         200: {
           content: {
-            "application/json": components["schemas"]["FountainRating"];
+            "application/json": components["schemas"]["Rating"];
           };
         };
-        /** @description Bad request */
+        /** @description Malformed request */
         400: {
           content: never;
         };
-        /** @description Authentication failed */
-        403: {
+        /** @description Authentication/authorization failed */
+        401: {
+          content: never;
+        };
+        /** @description Rating with provided ID not found! */
+        404: {
           content: never;
         };
       };
     };
     parameters: {
       path: {
+        /** @description ID of the Fob */
         id: string;
+        /** @description ID of the rating */
         ratingId: string;
       };
     };
   };
-  "/api/fountains/{id}": {
-    /** Get fountain */
+  "/api/fobs/{id}": {
+    /** Get Fob by ID */
     get: {
       parameters: {
         path: {
+          /** @description ID of the Fob */
           id: string;
         };
       };
       responses: {
-        /** @description Successful request, return fountain. */
+        /** @description Successful request, return Fob. */
         200: {
           content: {
-            "application/json": components["schemas"]["Fountain"];
+            "application/json": components["schemas"]["Fob"];
           };
         };
         /** @description Bad request */
@@ -862,39 +525,49 @@ export interface paths {
         403: {
           content: never;
         };
+        /** @description Fob not found */
+        404: {
+          content: never;
+        };
       };
     };
-    /** Update fountain info for a particular fountain */
+    /** Update Fob info for a particular Fob */
     put: {
       parameters: {
         path: {
+          /** @description ID of the Fob */
           id: string;
         };
       };
       requestBody: {
         content: {
-          "application/json": components["schemas"]["FountainInfo"];
+          "application/json": components["schemas"]["Fob"];
         };
       };
       responses: {
-        /** @description Fountain successfully updated! */
+        /** @description Fob successfully updated! */
         200: {
           content: {
-            "application/json": components["schemas"]["Fountain"];
+            "application/json": components["schemas"]["Fob"];
           };
         };
         /** @description Bad request */
         400: {
           content: never;
         };
-        /** @description Authentication failed */
+        /** @description Insufficient auth */
         403: {
+          content: never;
+        };
+        /** @description Fob not found */
+        404: {
           content: never;
         };
       };
     };
     parameters: {
       path: {
+        /** @description ID of the Fob */
         id: string;
       };
     };
@@ -983,7 +656,7 @@ export interface components {
       /** @description Email address of user */
       email: string;
       hashed_password: components["schemas"]["HashedPassword"];
-      profile: components["schemas"]["UserProfile"];
+      profile: components["schemas"]["Profile"];
       /** @description Unique user id (not technically necessary but helpful) */
       id: string;
       /** @description Created timestamp.  Unix epoch milliseconds. */
@@ -997,37 +670,39 @@ export interface components {
      *   "picture_link": "some text"
      * }
      */
-    UserProfile: {
+    Profile: {
       /** @description Full name of user */
       full_name: string;
       /** @description Link to profile photo */
       picture_link: string;
     };
     /**
+     * @description Rating for a Fob
      * @example {
-     *   "id": "some text",
-     *   "fob_id": "some text",
-     *   "user_id": "some text",
+     *   "id": "rating123",
+     *   "fob_id": "fob456",
+     *   "user_id": "user789",
      *   "details": {
-     *     "pressure": 50,
-     *     "taste": 12,
-     *     "temperature": 35
+     *     "pressure": 5,
+     *     "taste": 4,
+     *     "temperature": 3
      *   },
-     *   "created_at": 10,
-     *   "updated_at": 10
+     *   "created_at": 1672531200000,
+     *   "updated_at": 1672617600000
      * }
      */
-    FountainRating: {
-      /** @description Unique id of fountain rating (technically not necessary but nice to have) */
+    Rating: {
+      /** @description Unique ID of the rating */
       id: string;
-      /** @description ID of fountain rating is for */
+      /** @description ID of the Fob being rated */
       fob_id: string;
-      /** @description ID of user who created rating */
+      /** @description ID of the user who created the rating */
       user_id: string;
-      details: components["schemas"]["FountainRatingDetails"];
-      /** @description Created timestamp.  Unix epoch milliseconds. */
+      /** @description Details of the rating, specific to the type of Fob */
+      details: components["schemas"]["FountainRatingDetails"] | components["schemas"]["BathroomRatingDetails"];
+      /** @description Created timestamp. Unix epoch milliseconds. */
       created_at?: number;
-      /** @description Updated timestamp.  Unix epoch milliseconds. */
+      /** @description Updated timestamp. Unix epoch milliseconds. */
       updated_at?: number;
     };
     /**
@@ -1049,35 +724,6 @@ export interface components {
       url: string;
       /** @description ID of user that created the picture. */
       user_id: string;
-      /** @description Created timestamp.  Unix epoch milliseconds. */
-      created_at?: number;
-      /** @description Updated timestamp.  Unix epoch milliseconds. */
-      updated_at?: number;
-    };
-    /**
-     * @example {
-     *   "id": "some text",
-     *   "fob_id": "some text",
-     *   "user_id": "some text",
-     *   "details": {
-     *     "cleanliness": 25,
-     *     "decor": 92,
-     *     "drying": 71,
-     *     "privacy": 77,
-     *     "washing": 76
-     *   },
-     *   "created_at": 19,
-     *   "updated_at": 49
-     * }
-     */
-    BathroomRating: {
-      /** @description Unique id of bathroom rating */
-      id: string;
-      /** @description ID of bathroom rating is for */
-      fob_id: string;
-      /** @description ID of user who created bathroom rating */
-      user_id: string;
-      details: components["schemas"]["BathroomRatingDetails"];
       /** @description Created timestamp.  Unix epoch milliseconds. */
       created_at?: number;
       /** @description Updated timestamp.  Unix epoch milliseconds. */
@@ -1137,38 +783,22 @@ export interface components {
       username: string;
       user_credentials: components["schemas"]["UserCredentials"];
     };
-    /**
-     * @description Basic fountain information
-     * @example {
-     *   "id": "some text",
-     *   "info": {
-     *     "bottle_filler": true
-     *   },
-     *   "created_at": 54,
-     *   "updated_at": 52,
-     *   "name": "some text",
-     *   "location": {
-     *     "longitude": 17.64,
-     *     "latitude": 7.68
-     *   },
-     *   "user_id": "some text",
-     *   "average_rating": 3.5
-     * }
-     */
-    Fountain: {
-      /** @description Unique ID of fountain */
+    /** @description Fountain or bathroom information */
+    Fob: {
+      /** @description Unique ID of fob */
       id: string;
-      info: components["schemas"]["FountainInfo"];
+      /** @description Info about the Fob, can be either FountainInfo or BathroomInfo */
+      info: components["schemas"]["FountainInfo"] | components["schemas"]["BathroomInfo"];
       /** @description Created timestamp.  Unix epoch milliseconds. */
       created_at?: number;
       /** @description Updated timestamp.  Unix epoch milliseconds. */
       updated_at?: number;
-      /** @description Name of fountain */
+      /** @description Name of fob */
       name: string;
       location: components["schemas"]["Location"];
-      /** @description ID of user who created the fountain */
+      /** @description ID of user who created the fob */
       user_id: string;
-      /** @description Average user rating (0-5) of fountain */
+      /** @description Average rating of the fob */
       average_rating?: number;
     };
     /**
@@ -1194,42 +824,6 @@ export interface components {
       sanitary_products: boolean;
       /** @description Whether or not bathroom has a baby changer available */
       baby_changer: boolean;
-    };
-    /**
-     * @description Bathroom
-     * @example {
-     *   "id": "some text",
-     *   "info": {
-     *     "gender": "some text",
-     *     "sanitary_products": true,
-     *     "baby_changer": true
-     *   },
-     *   "created_at": 61,
-     *   "updated_at": 14,
-     *   "name": "some text",
-     *   "location": {
-     *     "longitude": 33.98,
-     *     "latitude": 88.94
-     *   },
-     *   "user_id": "some text",
-     *   "average_rating": 3.5
-     * }
-     */
-    Bathroom: {
-      /** @description Unique ID of bathroom */
-      id: string;
-      info: components["schemas"]["BathroomInfo"];
-      /** @description Created timestamp.  Unix epoch milliseconds. */
-      created_at?: number;
-      /** @description Updated timestamp.  Unix epoch milliseconds. */
-      updated_at?: number;
-      /** @description Name of bathroom */
-      name: string;
-      location: components["schemas"]["Location"];
-      /** @description ID of user who created the bathroom */
-      user_id: string;
-      /** @description Average user rating (0-5) of fountain */
-      average_rating?: number;
     };
     /**
      * @description Actual details of bathroom rating
@@ -1319,7 +913,7 @@ export interface components {
     /**
      * @description Summary of user contributions
      * @example {
-     *   "fountains": [
+     *   "fobs": [
      *     {
      *       "id": "some text",
      *       "info": {
@@ -1349,67 +943,7 @@ export interface components {
      *       }
      *     }
      *   ],
-     *   "bathrooms": [
-     *     {
-     *       "id": "some text",
-     *       "info": {
-     *         "gender": "some text",
-     *         "sanitary_products": true,
-     *         "baby_changer": true
-     *       },
-     *       "user_id": "some text",
-     *       "created_at": 45,
-     *       "updated_at": 93,
-     *       "name": "some text",
-     *       "location": {
-     *         "longitude": 38.65,
-     *         "latitude": 57
-     *       }
-     *     },
-     *     {
-     *       "id": "some text",
-     *       "info": {
-     *         "gender": "some text",
-     *         "sanitary_products": true,
-     *         "baby_changer": true
-     *       },
-     *       "user_id": "some text",
-     *       "created_at": 70,
-     *       "updated_at": 69,
-     *       "name": "some text",
-     *       "location": {
-     *         "longitude": 53.45,
-     *         "latitude": 10.67
-     *       }
-     *     }
-     *   ],
-     *   "fountain_ratings": [
-     *     {
-     *       "id": "some text",
-     *       "fob_id": "some text",
-     *       "user_id": "some text",
-     *       "details": {
-     *         "pressure": 91,
-     *         "taste": 0,
-     *         "temperature": 95
-     *       },
-     *       "created_at": 76,
-     *       "updated_at": 1
-     *     },
-     *     {
-     *       "id": "some text",
-     *       "fob_id": "some text",
-     *       "user_id": "some text",
-     *       "details": {
-     *         "pressure": 27,
-     *         "taste": 16,
-     *         "temperature": 63
-     *       },
-     *       "created_at": 30,
-     *       "updated_at": 68
-     *     }
-     *   ],
-     *   "bathroom_ratings": [
+     *   "ratings": [
      *     {
      *       "id": "some text",
      *       "fob_id": "some text",
@@ -1460,56 +994,32 @@ export interface components {
      * }
      */
     UserContributions: {
-      /** @description Fountains created by user */
-      fountains: components["schemas"]["Fountain"][];
-      /** @description Bathrooms created by user */
-      bathrooms: components["schemas"]["Bathroom"][];
-      /** @description Fountain ratings created by user */
-      fountain_ratings: components["schemas"]["FountainRating"][];
-      /** @description Bathroom ratings created by user */
-      bathroom_ratings: components["schemas"]["BathroomRating"][];
+      /** @description Fobs created by the user */
+      fobs?: components["schemas"]["Fob"][];
+      /** @description Fob ratings created by user */
+      ratings?: components["schemas"]["Rating"][];
       /** @description Pictures created by user */
       pictures: components["schemas"]["Picture"][];
     };
     /**
-     * @description Information necessary to create a bathroom
+     * @description Information necessary to create a Fob
      * @example {
-     *   "name": "some text",
+     *   "name": "Example Fob",
      *   "location": {
      *     "longitude": 25.86,
      *     "latitude": 2.67
-     *   },
-     *   "info": {
-     *     "gender": "some text",
-     *     "sanitary_products": true,
-     *     "baby_changer": true
-     *   }
-     * }
-     */
-    BathroomCreationDetails: {
-      /** @description Name of bathroom */
-      name: string;
-      location: components["schemas"]["Location"];
-      info: components["schemas"]["BathroomInfo"];
-    };
-    /**
-     * @description Information necessary to create a fountain
-     * @example {
-     *   "name": "some text",
-     *   "location": {
-     *     "longitude": 29.12,
-     *     "latitude": 60.61
      *   },
      *   "info": {
      *     "bottle_filler": true
      *   }
      * }
      */
-    FountainCreationDetails: {
-      /** @description Name of fountain */
+    FobCreationDetails: {
+      /** @description Name of the Fob */
       name: string;
       location: components["schemas"]["Location"];
-      info: components["schemas"]["FountainInfo"];
+      /** @description Details about the Fob */
+      info: components["schemas"]["FountainInfo"] | components["schemas"]["BathroomInfo"];
     };
   };
   responses: never;
