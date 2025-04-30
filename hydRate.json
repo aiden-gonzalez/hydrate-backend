@@ -46,37 +46,39 @@
                 "summary": "Create new user account"
             }
         },
-        "/api/fountains": {
-            "summary": "Primary endpoint for retrieving (GET) and adding (POST) fountains",
+        "/api/fobs": {
+            "summary": "Primary endpoint for retrieving (GET) and adding (POST) Fobs",
             "get": {
                 "parameters": [
                     {
-                        "name": "longitude",
-                        "description": "Longitude to fetch fountains around.\nIf provided, must also provide latitude!",
+                        "name": "type",
+                        "description": "Filter Fobs by type (fountain or bathroom)",
                         "schema": {
-                            "type": "number"
+                            "type": "string",
+                            "enum": ["fountain", "bathroom"]
                         },
-                        "in": "query"
+                        "in": "query",
+                        "required": false
                     },
                     {
                         "name": "latitude",
-                        "description": "Latitude to fetch fountains around.\nIf provided, must provide longitude!",
+                        "description": "Latitude to fetch Fobs around. If provided, must provide longitude!",
                         "schema": {
                             "type": "number"
                         },
                         "in": "query"
                     },
                     {
-                        "name": "bottle_filler",
-                        "description": "Filter fountains by bottle_filler property",
+                        "name": "longitude",
+                        "description": "Longitude to fetch Fobs around. If provided, must also provide latitude!",
                         "schema": {
-                            "type": "boolean"
+                            "type": "number"
                         },
                         "in": "query"
                     },
                     {
                         "name": "radius",
-                        "description": "Radius to fetch fountains within (in meters)",
+                        "description": "Radius to fetch Fobs within (in meters)",
                         "schema": {
                             "type": "number"
                         },
@@ -85,7 +87,7 @@
                     },
                     {
                         "name": "user_id",
-                        "description": "ID of user that created the fountain(s)",
+                        "description": "ID of user that created the Fob(s)",
                         "schema": {
                             "type": "string"
                         },
@@ -117,18 +119,18 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Fountain"
+                                        "$ref": "#/components/schemas/Fob"
                                     }
                                 }
                             }
                         },
-                        "description": "Successful query.  Return array of fountains."
+                        "description": "Successful query. Return array of Fobs."
                     },
                     "400": {
                         "description": "Bad request"
                     },
                     "403": {
-                        "description": "Authentication failed!"
+                        "description": "Authentication failed"
                     }
                 },
                 "security": [
@@ -136,14 +138,14 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Get a group of fountains (query)"
+                "summary": "Get a group of Fobs (query)"
             },
             "post": {
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/FountainCreationDetails"
+                                "$ref": "#/components/schemas/Fob"
                             }
                         }
                     },
@@ -154,14 +156,14 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Fountain"
+                                    "$ref": "#/components/schemas/Fob"
                                 }
                             }
                         },
-                        "description": "Successfully added fountain!"
+                        "description": "Successfully added Fob!"
                     },
                     "400": {
-                        "description": "Malformed request! Missing some information or not in right format."
+                        "description": "Malformed request! Missing some information or not in the right format."
                     },
                     "401": {
                         "description": "Access token incorrect / insufficient / expired!"
@@ -172,7 +174,7 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Add a fountain"
+                "summary": "Add a Fob"
             }
         },
         "/api/auth/refresh": {
@@ -328,150 +330,6 @@
                     "required": true
                 }
             ]
-        },
-        "/api/bathrooms": {
-            "summary": "Primary endpoint for retrieving (GET) and adding (POST) bathrooms",
-            "get": {
-                "parameters": [
-                    {
-                        "name": "longitude",
-                        "description": "Longitude to fetch bathrooms around.\nIf provided, must also provide latitude!",
-                        "schema": {
-                            "type": "number"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "latitude",
-                        "description": "Latitude to fetch bathrooms around.\nIf provided, must provide longitude!",
-                        "schema": {
-                            "type": "number"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "radius",
-                        "description": "Radius to fetch bathrooms within (in meters)",
-                        "schema": {
-                            "type": "number"
-                        },
-                        "in": "query",
-                        "required": false
-                    },
-                    {
-                        "name": "baby_changer",
-                        "description": "Filter bathrooms by baby_changer property",
-                        "schema": {
-                            "type": "boolean"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "gender",
-                        "description": "Filter bathrooms by gender property",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "required": false
-                    },
-                    {
-                        "name": "sanitary_products",
-                        "description": "Filter bathrooms by sanitary_products property",
-                        "schema": {
-                            "type": "boolean"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "user_id",
-                        "description": "ID of user that created the bathroom(s)",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "from_date",
-                        "description": "Filter bathrooms to those created on or after this date.  Unix epoch milliseconds timestamp.",
-                        "schema": {
-                            "type": "number"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "to_date",
-                        "description": "Filter bathrooms to those created before or on this date.  Unix epoch milliseconds timestamp.",
-                        "schema": {
-                            "type": "number"
-                        },
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Bathroom"
-                                    }
-                                }
-                            }
-                        },
-                        "description": "Successful query.  Return array of bathrooms."
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Get a group of bathrooms (query)"
-            },
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/BathroomCreationDetails"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Bathroom"
-                                }
-                            }
-                        },
-                        "description": "Successfully added bathroom!"
-                    },
-                    "400": {
-                        "description": "Malformed request! Missing some information or not in right format."
-                    },
-                    "401": {
-                        "description": "Access token incorrect / insufficient / expired!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Create (add) a bathroom"
-            }
         },
         "/api/bathrooms/{id}/ratings": {
             "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) bathroom ratings",
