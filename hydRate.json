@@ -331,102 +331,6 @@
                 }
             ]
         },
-        "/api/bathrooms/{id}/ratings": {
-            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) bathroom ratings",
-            "get": {
-                "parameters": [
-                    {
-                        "name": "page_size",
-                        "description": "Optional pagination: Size of pages to fetch (number of ratings per page)",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "query"
-                    },
-                    {
-                        "name": "page_offset",
-                        "description": "Optional pagination: Offset of page to fetch (default is 0, max is 100)",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/BathroomRating"
-                                    }
-                                }
-                            }
-                        },
-                        "description": "Successful query.  Return array of bathroom ratings."
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "403": {
-                        "description": "Authentication failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Get ratings for a particular bathroom"
-            },
-            "post": {
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/BathroomRatingDetails"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BathroomRating"
-                                }
-                            }
-                        },
-                        "description": "Successfully added bathroom rating!"
-                    },
-                    "400": {
-                        "description": "Malformed request! Missing some information or not in right format."
-                    },
-                    "401": {
-                        "description": "Access token incorrect / insufficient / expired!"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Add a bathroom rating"
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "schema": {
-                        "type": "string"
-                    },
-                    "in": "path",
-                    "required": true
-                }
-            ]
-        },
         "/api/bathrooms/{id}/ratings/{ratingId}": {
             "get": {
                 "responses": {
@@ -888,8 +792,8 @@
                 }
             ]
         },
-        "/api/fountains/{id}/ratings": {
-            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) fountain ratings",
+        "/api/fobs/{id}/ratings": {
+            "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) Fob ratings",
             "get": {
                 "parameters": [
                     {
@@ -916,12 +820,12 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/FountainRating"
+                                        "$ref": "#/components/schemas/FobRating"
                                     }
                                 }
                             }
                         },
-                        "description": "Successful query.  Return array of fountain ratings."
+                        "description": "Successful query. Return array of Fob ratings."
                     },
                     "400": {
                         "description": "Bad request"
@@ -935,14 +839,14 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Get ratings for a particular fountain"
+                "summary": "Get ratings for a particular Fob"
             },
             "post": {
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/FountainRatingDetails"
+                                "$ref": "#/components/schemas/FobRating"
                             }
                         }
                     },
@@ -953,14 +857,14 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FountainRating"
+                                    "$ref": "#/components/schemas/FobRating"
                                 }
                             }
                         },
-                        "description": "Successfully added fountain rating!"
+                        "description": "Successfully added Fob rating!"
                     },
                     "400": {
-                        "description": "Malformed request! Missing some information or not in right format."
+                        "description": "Malformed request! Missing some information or not in the right format."
                     },
                     "401": {
                         "description": "Access token incorrect / insufficient / expired!"
@@ -971,11 +875,12 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Add a fountain rating"
+                "summary": "Add a Fob rating"
             },
             "parameters": [
                 {
                     "name": "id",
+                    "description": "ID of the Fob",
                     "schema": {
                         "type": "string"
                     },
@@ -1289,6 +1194,57 @@
                 "example": {
                     "full_name": "some text",
                     "picture_link": "some text"
+                }
+            },
+            "FobRating": {
+                "description": "Rating for a Fob",
+                "required": [
+                    "id",
+                    "fob_id",
+                    "user_id",
+                    "details"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Unique ID of the rating",
+                        "type": "string"
+                    },
+                    "fob_id": {
+                        "description": "ID of the Fob being rated",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "ID of the user who created the rating",
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Details of the rating, specific to the type of Fob",
+                        "oneOf": [
+                            { "$ref": "#/components/schemas/FountainRatingDetails" },
+                            { "$ref": "#/components/schemas/BathroomRatingDetails" }
+                        ]
+                    },
+                    "created_at": {
+                        "description": "Created timestamp. Unix epoch milliseconds.",
+                        "type": "integer"
+                    },
+                    "updated_at": {
+                        "description": "Updated timestamp. Unix epoch milliseconds.",
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "id": "rating123",
+                    "fob_id": "fob456",
+                    "user_id": "user789",
+                    "details": {
+                        "pressure": 5,
+                        "taste": 4,
+                        "temperature": 3
+                    },
+                    "created_at": 1672531200000,
+                    "updated_at": 1672617600000
                 }
             },
             "FountainRating": {
