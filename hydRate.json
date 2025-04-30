@@ -1595,32 +1595,18 @@
                 ],
                 "type": "object",
                 "properties": {
-                    "fountains": {
-                        "description": "Fountains created by user",
+                    "fobs": {
+                        "description": "Fobs created by the user",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Fountain"
+                            "$ref": "#/components/schemas/Fob"
                         }
                     },
-                    "bathrooms": {
-                        "description": "Bathrooms created by user",
+                    "ratings": {
+                        "description": "Fob ratings created by user",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Bathroom"
-                        }
-                    },
-                    "fountain_ratings": {
-                        "description": "Fountain ratings created by user",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/FountainRating"
-                        }
-                    },
-                    "bathroom_ratings": {
-                        "description": "Bathroom ratings created by user",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/BathroomRating"
+                            "$ref": "#/components/schemas/FobRating"
                         }
                     },
                     "pictures": {
@@ -1632,7 +1618,7 @@
                     }
                 },
                 "example": {
-                    "fountains": [
+                    "fobs": [
                         {
                             "id": "some text",
                             "info": {
@@ -1662,67 +1648,7 @@
                             }
                         }
                     ],
-                    "bathrooms": [
-                        {
-                            "id": "some text",
-                            "info": {
-                                "gender": "some text",
-                                "sanitary_products": true,
-                                "baby_changer": true
-                            },
-                            "user_id": "some text",
-                            "created_at": 45,
-                            "updated_at": 93,
-                            "name": "some text",
-                            "location": {
-                                "longitude": 38.65,
-                                "latitude": 57
-                            }
-                        },
-                        {
-                            "id": "some text",
-                            "info": {
-                                "gender": "some text",
-                                "sanitary_products": true,
-                                "baby_changer": true
-                            },
-                            "user_id": "some text",
-                            "created_at": 70,
-                            "updated_at": 69,
-                            "name": "some text",
-                            "location": {
-                                "longitude": 53.45,
-                                "latitude": 10.67
-                            }
-                        }
-                    ],
-                    "fountain_ratings": [
-                        {
-                            "id": "some text",
-                            "fob_id": "some text",
-                            "user_id": "some text",
-                            "details": {
-                                "pressure": 91,
-                                "taste": 0,
-                                "temperature": 95
-                            },
-                            "created_at": 76,
-                            "updated_at": 1
-                        },
-                        {
-                            "id": "some text",
-                            "fob_id": "some text",
-                            "user_id": "some text",
-                            "details": {
-                                "pressure": 27,
-                                "taste": 16,
-                                "temperature": 63
-                            },
-                            "created_at": 30,
-                            "updated_at": 68
-                        }
-                    ],
-                    "bathroom_ratings": [
+                    "ratings": [
                         {
                             "id": "some text",
                             "fob_id": "some text",
