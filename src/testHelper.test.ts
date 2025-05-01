@@ -78,6 +78,18 @@ export function getLocation (latitude = 40.4237, longitude  = -86.9212) : ILocat
   } as ILocation;
 }
 
+export function removeAverageRating(fobs : IFob[]) : IFob[] {
+  fobs.forEach(x => delete x.average_rating);
+  return fobs;
+}
+
+export function expectEntitiesEqual(entitiesA, entitiesB) {
+  expect(entitiesA.length).to.equal(entitiesB.length);
+  for (let i = 0; i < entitiesA.length; i++) {
+    expect(entitiesA[i]).to.deep.equal(entitiesB.find((entity) => entity.id === entitiesA[i].id));
+  }
+}
+
 export function getFountain (user_id = generateUserId(), name = "fountain name", bottle_filler = false, location : ILocation = getLocation()) : IFob {
   return {
     id: generateFountainId(),

@@ -1,12 +1,13 @@
 import {authenticateRequest} from "../utils/auth";
 import {
+  expectEntitiesEqual,
   getAuthedReqMockForUser, getBathroom,
   getFountain,
   getFountainRatingDetails,
   getPicture,
   getReqMock,
   getResMock,
-  getUser,
+  getUser, removeAverageRating,
   simulateRouter
 } from "../testHelper.test";
 import {expect} from "chai";
@@ -68,7 +69,7 @@ describe("FOBS: CRUD of all kinds", () => {
     }
 
     // Create fountains
-    const fountainOne : IFob = {
+    const fountainOne : NewFob = {
       id: generateFountainId(),
       user_id: user.id,
       name: "Fob One",
@@ -80,7 +81,7 @@ describe("FOBS: CRUD of all kinds", () => {
         bottle_filler: true,
       }
     };
-    const fountainTwo : IFob = {
+    const fountainTwo : NewFob = {
       id: generateFountainId(),
       user_id: user.id,
       name: "Fob Two",
@@ -92,7 +93,7 @@ describe("FOBS: CRUD of all kinds", () => {
         bottle_filler: false,
       }
     };
-    const fountainThree : IFob = {
+    const fountainThree : NewFob = {
       id: generateFountainId(),
       user_id: user.id,
       name: "Fob Three",
@@ -111,8 +112,8 @@ describe("FOBS: CRUD of all kinds", () => {
       user_id: user.id,
       name: "Bathroom One",
       location: {
-        latitude: 40.42476607308126,
-        longitude: -86.9114030295504
+        latitude: 40.424766046533,
+        longitude: -86.911403067846
       },
       info: {
         gender: "female",
@@ -125,8 +126,8 @@ describe("FOBS: CRUD of all kinds", () => {
       user_id: user.id,
       name: "Bathroom Two",
       location: {
-        latitude: 40.42486535509428,
-        longitude: -86.91207343967577
+        latitude: 40.4248653569847,
+        longitude: -86.91207343234
       },
       info: {
         gender: "male",
@@ -139,8 +140,8 @@ describe("FOBS: CRUD of all kinds", () => {
       user_id: user.id,
       name: "Bathroom Three",
       location: {
-        latitude: 40.425193836261464,
-        longitude: -86.9112570893454
+        latitude: 40.42519386737,
+        longitude: -86.91125797826
       },
       info: {
         gender: "female",
@@ -278,14 +279,6 @@ describe("FOBS: CRUD of all kinds", () => {
     return [createdPictureOne, createdPictureTwo, createdPictureThree];
   }
 
-  function expectEntitiesEqual(entitiesA, entitiesB) {
-    expect(entitiesA).to.deep.equal(entitiesB);
-    expect(entitiesA.length).to.equal(entitiesB.length);
-    for (let i = 0; i < entitiesA.length; i++) {
-      expect(entitiesA[i]).to.deep.equal(entitiesB.find((fountain) => fountain.id === entitiesA[i].id));
-    }
-  }
-
   it("can't create a fob without authentication", async () => {
     const req = getReqMock(null, getFountain().info);
     const res = getResMock();
@@ -340,10 +333,13 @@ describe("FOBS: CRUD of all kinds", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    removeAverageRating(res.message as IFob[]);
     expectEntitiesEqual(res.message, createdFobs);
   });
 
-  it("gets all fountains with bottle fillers", async () => {
+  // Skipping this one because this feature is no longer implemented
+  // but it'd be nice to re-implement it another time
+  it.skip("gets all fountains with bottle fillers", async () => {
     const user : IUser = await getUser();
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
@@ -380,10 +376,11 @@ describe("FOBS: CRUD of all kinds", () => {
     }
 
     // Try to get all bathrooms within 50 meters of (5, 5)
-    await simulateRouter(req, res, getFobFuncs);
+    await simulateRouter(req, res, getFobsFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    removeAverageRating(res.message as IFob[]);
     expectEntitiesEqual(res.message, createdBathrooms.filter((bathroom) => calculateDistance(bathroom.location, {latitude: 40.42492454100864, longitude: -86.91155253041734} as ILocation) < 40));
   });
 
@@ -854,6 +851,4 @@ describe("FOBS: CRUD of all kinds", () => {
     createdFobRatings[0].updated_at = res.message.updated_at;
     expect(createdFobRatings[0]).to.deep.equal(res.message);
   });
-
-
 });

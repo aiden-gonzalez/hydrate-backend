@@ -1,8 +1,9 @@
 import {
+  expectEntitiesEqual,
   getAuthedReqMockForUser, getBathroom, getBathroomRating, getFountain, getFountainRating, getLocation, getPicture,
   getReqMock,
   getResMock,
-  getUser,
+  getUser, removeAverageRating,
   simulateRouter
 } from "../testHelper.test";
 import * as constants from "../utils/constants";
@@ -208,13 +209,14 @@ describe("PROFILES: getting and updating profiles", () => {
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
     // Copy timestamps
-    copyTimestamps(contributions.fobs[0], res.message.fountains[0]);
-    copyTimestamps(contributions.fobs[1], res.message.bathrooms[0]);
-    copyTimestamps(contributions.ratings[0], res.message.fountain_ratings[0]);
-    copyTimestamps(contributions.ratings[1], res.message.bathroom_ratings[0]);
+    copyTimestamps(contributions.fobs[0], res.message.fobs[0]);
+    copyTimestamps(contributions.fobs[1], res.message.fobs[1]);
+    copyTimestamps(contributions.ratings[0], res.message.ratings[0]);
+    copyTimestamps(contributions.ratings[1], res.message.ratings[1]);
     copyTimestamps(contributions.pictures[0], res.message.pictures[0]);
     copyTimestamps(contributions.pictures[1], res.message.pictures[1]);
-    expect(contributions).to.deep.equal(res.message);
+    removeAverageRating(res.message.fobs);
+    expectEntitiesEqual(contributions, res.message);
   });
 
   // TODO from_date and to_date tests

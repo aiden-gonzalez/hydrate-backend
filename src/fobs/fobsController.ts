@@ -12,7 +12,8 @@ import {
   HTTP_FORBIDDEN,
   HTTP_FORBIDDEN_MESSAGE,
   HTTP_INTERNAL_ERROR,
-  HTTP_OK
+  HTTP_OK,
+  FOUNTAIN_ID_PREFIX
 } from "../utils/constants";
 import { IPicture } from "../utils/types";
 import {
@@ -222,7 +223,8 @@ export async function addFobRating(req, res) {
   const userId = req.user.id;
 
   // Validate details
-  if (req.isFountain) {
+  const isFountainRating = fobId.startsWith(FOUNTAIN_ID_PREFIX);
+  if (isFountainRating) {
     const fountainRatingDetails = (ratingDetails as IFountainRatingDetails);
     if (!ratingDetailValueValidator(fountainRatingDetails.taste) || !ratingDetailValueValidator(fountainRatingDetails.temperature) || !ratingDetailValueValidator(fountainRatingDetails.pressure)) {
       return res.status(HTTP_BAD_REQUEST).send("Invalid rating detail value(s)!");
@@ -236,7 +238,7 @@ export async function addFobRating(req, res) {
 
   // Create new fountain rating
   const newRating = {
-    id: req.isFountain ? generateFountainRatingId() : generateBathroomRatingId(),
+    id: isFountainRating ? generateFountainRatingId() : generateBathroomRatingId(),
     fob_id: fobId,
     user_id: userId,
     details: ratingDetails

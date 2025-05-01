@@ -53,5 +53,5 @@ export function bathroomIdValidator(bathroomId: string) {
 }
 
 export function ratingDetailValueValidator(ratingDetailValue : number) {
-  return Number.isInteger(ratingDetailValue) && ratingDetailValue > 0 && ratingDetailValue < 6;
+  return Number.isInteger(ratingDetailValue) && ratingDetailValue >= 1 && ratingDetailValue <= 5;
 }
