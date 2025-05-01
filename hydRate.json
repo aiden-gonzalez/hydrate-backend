@@ -30,13 +30,6 @@
                 },
                 "responses": {
                     "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        },
                         "description": "Account successfully created"
                     },
                     "401": {
@@ -145,7 +138,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Fob"
+                                "$ref": "#/components/schemas/FobCreationDetails"
                             }
                         }
                     },
@@ -1491,12 +1484,17 @@
             "FobCreationDetails": {
                 "description": "Information necessary to create a Fob",
                 "required": [
+                    "type",
                     "name",
                     "location",
                     "info"
                 ],
                 "type": "object",
                 "properties": {
+                    "type": {
+                        "description": "Type of the Fob",
+                        "enum": ["fountain", "bathroom"]
+                    },
                     "name": {
                         "description": "Name of the Fob",
                         "type": "string"

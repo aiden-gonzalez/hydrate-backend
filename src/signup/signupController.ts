@@ -43,7 +43,7 @@ export async function createAccount(req, res) {
 
   return new Promise((resolve) => {
     db.createUser(newUser).then((createdUser) => {
-      resolve(res.status(HTTP_OK).send(createdUser));
+      resolve(res.sendStatus(HTTP_OK));
     }).catch((error) => {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
     });

@@ -16,9 +16,7 @@ export interface paths {
       responses: {
         /** @description Account successfully created */
         200: {
-          content: {
-            "application/json": components["schemas"]["User"];
-          };
+          content: never;
         };
         /** @description Credentials invalid! */
         401: {
@@ -69,7 +67,7 @@ export interface paths {
     post: {
       requestBody: {
         content: {
-          "application/json": components["schemas"]["Fob"];
+          "application/json": components["schemas"]["FobCreationDetails"];
         };
       };
       responses: {
@@ -1015,6 +1013,11 @@ export interface components {
      * }
      */
     FobCreationDetails: {
+      /**
+       * @description Type of the Fob
+       * @enum {unknown}
+       */
+      type: "fountain" | "bathroom";
       /** @description Name of the Fob */
       name: string;
       location: components["schemas"]["Location"];

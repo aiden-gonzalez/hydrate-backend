@@ -1,4 +1,5 @@
 import {
+  FobType,
   IFobCreationDetails,
   IFobInfo,
   IFobQueryParams,
@@ -79,7 +80,7 @@ export async function createFob(req, res) {
 
   // Create fob
   const newFob = {
-    id: req.isFountain ? generateFountainId() : generateBathroomId(),
+    id: fobCreationDetails.type == FobType.Fountain ? generateFountainId() : generateBathroomId(),
     user_id: req.user.id,
     name: fobCreationDetails.name,
     location: fobCreationDetails.location,
