@@ -797,7 +797,7 @@ export interface components {
       /** @description ID of user who created the fob */
       user_id: string;
       /** @description Average rating of the fob */
-      average_rating?: number;
+      average_rating?: number | null;
     };
     /**
      * @example {

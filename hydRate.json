@@ -1146,7 +1146,8 @@
                     },
                     "average_rating": {
                         "description": "Average rating of the fob",
-                        "type": "number"
+                        "type": "number",
+                        "nullable": true
                     }
                 }
             },
