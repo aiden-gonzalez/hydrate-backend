@@ -697,8 +697,8 @@
                     "400": {
                         "description": "Bad request"
                     },
-                    "403": {
-                        "description": "Insufficient auth"
+                    "401": {
+                        "description": "Invalid auth"
                     },
                     "404": {
                         "description": "Fob not found"

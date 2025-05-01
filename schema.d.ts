@@ -519,8 +519,8 @@ export interface paths {
         400: {
           content: never;
         };
-        /** @description Insufficient auth */
-        403: {
+        /** @description Invalid auth */
+        401: {
           content: never;
         };
         /** @description Fob not found */
