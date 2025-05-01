@@ -7,7 +7,7 @@ import {
   Updateable
 } from "kysely";
 import {IHashedPassword, ILocation} from "../utils/types";
-import {IUserProfile} from "../profiles/types";
+import {IProfile} from "../profiles/types";
 import {IFobInfo, IRatingDetails} from "../fobs/types";
 
 export interface Database {
@@ -95,7 +95,7 @@ export interface UserTable {
   username: string
   email: string
   hashed_password: ColumnType<IHashedPassword, IHashedPassword, IHashedPassword>
-  profile: ColumnType<IUserProfile, IUserProfile, IUserProfile>
+  profile: ColumnType<IProfile, IProfile, IProfile>
   created_at: DbCreatedAt
   updated_at: DbUpdatedAt
 }

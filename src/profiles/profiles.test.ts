@@ -15,7 +15,7 @@ import {
 } from "./profilesController";
 import {authenticateRequest} from '../utils/auth';
 import * as db from "../db/queries";
-import {IUserContributions, IUserProfile} from "./types";
+import {IUserContributions, IProfile} from "./types";
 import {expect} from "chai";
 
 function copyTimestamps(obj_a, obj_b) {
@@ -121,7 +121,7 @@ describe("PROFILES: getting and updating profiles", () => {
   });
 
   it("successfully updates a user profile that is owned by the requesting user", async () => {
-    const newUserProfile : IUserProfile = {
+    const newUserProfile : IProfile = {
       full_name: "Updated Name",
       picture_link: "https://www.facebook.com"
     };
@@ -191,16 +191,14 @@ describe("PROFILES: getting and updating profiles", () => {
     const bathroom = getBathroom(user.id);
     bathroom.location = getLocation(40, -86);
     const contributions : IUserContributions = {
-      fountains: [fountain],
-      bathrooms: [bathroom],
-      fountain_ratings: [getFountainRating(fountain.id, user.id)],
-      bathroom_ratings: [getBathroomRating(bathroom.id, user.id)],
+      fobs: [fountain, bathroom],
+      ratings: [getFountainRating(fountain.id, user.id), getBathroomRating(bathroom.id, user.id)],
       pictures: [getPicture(fountain.id, user.id), getPicture(bathroom.id, user.id)]
     }
-    await db.createFob(contributions.fountains[0]);
-    await db.createFob(contributions.bathrooms[0]);
-    await db.createRating(contributions.fountain_ratings[0]);
-    await db.createRating(contributions.bathroom_ratings[0]);
+    await db.createFob(contributions.fobs[0]);
+    await db.createFob(contributions.fobs[1]);
+    await db.createRating(contributions.ratings[0]);
+    await db.createRating(contributions.ratings[1]);
     await db.createPicture(contributions.pictures[0]);
     await db.createPicture(contributions.pictures[1]);
 
@@ -210,10 +208,10 @@ describe("PROFILES: getting and updating profiles", () => {
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
     // Copy timestamps
-    copyTimestamps(contributions.fountains[0], res.message.fountains[0]);
-    copyTimestamps(contributions.bathrooms[0], res.message.bathrooms[0]);
-    copyTimestamps(contributions.fountain_ratings[0], res.message.fountain_ratings[0]);
-    copyTimestamps(contributions.bathroom_ratings[0], res.message.bathroom_ratings[0]);
+    copyTimestamps(contributions.fobs[0], res.message.fountains[0]);
+    copyTimestamps(contributions.fobs[1], res.message.bathrooms[0]);
+    copyTimestamps(contributions.ratings[0], res.message.fountain_ratings[0]);
+    copyTimestamps(contributions.ratings[1], res.message.bathroom_ratings[0]);
     copyTimestamps(contributions.pictures[0], res.message.pictures[0]);
     copyTimestamps(contributions.pictures[1], res.message.pictures[1]);
     expect(contributions).to.deep.equal(res.message);

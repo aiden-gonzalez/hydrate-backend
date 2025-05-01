@@ -1,5 +1,5 @@
 import {ISignupRequest} from "./types";
-import {IUserProfile} from "../profiles/types";
+import {IProfile} from "../profiles/types";
 import { IUser } from "../utils/types";
 import {
   ERROR_USER_WITH_EMAIL_ALREADY_EXISTS,
@@ -37,7 +37,7 @@ export async function createAccount(req, res) {
     profile: {
       full_name: "",
       picture_link: URL_DEFAULT_PROFILE_PICTURE
-    } as IUserProfile,
+    } as IProfile,
     hashed_password: await hashPass(signupRequest.user_credentials.password)
   } as IUser;
 

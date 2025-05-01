@@ -14,11 +14,7 @@ import {
   FobType,
   IFobInfo,
   IFobQueryParams,
-  IRatingDetails,
-  isBathroom,
-  isBathroomRating,
-  isFountain,
-  isFountainRating
+  IRatingDetails
 } from "../fobs/types";
 import {sql} from "kysely";
 import {calculateLocationAtDistance} from "../utils/calculation";
@@ -163,10 +159,8 @@ export function getUserContributions(userId: string, params: IUserContributionQu
       // results[1] will have the results of the second query
       // and so on...
       const response = {
-        fountains: (results[0] as any).filter((fob) => isFountain(fob)),
-        bathrooms: (results[0] as any).filter((fob) => isBathroom(fob)),
-        fountain_ratings: (results[1] as any).filter((rating) => isFountainRating(rating)),
-        bathroom_ratings: (results[1] as any).filter((rating) => isBathroomRating(rating)),
+        fobs: results[0],
+        ratings: results[1],
         pictures: results[2]
       } as IUserContributions;
       resolve(response);

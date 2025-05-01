@@ -12,8 +12,14 @@ import * as constants from "./utils/constants";
 import {findFobs} from "./db/queries";
 import {migrateToLatest} from "./db/migrate";
 import {expect} from "chai";
-import {IFountain, IFountainInfo, IFountainRating, IFountainRatingDetails} from "./fountains/types";
-import {IBathroom, IBathroomInfo, IBathroomRating, IBathroomRatingDetails} from "./bathrooms/types";
+import {
+  IFountainInfo,
+  IFountainRatingDetails,
+  IBathroomInfo,
+  IBathroomRatingDetails,
+  IFob,
+  IRating
+} from "./fobs/types";
 import {getDb} from "./db/database";
 
 describe("Connect to database and run tests", function () {
@@ -72,7 +78,7 @@ export function getLocation (latitude = 40.4237, longitude  = -86.9212) : ILocat
   } as ILocation;
 }
 
-export function getFountain (user_id = generateUserId(), name = "fountain name", bottle_filler = false, location : ILocation = getLocation()) : IFountain {
+export function getFountain (user_id = generateUserId(), name = "fountain name", bottle_filler = false, location : ILocation = getLocation()) : IFob {
   return {
     id: generateFountainId(),
     user_id: user_id,
@@ -81,10 +87,10 @@ export function getFountain (user_id = generateUserId(), name = "fountain name",
     info: {
       bottle_filler: bottle_filler
     } as IFountainInfo
-  } as IFountain;
+  } as IFob;
 }
 
-export function getBathroom (user_id = generateUserId(), name = "bathroom name", gender = "male", baby_changer = false, sanitary_products = false, location : ILocation = getLocation()) : IBathroom {
+export function getBathroom (user_id = generateUserId(), name = "bathroom name", gender = "male", baby_changer = false, sanitary_products = false, location : ILocation = getLocation()) : IFob {
   return {
     id: generateBathroomId(),
     user_id: user_id,
@@ -95,16 +101,16 @@ export function getBathroom (user_id = generateUserId(), name = "bathroom name",
       baby_changer: baby_changer,
       sanitary_products: sanitary_products
     } as IBathroomInfo
-  } as IBathroom;
+  } as IFob;
 }
 
-export function getFountainRating (fobId = generateFountainId(), userId = generateUserId(), details = getFountainRatingDetails()) : IFountainRating {
+export function getFountainRating (fobId = generateFountainId(), userId = generateUserId(), details = getFountainRatingDetails()) : IRating {
   return {
     id: generateFountainRatingId(),
     fob_id: fobId,
     user_id: userId,
     details: details
-  } as IFountainRating;
+  } as IRating;
 }
 
 export function getFountainRatingDetails (pressure = 3, taste = 3, temperature = 3) : IFountainRatingDetails {
@@ -115,13 +121,13 @@ export function getFountainRatingDetails (pressure = 3, taste = 3, temperature =
   } as IFountainRatingDetails;
 }
 
-export function getBathroomRating (fobId = generateBathroomId(), userId = generateUserId(), details = getBathroomRatingDetails()) : IBathroomRating {
+export function getBathroomRating (fobId = generateBathroomId(), userId = generateUserId(), details = getBathroomRatingDetails()) : IRating {
   return {
     id: generateBathroomRatingId(),
     fob_id: fobId,
     user_id: userId,
     details: details
-  } as IBathroomRating;
+  } as IRating;
 }
 
 export function getBathroomRatingDetails (cleanliness = 3, decor = 3, drying = 3, privacy = 3, washing = 3) : IBathroomRatingDetails {
