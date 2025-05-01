@@ -14,7 +14,8 @@ import {
   HTTP_FORBIDDEN_MESSAGE,
   HTTP_INTERNAL_ERROR,
   HTTP_OK,
-  FOUNTAIN_ID_PREFIX
+  FOUNTAIN_ID_PREFIX,
+  HTTP_NOT_FOUND
 } from "../utils/constants";
 import { IPicture } from "../utils/types";
 import {
@@ -102,6 +103,9 @@ export async function getFobById(req, res) {
   // Get fountain
   try {
     const fob = await db.getFob(fobId);
+    if (fob === undefined || fob === null) {
+      return res.sendStatus(HTTP_NOT_FOUND);
+    }
     res.status(HTTP_OK).json(fob);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);

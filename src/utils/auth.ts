@@ -22,14 +22,14 @@ export function validateToken(token: string) : Promise<IUser> {
 export async function authenticateRequest (req, res, next) {
   const token = req.get("Authorization");
   if (token == null)
-    return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
+    return res.sendStatus(constants.HTTP_UNAUTHORIZED);
 
   try {
     const tokenUser = await validateToken(token);
     req.user = tokenUser;
     next();
   } catch (error) {
-    res.status(constants.HTTP_UNAUTHORIZED).send(error);
+    res.sendStatus(constants.HTTP_UNAUTHORIZED);
   }
 }
 

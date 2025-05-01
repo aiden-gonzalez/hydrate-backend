@@ -194,8 +194,13 @@ export function deletePicture(id: string) : Promise<Picture> {
 export function parseTimestampsPromise(item : Promise<any>) : Promise<any> {
   return new Promise((resolve, reject) => {
     item.then((result) => {
-      result.created_at = parseInt(result.created_at);
-      result.updated_at = parseInt(result.updated_at);
+      if (result !== undefined
+        && result !== null
+        && result.hasOwnProperty('created_at')
+        && result.hasOwnProperty('updated_at')) {
+        result.created_at = parseInt(result.created_at);
+        result.updated_at = parseInt(result.updated_at);
+      }
       resolve(result);
     }).catch((error) => reject(error));
   });
