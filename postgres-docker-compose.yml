@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres
-    hostname: localhost # (use actual IP) for adminer "Server" field
+    hostname: localhost # (use actual IP or "db") for adminer "Server" field
     container_name: hydrate_postgres
     # restart: always
     # set shared memory limit when using docker-compose
