@@ -3,9 +3,11 @@ import { promises as fs } from 'fs'
 import {
   Migrator,
   FileMigrationProvider,
-  NO_MIGRATIONS
+  NO_MIGRATIONS,
+  sql
 } from 'kysely'
 import {getDb} from "./database";
+import {exponentialBackoff} from "../utils/retry";
 
 export async function migrateToLatest() {
   await migrateTo();
@@ -19,6 +21,16 @@ async function migrateTo(migration_name : any = null) {
   // We want a separate db pool for migration
   const migrationDb = getDb();
 
+  // Ensure postgres db is ready for migration. This will execute this query until it succeeds
+  await exponentialBackoff(
+    async () => await migrationDb.executeQuery(sql`SELECT * FROM information_schema.tables`.compile(migrationDb)),
+    {
+      tryMessage: "Checking if the database is ready for migration...",
+      retryMessage: "Database not ready yet"
+    }
+  );
+
+
   const migrator = new Migrator({
     db: migrationDb,
     provider: new FileMigrationProvider({
@@ -27,7 +39,7 @@ async function migrateTo(migration_name : any = null) {
       // This needs to be an absolute path.
       migrationFolder: path.join(__dirname, 'migrations'),
     }),
-  })
+  });
 
   const { error, results } = migration_name != null ? await migrator.migrateTo(migration_name) : await migrator.migrateToLatest();
 
