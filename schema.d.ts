@@ -256,7 +256,10 @@ export interface paths {
       /** @description Picture link */
       requestBody: {
         content: {
-          "application/json": string;
+          "application/json": {
+            /** @description URL of the picture */
+            url: string;
+          };
         };
       };
       responses: {
@@ -283,15 +286,13 @@ export interface paths {
       };
     };
   };
-  "/api/fobs/{id}/pictures/{pictureId}": {
-    /** Get a specific picture for a Fob */
+  "/api/pictures/{id}": {
+    /** Get a specific picture by ID */
     get: {
       parameters: {
         path: {
-          /** @description ID of the Fob */
-          id: string;
           /** @description ID of the picture */
-          pictureId: string;
+          id: string;
         };
       };
       responses: {
@@ -315,26 +316,24 @@ export interface paths {
         };
       };
     };
-    /** Delete a specific picture for a Fob */
+    /** Delete a specific picture by ID */
     delete: {
       parameters: {
         path: {
-          /** @description ID of the Fob */
-          id: string;
           /** @description ID of the picture */
-          pictureId: string;
+          id: string;
         };
       };
       responses: {
-        /** @description Successfully removed picture! */
+        /** @description Successfully deleted the picture */
         200: {
           content: never;
         };
-        /** @description Malformed request (missing ID?) */
+        /** @description Malformed request (missing or invalid ID) */
         400: {
           content: never;
         };
-        /** @description Authentication/authorization failed! */
+        /** @description Authentication/authorization failed */
         401: {
           content: never;
         };
@@ -346,10 +345,8 @@ export interface paths {
     };
     parameters: {
       path: {
-        /** @description ID of the Fob */
-        id: string;
         /** @description ID of the picture */
-        pictureId: string;
+        id: string;
       };
     };
   };

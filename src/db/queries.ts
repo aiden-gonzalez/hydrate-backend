@@ -172,15 +172,15 @@ export function getUserContributions(userId: string, params: IUserContributionQu
 
 // PICTURE
 export function createPicture(picture: NewPicture) : Promise<Picture> {
-  return db.insertInto('picture').values(picture).returningAll().executeTakeFirstOrThrow();
+  return parseTimestampsPromise(db.insertInto('picture').values(picture).returningAll().executeTakeFirstOrThrow());
 }
 
 export function getPictureById(id: string) : Promise<Picture> {
-  return db.selectFrom('picture').where('id', '=', id).selectAll().executeTakeFirst();
+  return parseTimestampsPromise(db.selectFrom('picture').where('id', '=', id).selectAll().executeTakeFirst());
 }
 
 export function getPicturesForFob(fobId: string) : Promise<Picture[]> {
-  return db.selectFrom('picture').where('fob_id', '=', fobId).selectAll().execute();
+  return parseArrayTimestampsPromise(db.selectFrom('picture').where('fob_id', '=', fobId).selectAll().execute());
 }
 
 export function getPicturesByUser(userId: string) : Promise<Picture[]> {

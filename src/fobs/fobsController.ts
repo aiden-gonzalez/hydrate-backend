@@ -30,8 +30,8 @@ import {NewFob} from "../db/types";
 import {ratingDetailValueValidator, urlValidator} from "../utils/validation";
 
 // TODO think about how to set correct status depending on response from database
-// If none are found, should be 404 not found?
-// If id is invalid, should be 400?
+// If id is invalid, should be 404 not found?
+// If request bad, should be 400?
 // If not allowed to edit something, should be 403 or 401?
 // If something goes wrong with the database, should be 500?
 
@@ -145,7 +145,7 @@ export async function addFobPicture(req, res) {
   // Get path parameter
   const fobId = req.params.id;
   // Get picture url from request
-  const pictureUrl = req.body;
+  const pictureUrl = req.body.url;
 
   // Validate url
   if (!urlValidator(pictureUrl)) {
@@ -170,15 +170,21 @@ export async function addFobPicture(req, res) {
 
 export async function getFobPicture(req, res) {
   // Get path parameters
-  // TODO fountainID is not considered here. This means that any fountainId could be passed in
+  // TODO fobId is not considered here. This means that any fobId could be passed in
   // and the picture would still be fetched if it exists. Depending on how potential future
-  // fountains permission logic is implemented, this could be a vulnerability.
-  // const fountainId = req.params.id;
+  // fobId permission logic is implemented, this could be a vulnerability.
+  const fobId = req.params.id;
   const pictureId = req.params.pictureId;
 
   // Get fountain picture
   try {
     const fobPicture = await db.getPictureById(pictureId);
+    if (fobPicture === undefined || fobPicture === null) {
+      return res.sendStatus(HTTP_NOT_FOUND);
+    }
+    if (fobPicture.fob_id != fobId) {
+      return res.sendStatus(HTTP_NOT_FOUND);
+    }
     res.status(HTTP_OK).json(fobPicture);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
