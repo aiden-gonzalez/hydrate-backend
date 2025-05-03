@@ -376,7 +376,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "string"
+                                "type": "object",
+                                "properties": {
+                                    "url": {
+                                        "description": "URL of the picture",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["url"]
                             }
                         }
                     },
