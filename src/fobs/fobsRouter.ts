@@ -34,16 +34,6 @@ fobsRouter.post('/fobs/:id/pictures',
   fobsController.addFobPicture // create a new fob picture
 ); // Create picture for fob
 
-// fobs/:id/pictures/:pictureId
-fobsRouter.get('/fobs/:id/pictures/:pictureId',
-  authenticateRequest, // authenticate request
-  fobsController.getFobPicture // get fob picture
-); // Get picture for fob
-fobsRouter.delete('/fobs/:id/pictures/:pictureId',
-  authenticateRequest, // authenticate request
-  fobsController.deleteFobPicture // delete fob picture
-); // Delete picture for fob
-
 // fobs/:id/ratings
 fobsRouter.get('/fobs/:id/ratings',
   authenticateRequest, // authenticate request

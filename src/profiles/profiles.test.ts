@@ -42,7 +42,6 @@ describe("PROFILES: getting and updating profiles", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it("fails to find a profile for user that doesn't exist", async () => {
@@ -157,7 +156,6 @@ describe("PROFILES: getting and updating profiles", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it("fails to get user contributions for a user that doesn't exist", async () => {

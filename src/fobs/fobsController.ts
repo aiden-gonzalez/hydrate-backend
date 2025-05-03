@@ -17,7 +17,6 @@ import {
   FOUNTAIN_ID_PREFIX,
   HTTP_NOT_FOUND
 } from "../utils/constants";
-import { IPicture } from "../utils/types";
 import {
   generateBathroomId,
   generateBathroomRatingId,
@@ -28,6 +27,7 @@ import {
 import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator, urlValidator} from "../utils/validation";
+import {IPicture} from "../pictures/types";
 
 // TODO think about how to set correct status depending on response from database
 // If id is invalid, should be 404 not found?
@@ -163,47 +163,6 @@ export async function addFobPicture(req, res) {
   try {
     const createdPicture = await db.createPicture(newPicture);
     res.status(HTTP_CREATED).json(createdPicture);
-  } catch (error) {
-    res.status(HTTP_INTERNAL_ERROR).send(error);
-  }
-}
-
-export async function getFobPicture(req, res) {
-  // Get path parameters
-  // TODO fobId is not considered here. This means that any fobId could be passed in
-  // and the picture would still be fetched if it exists. Depending on how potential future
-  // fobId permission logic is implemented, this could be a vulnerability.
-  const fobId = req.params.id;
-  const pictureId = req.params.pictureId;
-
-  // Get fountain picture
-  try {
-    const fobPicture = await db.getPictureById(pictureId);
-    if (fobPicture === undefined || fobPicture === null) {
-      return res.sendStatus(HTTP_NOT_FOUND);
-    }
-    if (fobPicture.fob_id != fobId) {
-      return res.sendStatus(HTTP_NOT_FOUND);
-    }
-    res.status(HTTP_OK).json(fobPicture);
-  } catch (error) {
-    res.status(HTTP_INTERNAL_ERROR).send(error);
-  }
-}
-
-export async function deleteFobPicture(req, res) {
-  // Get path parameters
-  // TODO do we care if the picture doesn't actually belong to the fountain which is specified?
-  // Currently we don't check that the picture belongs to the fountain before deleting it.
-  // We don't check the fountainId at all.
-  // TODO we also don't check who created the picture. There is no ownership here. Anyone can moderate anything.
-  // const fountainId = req.params.id;
-  const pictureId = req.params.pictureId;
-
-  // Delete fountain picture
-  try {
-    await db.deletePicture(pictureId);
-    res.status(HTTP_OK).send("Successfully removed picture");
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }

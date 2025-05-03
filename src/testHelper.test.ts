@@ -1,5 +1,6 @@
 import 'dotenv/config';
-import {ILocation, IPicture, IUser} from "./utils/types";
+import {ILocation, IUser} from "./utils/types";
+import {IPicture} from "./pictures/types";
 import {
   generateBathroomId, generateBathroomRatingId,
   generateFountainId,
@@ -194,6 +195,10 @@ export function getResMock () {
     "message": null,
     "send": function (message : any) {
       this["message"] = message;
+      return this;
+    },
+    "sendStatus": function (code : number) {
+      this["sentStatus"] = code;
       return this;
     },
     "sentStatus": null,

@@ -20,8 +20,6 @@ import {
   updateFob,
   getFobPictures,
   addFobPicture,
-  getFobPicture,
-  deleteFobPicture,
   getFobRatings,
   addFobRating,
   getFobRating,
@@ -53,8 +51,6 @@ describe("FOBS: CRUD of all kinds", () => {
   const updateFobFuncs = [authenticateRequest, updateFob];
   const getFobPicturesFuncs = [authenticateRequest, getFobPictures];
   const addFobPictureFuncs = [authenticateRequest, addFobPicture];
-  const getFobPictureFuncs = [authenticateRequest, getFobPicture];
-  const deleteFobPictureFuncs = [authenticateRequest, deleteFobPicture];
   const getFobRatingsFuncs = [authenticateRequest, getFobRatings];
   const addFobRatingFuncs = [authenticateRequest, addFobRating];
   const getFobRatingFuncs = [authenticateRequest, getFobRating];
@@ -288,7 +284,6 @@ describe("FOBS: CRUD of all kinds", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it("creates a fountain with authentication", async () => {
@@ -317,7 +312,6 @@ describe("FOBS: CRUD of all kinds", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it("gets all fountains with authentication", async () => {
@@ -401,7 +395,6 @@ describe("FOBS: CRUD of all kinds", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it ("gets a particular bathroom", async () => {
@@ -444,7 +437,6 @@ describe("FOBS: CRUD of all kinds", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it ("updates a fountain", async () => {
@@ -490,7 +482,6 @@ describe("FOBS: CRUD of all kinds", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it("can't create a fountain picture with invalid URL", async () => {
@@ -505,7 +496,9 @@ describe("FOBS: CRUD of all kinds", () => {
     req.params = {
       id: createdFobs[0].id
     };
-    req.body = "not a url"; // invalid picture link
+    req.body = {
+      "url": "not a url" // invalid picture link
+    };
 
     // Try to create fountain picture
     await simulateRouter(req, res, addFobPictureFuncs);
@@ -528,7 +521,9 @@ describe("FOBS: CRUD of all kinds", () => {
       id: createdFobs[0].id
     };
     const pictureToCreate = getPicture(createdFobs[0].id, user.id);
-    req.body = pictureToCreate.url; // valid picture link
+    req.body = {
+      "url": pictureToCreate.url
+    }; // valid picture link
 
     // Try to create fountain picture
     await simulateRouter(req, res, addFobPictureFuncs);
@@ -562,7 +557,6 @@ describe("FOBS: CRUD of all kinds", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it("gets bathroom pictures", async () => {
@@ -589,80 +583,6 @@ describe("FOBS: CRUD of all kinds", () => {
     expectEntitiesEqual(res.message, createdPictures);
   });
 
-  it("can't get a particular picture without authentication", async () => {
-    const req = getReqMock();
-    const res = getResMock();
-
-    // Create bathrooms
-    const createdBathrooms = await createFobs();
-
-    // Add pictures
-    const createdPictures = await createPictures(createdBathrooms[0].id, generateUserId());
-
-    // Set up request
-    req.params = {
-      pictureId: createdPictures[0].id
-    };
-
-    // Try to get picture
-    await simulateRouter(req, res, getFobPictureFuncs);
-
-    // Should have failed with unauthorized
-    expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
-  });
-
-  it("successfully gets a particular picture", async () => {
-    const user = await getUser();
-    const req = getAuthedReqMockForUser(user);
-    const res = getResMock();
-
-    // Create bathrooms
-    const createdBathrooms = await createFobs();
-
-    // Add pictures
-    const createdPictures = await createPictures(createdBathrooms[0].id, user.id);
-
-    // Set up request
-    req.params = {
-      pictureId: createdPictures[0].id
-    };
-
-    // Try to get picture
-    await simulateRouter(req, res, getFobPictureFuncs);
-
-    // Should have succeeded
-    expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdPictures[0]);
-  });
-
-  it("successfully deletes a picture while authenticated", async () => {
-    const user = await getUser();
-    const req = getAuthedReqMockForUser(user);
-    const res = getResMock();
-
-    // Create fountains
-    const createdFobs = await createFobs();
-
-    // Add pictures
-    const createdPictures = await createPictures(createdFobs[0].id, user.id);
-
-    // Set up request
-    req.params = {
-      pictureId: createdPictures[0].id
-    };
-
-    // Try to delete picture
-    await simulateRouter(req, res, deleteFobPictureFuncs);
-
-    // Should have succeeded
-    expect(res.sentStatus).to.equal(constants.HTTP_OK);
-
-    // Picture should not exist
-    const picture = await db.getPictureById(createdPictures[0].id);
-    expect(picture).to.be.undefined;
-  });
-
   it("can't create fountain rating without authentication", async () => {
     const req = getReqMock();
     const res = getResMock();
@@ -681,7 +601,6 @@ describe("FOBS: CRUD of all kinds", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it("can't create a fountain rating with invalid scores", async () => {
@@ -772,7 +691,6 @@ describe("FOBS: CRUD of all kinds", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it("successfully gets a particular bathroom rating", async () => {
@@ -821,7 +739,6 @@ describe("FOBS: CRUD of all kinds", () => {
 
     // Should have failed with unauthorized
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
   });
 
   it ("updates a fountain rating", async () => {
