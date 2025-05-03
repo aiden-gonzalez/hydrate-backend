@@ -1,14 +1,13 @@
 import 'dotenv/config';
 import express from 'express';
-import * as BodyParser from "body-parser";
 import * as OpenApiValidator from "express-openapi-validator";
+import {migrateToLatest} from "./db/migrate";
 
 // Routers
 import fobsRouter from "./fobs/fobsRouter";
 import authRouter from './auth/authRouter';
 import profilesRouter from './profiles/profilesRouter';
 import signupRouter from './signup/signupRouter';
-import {migrateToLatest} from "./db/migrate";
 
 // Server port
 const port = process.env.PORT;
@@ -19,12 +18,16 @@ const http = require("http");
 const app = express();
 
 // Body parser middleware
-app.use(BodyParser.json());
-app.use(BodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.text());
+app.use(express.urlencoded({ extended: false }));
+
 // Setup validator middleware (using to validate requests)
 app.use(
   OpenApiValidator.middleware({
     apiSpec: './hydRate.json',
+    validateApiSpec: true, // (default)
+    validateSecurity: true, // (default)
     validateRequests: true, // (default)
     validateResponses: true // false by default
   })
