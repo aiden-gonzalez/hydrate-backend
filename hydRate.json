@@ -426,7 +426,19 @@
                 }
             ]
         },
-        "/api/fobs/{id}/pictures/{pictureId}": {
+       "/api/pictures/{id}": {
+            "summary": "Get or delete a specific picture by its ID",
+            "parameters": [
+                {
+                    "name": "id",
+                    "description": "ID of the picture",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ],
             "get": {
                 "responses": {
                     "200": {
@@ -454,18 +466,18 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Get a specific picture for a Fob"
+                "summary": "Get a specific picture by ID"
             },
             "delete": {
                 "responses": {
                     "200": {
-                        "description": "Successfully removed picture!"
+                        "description": "Successfully deleted the picture"
                     },
                     "400": {
-                        "description": "Malformed request (missing ID?)"
+                        "description": "Malformed request (missing or invalid ID)"
                     },
                     "401": {
-                        "description": "Authentication/authorization failed!"
+                        "description": "Authentication/authorization failed"
                     },
                     "404": {
                         "description": "Picture with provided ID not found!"
@@ -476,28 +488,8 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Delete a specific picture for a Fob"
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "description": "ID of the Fob",
-                    "schema": {
-                        "type": "string"
-                    },
-                    "in": "path",
-                    "required": true
-                },
-                {
-                    "name": "pictureId",
-                    "description": "ID of the picture",
-                    "schema": {
-                        "type": "string"
-                    },
-                    "in": "path",
-                    "required": true
-                }
-            ]
+                "summary": "Delete a specific picture by ID"
+            }
         },
         "/api/fobs/{id}/ratings": {
             "summary": "Primary endpoint for adding (POST), retrieving (GET), and updating (PUT) Fob ratings",
