@@ -567,6 +567,37 @@ export interface paths {
       };
     };
   };
+  "/api/fobs/{id}/details": {
+    /** Get detailed information about a Fob */
+    get: {
+      parameters: {
+        path: {
+          /** @description ID of the Fob */
+          id: string;
+        };
+      };
+      responses: {
+        /** @description Successfully retrieved Fob details */
+        200: {
+          content: {
+            "application/json": components["schemas"]["FobWithDetails"];
+          };
+        };
+        /** @description Malformed request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication/authorization failed */
+        401: {
+          content: never;
+        };
+        /** @description Fob with provided ID not found */
+        404: {
+          content: never;
+        };
+      };
+    };
+  };
   "/": {
     /** Generic endpoint */
     get: {
@@ -1020,6 +1051,76 @@ export interface components {
       location: components["schemas"]["Location"];
       /** @description Details about the Fob */
       info: components["schemas"]["FountainInfo"] | components["schemas"]["BathroomInfo"];
+    };
+    /**
+     * @description Details of a Fob including its pictures and ratings
+     * @example {
+     *   "fob": {
+     *     "id": "fob123",
+     *     "info": {
+     *       "bottle_filler": true
+     *     },
+     *     "user_id": "user456",
+     *     "created_at": 1672531200000,
+     *     "updated_at": 1672617600000,
+     *     "name": "Example Fob",
+     *     "location": {
+     *       "longitude": 25.86,
+     *       "latitude": 2.67
+     *     }
+     *   },
+     *   "pictures": [
+     *     {
+     *       "id": "pic123",
+     *       "fob_id": "fob123",
+     *       "url": "https://example.com/pic1.jpg",
+     *       "user_id": "user789",
+     *       "created_at": 1672531200000,
+     *       "updated_at": 1672617600000
+     *     },
+     *     {
+     *       "id": "pic124",
+     *       "fob_id": "fob123",
+     *       "url": "https://example.com/pic2.jpg",
+     *       "user_id": "user789",
+     *       "created_at": 1672531200000,
+     *       "updated_at": 1672617600000
+     *     }
+     *   ],
+     *   "ratings": [
+     *     {
+     *       "id": "rating123",
+     *       "fob_id": "fob123",
+     *       "user_id": "user789",
+     *       "details": {
+     *         "pressure": 5,
+     *         "taste": 4,
+     *         "temperature": 3
+     *       },
+     *       "created_at": 1672531200000,
+     *       "updated_at": 1672617600000
+     *     },
+     *     {
+     *       "id": "rating124",
+     *       "fob_id": "fob123",
+     *       "user_id": "user456",
+     *       "details": {
+     *         "pressure": 5,
+     *         "taste": 4,
+     *         "temperature": 3
+     *       },
+     *       "created_at": 1672531200000,
+     *       "updated_at": 1672617600000
+     *     }
+     *   ]
+     * }
+     */
+    FobWithDetails: {
+      fob: components["schemas"]["Fob"];
+      /** @description Array of pictures associated with the Fob */
+      pictures: components["schemas"]["Picture"][];
+      /** @description Array of ratings associated with the Fob */
+      ratings: components["schemas"]["Rating"][];
     };
   };
   responses: never;

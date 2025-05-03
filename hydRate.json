@@ -761,6 +761,49 @@
                 }
             ]
         },
+        "/api/fobs/{id}/details": {
+            "summary": "Retrieve detailed information about a Fob, including all pictures and ratings",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of the Fob",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FobWithDetails"
+                                }
+                            }
+                        },
+                        "description": "Successfully retrieved Fob details"
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    },
+                    "404": {
+                        "description": "Fob with provided ID not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
+                "summary": "Get detailed information about a Fob"
+            }
+        },
         "/": {
             "get": {
                 "responses": {
@@ -1519,6 +1562,90 @@
                     "info": {
                         "bottle_filler": true
                     }
+                }
+            },
+            "FobWithDetails": {
+                "description": "Details of a Fob including its pictures and ratings",
+                "type": "object",
+                "properties": {
+                    "fob": {
+                        "$ref": "#/components/schemas/Fob"
+                    },
+                    "pictures": {
+                        "description": "Array of pictures associated with the Fob",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Picture"
+                        }
+                    },
+                    "ratings": {
+                        "description": "Array of ratings associated with the Fob",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Rating"
+                        }
+                    }
+                },
+                "required": ["fob", "pictures", "ratings"],
+                "example": {
+                    "fob": {
+                        "id": "fob123",
+                        "info": {
+                            "bottle_filler": true
+                        },
+                        "user_id": "user456",
+                        "created_at": 1672531200000,
+                        "updated_at": 1672617600000,
+                        "name": "Example Fob",
+                        "location": {
+                            "longitude": 25.86,
+                            "latitude": 2.67
+                        }
+                    },
+                    "pictures": [
+                        {
+                            "id": "pic123",
+                            "fob_id": "fob123",
+                            "url": "https://example.com/pic1.jpg",
+                            "user_id": "user789",
+                            "created_at": 1672531200000,
+                            "updated_at": 1672617600000
+                        },
+                        {
+                            "id": "pic124",
+                            "fob_id": "fob123",
+                            "url": "https://example.com/pic2.jpg",
+                            "user_id": "user789",
+                            "created_at": 1672531200000,
+                            "updated_at": 1672617600000
+                        }
+                    ],
+                    "ratings": [
+                        {
+                            "id": "rating123",
+                            "fob_id": "fob123",
+                            "user_id": "user789",
+                            "details": {
+                                "pressure": 5,
+                                "taste": 4,
+                                "temperature": 3
+                            },
+                            "created_at": 1672531200000,
+                            "updated_at": 1672617600000
+                        },
+                        {
+                            "id": "rating124",
+                            "fob_id": "fob123",
+                            "user_id": "user456",
+                            "details": {
+                                "pressure": 5,
+                                "taste": 4,
+                                "temperature": 3
+                            },
+                            "created_at": 1672531200000,
+                            "updated_at": 1672617600000
+                        }
+                    ]
                 }
             }
         },
