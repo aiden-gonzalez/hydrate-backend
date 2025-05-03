@@ -732,6 +732,42 @@ export interface components {
       updated_at?: number;
     };
     /**
+     * @description Details of a rating including the user who created it
+     * @example {
+     *   "rating": {
+     *     "id": "rating123",
+     *     "fob_id": "fob456",
+     *     "user_id": "user789",
+     *     "details": {
+     *       "pressure": 5,
+     *       "taste": 4,
+     *       "temperature": 3
+     *     },
+     *     "created_at": 1672531200000,
+     *     "updated_at": 1672617600000
+     *   },
+     *   "user": {
+     *     "id": "user789",
+     *     "username": "exampleUser",
+     *     "email": "example@example.com",
+     *     "hashed_password": {
+     *       "hash_pass": "hashedPassword",
+     *       "hash_salt": "hashedSalt"
+     *     },
+     *     "profile": {
+     *       "full_name": "Example User",
+     *       "picture_link": "https://example.com/profile.jpg"
+     *     },
+     *     "created_at": 1672531200000,
+     *     "updated_at": 1672617600000
+     *   }
+     * }
+     */
+    RatingWithDetails: {
+      rating: components["schemas"]["Rating"];
+      user: components["schemas"]["User"];
+    };
+    /**
      * @example {
      *   "id": "some text",
      *   "fob_id": "some text",
@@ -1089,38 +1125,73 @@ export interface components {
      *   ],
      *   "ratings": [
      *     {
-     *       "id": "rating123",
-     *       "fob_id": "fob123",
-     *       "user_id": "user789",
-     *       "details": {
-     *         "pressure": 5,
-     *         "taste": 4,
-     *         "temperature": 3
+     *       "rating": {
+     *         "id": "rating123",
+     *         "fob_id": "fob123",
+     *         "user_id": "user789",
+     *         "details": {
+     *           "pressure": 5,
+     *           "taste": 4,
+     *           "temperature": 3
+     *         },
+     *         "created_at": 1672531200000,
+     *         "updated_at": 1672617600000
      *       },
-     *       "created_at": 1672531200000,
-     *       "updated_at": 1672617600000
+     *       "user": {
+     *         "id": "user789",
+     *         "username": "exampleUser1",
+     *         "email": "example1@example.com",
+     *         "hashed_password": {
+     *           "hash_pass": "hashedPassword1",
+     *           "hash_salt": "hashedSalt1"
+     *         },
+     *         "profile": {
+     *           "full_name": "Example User 1",
+     *           "picture_link": "https://example.com/profile1.jpg"
+     *         },
+     *         "created_at": 1672531200000,
+     *         "updated_at": 1672617600000
+     *       }
      *     },
      *     {
-     *       "id": "rating124",
-     *       "fob_id": "fob123",
-     *       "user_id": "user456",
-     *       "details": {
-     *         "pressure": 5,
-     *         "taste": 4,
-     *         "temperature": 3
+     *       "rating": {
+     *         "id": "rating124",
+     *         "fob_id": "fob123",
+     *         "user_id": "user456",
+     *         "details": {
+     *           "pressure": 5,
+     *           "taste": 4,
+     *           "temperature": 3
+     *         },
+     *         "created_at": 1672531200000,
+     *         "updated_at": 1672617600000
      *       },
-     *       "created_at": 1672531200000,
-     *       "updated_at": 1672617600000
+     *       "user": {
+     *         "id": "user456",
+     *         "username": "exampleUser2",
+     *         "email": "example2@example.com",
+     *         "hashed_password": {
+     *           "hash_pass": "hashedPassword2",
+     *           "hash_salt": "hashedSalt2"
+     *         },
+     *         "profile": {
+     *           "full_name": "Example User 2",
+     *           "picture_link": "https://example.com/profile2.jpg"
+     *         },
+     *         "created_at": 1672531200000,
+     *         "updated_at": 1672617600000
+     *       }
      *     }
      *   ]
      * }
      */
     FobWithDetails: {
       fob: components["schemas"]["Fob"];
+      user?: components["schemas"]["User"];
       /** @description Array of pictures associated with the Fob */
       pictures: components["schemas"]["Picture"][];
-      /** @description Array of ratings associated with the Fob */
-      ratings: components["schemas"]["Rating"][];
+      /** @description Array of ratings (with details) associated with the Fob */
+      ratings: components["schemas"]["RatingWithDetails"][];
     };
   };
   responses: never;
