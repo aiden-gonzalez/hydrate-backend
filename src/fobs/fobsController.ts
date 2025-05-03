@@ -3,6 +3,7 @@ import {
   IFobCreationDetails,
   IFobInfo,
   IFobQueryParams,
+  IFobWithDetails,
   IRating,
   IRatingDetails
 } from "./types";
@@ -253,6 +254,38 @@ export async function updateFobRating(req, res) {
   try {
     const fobRating = await db.updateRating(ratingId, ratingUpdate);
     res.status(HTTP_OK).json(fobRating);
+  } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
+}
+
+export async function getFobWithDetails(req, res) {
+  // Get path parameter
+  const fobId = req.params.id;
+
+  try {
+    // Fetch fob details
+    const fob = await db.getFob(fobId);
+
+    // If fob not found
+    if (fob === undefined || fob === null) {
+      return res.sendStatus(HTTP_NOT_FOUND);
+    }
+
+    // Fetch associated pictures and ratings
+    const [pictures, ratings] = await Promise.all([
+      db.getPicturesForFob(fobId),
+      db.getRatingsForFob(fobId)
+    ]);
+
+    // Combine details
+    const fobWithDetails : IFobWithDetails = {
+      fob,
+      pictures,
+      ratings
+    };
+
+    res.status(HTTP_OK).json(fobWithDetails);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }

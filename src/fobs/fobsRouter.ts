@@ -24,6 +24,12 @@ fobsRouter.put('/fobs/:id',
   fobsController.updateFob // update fob
 ); // Update fob
 
+// fobs/:id/details
+fobsRouter.get('/fobs/:id/details',
+  authenticateRequest, // authenticate request
+  fobsController.getFobWithDetails // get fob with details
+); // Get fob with details
+
 // fobs/:id/pictures
 fobsRouter.get('/fobs/:id/pictures',
   authenticateRequest, // authenticate request

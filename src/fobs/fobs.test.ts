@@ -23,7 +23,8 @@ import {
   getFobRatings,
   addFobRating,
   getFobRating,
-  updateFobRating
+  updateFobRating,
+  getFobWithDetails
 } from "./fobsController";
 import {
   IFob,
@@ -55,6 +56,7 @@ describe("FOBS: CRUD of all kinds", () => {
   const addFobRatingFuncs = [authenticateRequest, addFobRating];
   const getFobRatingFuncs = [authenticateRequest, getFobRating];
   const updateFobRatingFuncs = [authenticateRequest, ratingPermissionCheck, updateFobRating];
+  const getFobWithDetailsFuncs = [authenticateRequest, getFobWithDetails];
 
   // TODO add more unhappy paths? Malformed data, bad responses?
 
@@ -767,5 +769,70 @@ describe("FOBS: CRUD of all kinds", () => {
     // Copy new updated at
     createdFobRatings[0].updated_at = res.message.updated_at;
     expect(createdFobRatings[0]).to.deep.equal(res.message);
+  });
+
+  it("can't get fob with details without authentication", async () => {
+    const req = getReqMock();
+    const res = getResMock();
+
+    // Create fobs
+    const createdFobs = await createFobs();
+
+    // Specify an ID in request
+    req.params = {
+      id: createdFobs[0].id
+    };
+
+    // Try to get fob details
+    await simulateRouter(req, res, getFobWithDetailsFuncs);
+
+    // Should have failed with unauthorized
+    expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
+  });
+
+  it("gets fob details with pictures and ratings", async () => {
+    const user = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create fobs
+    const createdFobs = await createFobs(user);
+
+    // Add pictures and ratings
+    const createdPictures = await createPictures(createdFobs[0].id, user.id);
+    const createdRatings = await createRatings(user, createdFobs[0]);
+
+    // Specify an ID in request
+    req.params = {
+      id: createdFobs[0].id
+    };
+
+    // Try to get fob details
+    await simulateRouter(req, res, getFobWithDetailsFuncs);
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expect(res.message).to.deep.equal({
+      fob: createdFobs[0],
+      pictures: createdPictures,
+      ratings: createdRatings
+    });
+  });
+
+  it("returns 404 for non-existent fob with details", async () => {
+    const user = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Specify a non-existent ID in request
+    req.params = {
+      id: "non-existent-id"
+    };
+
+    // Try to get fob details
+    await simulateRouter(req, res, getFobWithDetailsFuncs);
+
+    // Should have failed with not found
+    expect(res.sentStatus).to.equal(constants.HTTP_NOT_FOUND);
   });
 });

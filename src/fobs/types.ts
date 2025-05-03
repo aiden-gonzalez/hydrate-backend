@@ -20,6 +20,7 @@ export type IFobInfo = IFountainInfo | IBathroomInfo;
 export type IRating = components["schemas"]["Rating"];
 export type IRatingDetails = IFountainRatingDetails | IBathroomRatingDetails;
 export type IFobCreationDetails = components["schemas"]["FobCreationDetails"];
+export type IFobWithDetails = components["schemas"]["FobWithDetails"];
 export type IFobQueryParams =  paths["/api/fobs"]["get"]["parameters"]["query"];
 
 export function isFountain(fob: IFob) {
