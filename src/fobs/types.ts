@@ -19,6 +19,7 @@ export type IFob = components["schemas"]["Fob"];
 export type IFobInfo = IFountainInfo | IBathroomInfo;
 export type IRating = components["schemas"]["Rating"];
 export type IRatingDetails = IFountainRatingDetails | IBathroomRatingDetails;
+export type IRatingWithDetails = components["schemas"]["RatingWithDetails"];
 export type IFobCreationDetails = components["schemas"]["FobCreationDetails"];
 export type IFobWithDetails = components["schemas"]["FobWithDetails"];
 export type IFobQueryParams =  paths["/api/fobs"]["get"]["parameters"]["query"];

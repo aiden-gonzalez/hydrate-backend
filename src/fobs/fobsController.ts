@@ -273,11 +273,10 @@ export async function getFobWithDetails(req, res) {
     }
 
     // Fetch associated pictures and ratings
-    // TODO make this a single DB call, including the ratings with details
-    const [user, pictures, ratings] = await Promise.all([
+    const [user, pictures, ratingsWithDetails] = await Promise.all([
       db.getUserById(fob.user_id),
       db.getPicturesForFob(fobId),
-      db.getRatingsForFob(fobId)
+      db.getRatingsWithDetailsForFob(fobId)
     ]);
 
     // Combine details
@@ -285,7 +284,7 @@ export async function getFobWithDetails(req, res) {
       fob,
       user,
       pictures,
-      ratings
+      ratingsWithDetails
     };
 
     res.status(HTTP_OK).json(fobWithDetails);

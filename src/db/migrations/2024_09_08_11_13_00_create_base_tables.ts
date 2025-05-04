@@ -1,5 +1,4 @@
 import {Kysely, sql} from 'kysely';
-
 const epochType = 'bigint';
 const epochSql = sql`(EXTRACT(EPOCH FROM NOW())::double precision*1000)::bigint`;
 
@@ -60,6 +59,26 @@ export async function up(db: Kysely<any>): Promise<void> {
         LEFT JOIN rating ON rating.fob_id = fob.id
         LEFT JOIN jsonb_each(rating.details) on true
       GROUP BY fob.id`
+    )
+    .execute();
+  await db.schema
+    .createView('rating_with_details')
+    .as(sql`
+      SELECT
+        rating.id as rating_id,
+        rating.fob_id,
+        rating.user_id,
+        rating.details,
+        rating.created_at as rating_created_at,
+        rating.updated_at as rating_updated_at,
+        user.username,
+        user.email,
+        user.hashed_password,
+        user.profile,
+        user.created_at as user_created_at,
+        user.updated_at as user_updated_at
+      FROM rating
+        inner join user on user.id = rating.user_id`
     )
     .execute();
 }

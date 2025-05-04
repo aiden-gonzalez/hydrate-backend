@@ -16,7 +16,8 @@ export interface Database {
   rating: RatingTable,
   user: UserTable,
   picture: PictureTable,
-  fob_with_rating: FobWithRatingView
+  fob_with_rating: FobWithRatingView,
+  rating_with_details: RatingWithDetailsView
 }
 
 type DbCreatedAt = ColumnType<number, number, never>
@@ -89,6 +90,23 @@ export interface RatingTable {
 export type Rating = Selectable<RatingTable>
 export type NewRating = Insertable<RatingTable>
 export type RatingUpdate = Updateable<RatingTable>
+
+export interface RatingWithDetailsView {
+  rating_id: string
+  fob_id: string
+  user_id: string
+  details: ColumnType<IRatingDetails, IRatingDetails, IRatingDetails>
+  rating_created_at: DbCreatedAt
+  rating_updated_at: DbUpdatedAt
+  username: string
+  email: string
+  hashed_password: ColumnType<IHashedPassword, IHashedPassword, IHashedPassword>
+  profile: ColumnType<IProfile, IProfile, IProfile>
+  user_created_at: DbCreatedAt
+  user_updated_at: DbUpdatedAt
+}
+
+export type RatingWithDetails = Selectable<RatingWithDetailsView>
 
 export interface UserTable {
   id: string

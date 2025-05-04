@@ -6,19 +6,19 @@ import {
   NewRating,
   NewUser, Picture,
   Rating,
-  RatingUpdate,
+  RatingUpdate, RatingWithDetails,
   User,
   UserUpdate
 } from './types';
 import {
   FobType,
   IFobInfo,
-  IFobQueryParams,
-  IRatingDetails
+  IFobQueryParams, IRating,
+  IRatingDetails, IRatingWithDetails
 } from "../fobs/types";
 import {sql} from "kysely";
 import {calculateLocationAtDistance} from "../utils/calculation";
-import {ILocation} from "../utils/types";
+import {ILocation, IUser} from "../utils/types";
 import {IUserContributionQueryParams, IUserContributions} from "../profiles/types";
 import * as constants from "../utils/constants";
 
@@ -112,6 +112,36 @@ export function getRating(id: string) : Promise<Rating> {
 
 export function getRatingsForFob(fobId: string) : Promise<Rating[]> {
   return db.selectFrom('rating').where('fob_id', '=', fobId).selectAll().execute();
+}
+
+export async function getRatingsWithDetailsForFob(fobId: string) : Promise<IRatingWithDetails[]> {
+  const queryResult : RatingWithDetails[] = await db.selectFrom('rating_with_details')
+    .where('fob_id', '=', fobId).selectAll().execute();
+
+  let results : IRatingWithDetails[] = [];
+  queryResult.forEach(ratingWithDetails => {
+    results.push({
+      rating: {
+        id: ratingWithDetails.rating_id,
+        fob_id: ratingWithDetails.fob_id,
+        user_id: ratingWithDetails.user_id,
+        details:  ratingWithDetails.details,
+        created_at: ratingWithDetails.rating_created_at,
+        updated_at: ratingWithDetails.rating_updated_at
+      } as IRating,
+      user: {
+        id:  ratingWithDetails.user_id,
+        username: ratingWithDetails.username,
+        email: ratingWithDetails.email,
+        hashed_password: ratingWithDetails.hashed_password,
+        profile: ratingWithDetails.profile,
+        created_at: ratingWithDetails.user_created_at,
+        updated_at: ratingWithDetails.user_updated_at
+      } as IUser
+    });
+  });
+
+  return results;
 }
 
 export function getRatingsByUser(userId: string) : Promise<Rating[]> {
