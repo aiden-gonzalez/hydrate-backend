@@ -71,14 +71,14 @@ export async function up(db: Kysely<any>): Promise<void> {
         rating.details,
         rating.created_at as rating_created_at,
         rating.updated_at as rating_updated_at,
-        user.username,
-        user.email,
-        user.hashed_password,
-        user.profile,
-        user.created_at as user_created_at,
-        user.updated_at as user_updated_at
+        "user".username,
+        "user".email,
+        "user".hashed_password,
+        "user".profile,
+        "user".created_at as user_created_at,
+        "user".updated_at as user_updated_at
       FROM rating
-        inner join user on user.id = rating.user_id`
+        inner join "user" on "user".id = rating.user_id`
     )
     .execute();
 }
