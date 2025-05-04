@@ -1623,7 +1623,7 @@
                             "$ref": "#/components/schemas/Picture"
                         }
                     },
-                    "ratings": {
+                    "ratingsWithDetails": {
                         "description": "Array of ratings (with details) associated with the Fob",
                         "type": "array",
                         "items": {
@@ -1631,7 +1631,7 @@
                         }
                     }
                 },
-                "required": ["fob", "pictures", "ratings"],
+                "required": ["fob", "user", "pictures", "ratingsWithDetails"],
                 "example": {
                     "fob": {
                         "id": "fob123",
@@ -1646,6 +1646,21 @@
                             "longitude": 25.86,
                             "latitude": 2.67
                         }
+                    },
+                    "user": {
+                        "username": "some text",
+                        "email": "some text",
+                        "hashed_password": {
+                            "hash_pass": "some text",
+                            "hash_salt": "some text"
+                        },
+                        "profile": {
+                            "full_name": "some text",
+                            "picture_link": "some text"
+                        },
+                        "id": "some text",
+                        "created_at": 1672531200000,
+                        "updated_at": 1672531200000
                     },
                     "pictures": [
                         {
@@ -1665,7 +1680,7 @@
                             "updated_at": 1672617600000
                         }
                     ],
-                    "ratings": [
+                    "ratingsWithDetails": [
                         {
                             "rating": {
                                 "id": "rating123",

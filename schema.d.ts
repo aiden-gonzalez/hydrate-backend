@@ -1105,6 +1105,21 @@ export interface components {
      *       "latitude": 2.67
      *     }
      *   },
+     *   "user": {
+     *     "username": "some text",
+     *     "email": "some text",
+     *     "hashed_password": {
+     *       "hash_pass": "some text",
+     *       "hash_salt": "some text"
+     *     },
+     *     "profile": {
+     *       "full_name": "some text",
+     *       "picture_link": "some text"
+     *     },
+     *     "id": "some text",
+     *     "created_at": 1672531200000,
+     *     "updated_at": 1672531200000
+     *   },
      *   "pictures": [
      *     {
      *       "id": "pic123",
@@ -1123,7 +1138,7 @@ export interface components {
      *       "updated_at": 1672617600000
      *     }
      *   ],
-     *   "ratings": [
+     *   "ratingsWithDetails": [
      *     {
      *       "rating": {
      *         "id": "rating123",
@@ -1187,11 +1202,11 @@ export interface components {
      */
     FobWithDetails: {
       fob: components["schemas"]["Fob"];
-      user?: components["schemas"]["User"];
+      user: components["schemas"]["User"];
       /** @description Array of pictures associated with the Fob */
       pictures: components["schemas"]["Picture"][];
       /** @description Array of ratings (with details) associated with the Fob */
-      ratings: components["schemas"]["RatingWithDetails"][];
+      ratingsWithDetails: components["schemas"]["RatingWithDetails"][];
     };
   };
   responses: never;
