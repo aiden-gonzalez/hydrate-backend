@@ -152,7 +152,7 @@ export function updateRating(id: string, updateWith: IRatingDetails) : Promise<R
   const update : RatingUpdate = {
     details: updateWith
   };
-  return db.updateTable('rating').set(update).where('id', '=', id).returningAll().executeTakeFirst();
+  return parseTimestampsPromise(db.updateTable('rating').set(update).where('id', '=', id).returningAll().executeTakeFirst());
 }
 
 // USER

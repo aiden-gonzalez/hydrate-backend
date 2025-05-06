@@ -791,7 +791,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("gets fob details with pictures and ratings", async () => {
-    const user = await getUser();
+    const user = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -814,8 +814,12 @@ describe("FOBS: CRUD of all kinds", () => {
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
     expect(res.message).to.deep.equal({
       fob: createdFobs[0],
+      user: user,
       pictures: createdPictures,
-      ratings: createdRatings
+      ratingsWithDetails: createdRatings.map((rating) => { return {
+        user: user,
+        rating: rating
+      }})
     });
   });
 
