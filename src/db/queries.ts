@@ -103,15 +103,15 @@ export function deleteFob(id: string) : Promise<Fob> {
 
 // RATINGS
 export function createRating(rating: NewRating) : Promise<Rating> {
-  return db.insertInto('rating').values(rating).returningAll().executeTakeFirstOrThrow();
+  return parseTimestampsPromise(db.insertInto('rating').values(rating).returningAll().executeTakeFirstOrThrow());
 }
 
 export function getRating(id: string) : Promise<Rating> {
-  return db.selectFrom('rating').where('id', '=', id).selectAll().executeTakeFirst();
+  return parseTimestampsPromise(db.selectFrom('rating').where('id', '=', id).selectAll().executeTakeFirst());
 }
 
 export function getRatingsForFob(fobId: string) : Promise<Rating[]> {
-  return db.selectFrom('rating').where('fob_id', '=', fobId).selectAll().execute();
+  return parseArrayTimestampsPromise(db.selectFrom('rating').where('fob_id', '=', fobId).selectAll().execute());
 }
 
 export async function getRatingsWithDetailsForFob(fobId: string) : Promise<IRatingWithDetails[]> {
@@ -121,15 +121,15 @@ export async function getRatingsWithDetailsForFob(fobId: string) : Promise<IRati
   let results : IRatingWithDetails[] = [];
   queryResult.forEach(ratingWithDetails => {
     results.push({
-      rating: {
+      rating: parseTimestamps({
         id: ratingWithDetails.rating_id,
         fob_id: ratingWithDetails.fob_id,
         user_id: ratingWithDetails.user_id,
         details:  ratingWithDetails.details,
         created_at: ratingWithDetails.rating_created_at,
         updated_at: ratingWithDetails.rating_updated_at
-      } as IRating,
-      user: {
+      }) as IRating,
+      user: parseTimestamps({
         id:  ratingWithDetails.user_id,
         username: ratingWithDetails.username,
         email: ratingWithDetails.email,
@@ -137,7 +137,7 @@ export async function getRatingsWithDetailsForFob(fobId: string) : Promise<IRati
         profile: ratingWithDetails.profile,
         created_at: ratingWithDetails.user_created_at,
         updated_at: ratingWithDetails.user_updated_at
-      } as IUser
+      }) as IUser
     });
   });
 
@@ -145,7 +145,7 @@ export async function getRatingsWithDetailsForFob(fobId: string) : Promise<IRati
 }
 
 export function getRatingsByUser(userId: string) : Promise<Rating[]> {
-  return db.selectFrom('rating').where('user_id', '=', userId).selectAll().execute();
+  return parseArrayTimestampsPromise(db.selectFrom('rating').where('user_id', '=', userId).selectAll().execute());
 }
 
 export function updateRating(id: string, updateWith: IRatingDetails) : Promise<Rating> {
@@ -161,15 +161,15 @@ export function createUser(user: NewUser) : Promise<User> {
 }
 
 export function getUserById(id: string) : Promise<User> {
-  return db.selectFrom('user').where('id', '=', id).selectAll().executeTakeFirst();
+  return parseTimestampsPromise(db.selectFrom('user').where('id', '=', id).selectAll().executeTakeFirst());
 }
 
 export function getUserByUsername(username: string) : Promise<User> {
-  return db.selectFrom('user').where('username', '=', username).selectAll().executeTakeFirst();
+  return parseTimestampsPromise(db.selectFrom('user').where('username', '=', username).selectAll().executeTakeFirst());
 }
 
 export function getUserByEmail(email: string) : Promise<User> {
-  return db.selectFrom('user').where('email', '=', email).selectAll().executeTakeFirst();
+  return parseTimestampsPromise(db.selectFrom('user').where('email', '=', email).selectAll().executeTakeFirst());
 }
 
 export function updateUserProfileByUsername(username: string, updateWith : UserUpdate) : Promise<User> {
@@ -214,36 +214,36 @@ export function getPicturesForFob(fobId: string) : Promise<Picture[]> {
 }
 
 export function getPicturesByUser(userId: string) : Promise<Picture[]> {
-  return db.selectFrom('picture').where('user_id', '=', userId).selectAll().execute();
+  return parseArrayTimestampsPromise(db.selectFrom('picture').where('user_id', '=', userId).selectAll().execute());
 }
 
 export function deletePicture(id: string) : Promise<Picture> {
   return db.deleteFrom('picture').where('id', '=', id).returningAll().executeTakeFirst();
 }
 
-export function parseTimestampsPromise(item : Promise<any>) : Promise<any> {
+function parseTimestampsPromise(item : Promise<any>) : Promise<any> {
   return new Promise((resolve, reject) => {
     item.then((result) => {
-      if (result !== undefined
-        && result !== null
-        && result.hasOwnProperty('created_at')
-        && result.hasOwnProperty('updated_at')) {
-        result.created_at = parseInt(result.created_at);
-        result.updated_at = parseInt(result.updated_at);
-      }
-      resolve(result);
+      resolve(parseTimestamps(result));
     }).catch((error) => reject(error));
   });
 }
 
-export function parseArrayTimestampsPromise(itemArray: Promise<any[]>) : Promise<any[]> {
+function parseArrayTimestampsPromise(itemArray: Promise<any[]>) : Promise<any[]> {
   return new Promise((resolve, reject) => {
     itemArray.then((result) => {
-      resolve(result.map((item) => {
-        item.created_at = parseInt(item.created_at);
-        item.updated_at = parseInt(item.updated_at);
-        return item;
-      }));
+      resolve(result.map(parseTimestamps));
     }).catch((error) => reject(error));
   });
+}
+
+function parseTimestamps(item: any) : any {
+  if (item !== undefined
+    && item !== null
+    && item.hasOwnProperty('created_at')
+    && item.hasOwnProperty('updated_at')) {
+    item.created_at = parseInt(item.created_at);
+    item.updated_at = parseInt(item.updated_at);
+  }
+  return item;
 }
