@@ -545,7 +545,11 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Rating"
+                                "description": "Details of the rating, specific to the type of Fob",
+                                "oneOf": [
+                                    { "$ref": "#/components/schemas/FountainRatingDetails" },
+                                    { "$ref": "#/components/schemas/BathroomRatingDetails" }
+                                ]
                             }
                         }
                     },

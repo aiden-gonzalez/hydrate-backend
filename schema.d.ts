@@ -392,7 +392,7 @@ export interface paths {
       };
       requestBody: {
         content: {
-          "application/json": components["schemas"]["Rating"];
+          "application/json": components["schemas"]["FountainRatingDetails"] | components["schemas"]["BathroomRatingDetails"];
         };
       };
       responses: {
