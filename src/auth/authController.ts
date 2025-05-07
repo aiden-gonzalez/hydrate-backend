@@ -33,12 +33,20 @@ export async function validatePassword (req, res) {
   return res.status(constants.HTTP_OK).send(getAuthSuccessResponse(user));
 }
 
-export function validateRefresh(req, res) {
+export async function validateRefresh(req, res) {
   // Get refresh token from request
   const refreshRequest : IAuthRefreshRequest = req.body;
 
   // Validate token
   validateToken(refreshRequest.refresh_token).then((user: IUser) => {
+    // Check that user still exists in db
+    const dbUser = db.getUserById(user.id);
+
+    // If user account is non-existent, then we consider the tokens invalid
+    if (dbUser === undefined || dbUser === null) {
+      return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
+    }
+
     // Send new tokens
     return res.status(constants.HTTP_OK).send(getAuthSuccessResponse(user));
   }).catch((error) => {
