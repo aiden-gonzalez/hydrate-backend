@@ -197,12 +197,18 @@ export async function addFobRating(req, res) {
   const isFountainRating = fobId.startsWith(FOUNTAIN_ID_PREFIX);
   if (isFountainRating) {
     const fountainRatingDetails = (ratingDetails as IFountainRatingDetails);
-    if (!ratingDetailValueValidator(fountainRatingDetails.taste) || !ratingDetailValueValidator(fountainRatingDetails.temperature) || !ratingDetailValueValidator(fountainRatingDetails.pressure)) {
+    if (!ratingDetailValueValidator(fountainRatingDetails.taste)
+      || !ratingDetailValueValidator(fountainRatingDetails.temperature)
+      || !ratingDetailValueValidator(fountainRatingDetails.pressure)) {
       return res.status(HTTP_BAD_REQUEST).send("Invalid rating detail value(s)!");
     }
   } else {
     const bathroomRatingDetails = (ratingDetails as IBathroomRatingDetails);
-    if (!ratingDetailValueValidator(bathroomRatingDetails.washing) || !ratingDetailValueValidator(bathroomRatingDetails.decor) || !ratingDetailValueValidator(bathroomRatingDetails.cleanliness) || !ratingDetailValueValidator(bathroomRatingDetails.drying) || !ratingDetailValueValidator(bathroomRatingDetails.privacy)) {
+    if (!ratingDetailValueValidator(bathroomRatingDetails.washing)
+      || !ratingDetailValueValidator(bathroomRatingDetails.decor)
+      || !ratingDetailValueValidator(bathroomRatingDetails.cleanliness)
+      || !ratingDetailValueValidator(bathroomRatingDetails.drying)
+      || !ratingDetailValueValidator(bathroomRatingDetails.privacy)) {
       return res.status(HTTP_BAD_REQUEST).send("Invalid rating detail value(s)!");
     }
   }
