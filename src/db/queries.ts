@@ -29,7 +29,7 @@ export function createFob(fob: NewFob) : Promise<Fob> {
 }
 
 export function getFob(id: string) : Promise<Fob> {
-  return parseTimestampsPromise(db.selectFrom('fob').where('id', '=', id).selectAll().executeTakeFirst());
+  return parseTimestampsPromise(db.selectFrom('fob_with_rating').where('id', '=', id).selectAll().executeTakeFirst());
 }
 
 export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
