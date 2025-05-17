@@ -326,6 +326,17 @@
         },
         "/api/fobs/{id}/pictures": {
             "summary": "Add, retrieve, and delete pictures for a Fob",
+            "parameters": [
+                {
+                    "name": "id",
+                    "description": "ID of the Fob",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ],
             "get": {
                 "responses": {
                     "200": {
@@ -358,62 +369,7 @@
                 ],
                 "summary": "Get pictures for a Fob",
                 "description": "Fetches all pictures if no offset is provided. Otherwise, fetches just the picture at the specified offset."
-            },
-            "post": {
-                "requestBody": {
-                    "description": "Picture link",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "url": {
-                                        "description": "URL of the picture",
-                                        "type": "string"
-                                    }
-                                },
-                                "required": ["url"]
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Picture"
-                                }
-                            }
-                        },
-                        "description": "Successfully added picture!"
-                    },
-                    "400": {
-                        "description": "Malformed request"
-                    },
-                    "401": {
-                        "description": "Authentication/authorization failed"
-                    }
-                },
-                "security": [
-                    {
-                        "Access_Token": []
-                    }
-                ],
-                "summary": "Add a picture for a Fob"
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "description": "ID of the Fob",
-                    "schema": {
-                        "type": "string"
-                    },
-                    "in": "path",
-                    "required": true
-                }
-            ]
+            }
         },
        "/api/pictures/{id}": {
             "summary": "Get or delete a specific picture by its ID",
