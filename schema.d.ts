@@ -209,10 +209,7 @@ export interface paths {
     };
   };
   "/api/fobs/{id}/pictures": {
-    /**
-     * Get pictures for a Fob
-     * @description Fetches all pictures if no offset is provided. Otherwise, fetches just the picture at the specified offset.
-     */
+    /** Get pictures for a Fob */
     get: {
       parameters: {
         path: {
@@ -224,7 +221,7 @@ export interface paths {
         /** @description Successful pictures request */
         200: {
           content: {
-            "application/json": components["schemas"]["Picture"][];
+            "application/json": components["schemas"]["PictureSignedUrl"];
           };
         };
         /** @description Malformed request (may be missing required parameters) */
@@ -261,7 +258,7 @@ export interface paths {
         /** @description Successful picture upload URL request */
         200: {
           content: {
-            "application/json": components["schemas"]["PictureUpload"];
+            "application/json": components["schemas"]["PictureSignedUrl"];
           };
         };
         /** @description Malformed request */
@@ -829,14 +826,14 @@ export interface components {
     };
     /**
      * @example {
-     *   "upload_url": "some text",
+     *   "signed_url": "some text",
      *   "expires": 174857296748
      * }
      */
-    PictureUpload: {
-      /** @description Upload URL for picture */
-      upload_url: string;
-      /** @description Expiration time of the upload URL in Unix epoch milliseconds */
+    PictureSignedUrl: {
+      /** @description Signed URL for picture */
+      signed_url: string;
+      /** @description Expiration time of the signed URL in Unix epoch milliseconds */
       expires?: number;
     };
     /**

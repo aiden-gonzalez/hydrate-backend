@@ -343,10 +343,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Picture"
-                                    }
+                                    "$ref": "#/components/schemas/PictureSignedUrl"
                                 }
                             }
                         },
@@ -367,8 +364,7 @@
                         "Access_Token": []
                     }
                 ],
-                "summary": "Get pictures for a Fob",
-                "description": "Fetches all pictures if no offset is provided. Otherwise, fetches just the picture at the specified offset."
+                "summary": "Get pictures for a Fob"
             }
         },
         "/api/fobs/{id}/pictures/upload": {
@@ -390,7 +386,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PictureUpload"
+                                    "$ref": "#/components/schemas/PictureSignedUrl"
                                 }
                             }
                         },
@@ -1131,21 +1127,21 @@
                     "updated_at": 86
                 }
             },
-            "PictureUpload": {
-                "required": ["upload_url"],
+            "PictureSignedUrl": {
+                "required": ["signed_url"],
                 "type": "object",
                 "properties": {
-                    "upload_url": {
-                        "description": "Upload URL for picture",
+                    "signed_url": {
+                        "description": "Signed URL for picture",
                         "type": "string"
                     },
                     "expires": {
-                        "description": "Expiration time of the upload URL in Unix epoch milliseconds",
+                        "description": "Expiration time of the signed URL in Unix epoch milliseconds",
                         "type": "integer"
                     }
                 },
                 "example": {
-                    "upload_url": "some text",
+                    "signed_url": "some text",
                     "expires": 174857296748
                 }
             },
