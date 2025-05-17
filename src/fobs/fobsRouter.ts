@@ -35,10 +35,10 @@ fobsRouter.get('/fobs/:id/pictures',
   authenticateRequest, // authenticate request
   fobsController.getFobPictures // get fob pictures
 ); // Get pictures for fob
-fobsRouter.post('/fobs/:id/pictures',
+fobsRouter.get('/fobs/:id/pictures/upload',
   authenticateRequest, // authenticate request
-  fobsController.addFobPicture // create a new fob picture
-); // Create picture for fob
+  fobsController.getFobPictureUploadUrl // get a fob picture upload url
+); // Get fob picture upload url
 
 // fobs/:id/ratings
 fobsRouter.get('/fobs/:id/ratings',
