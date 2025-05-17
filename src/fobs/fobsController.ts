@@ -16,20 +16,23 @@ import {
   HTTP_INTERNAL_ERROR,
   HTTP_OK,
   FOUNTAIN_ID_PREFIX,
-  HTTP_NOT_FOUND
+  HTTP_NOT_FOUND,
+  S3_DOWNLOAD_URL_EXPIRATION,
+  S3_UPLOAD_URL_EXPIRATION
 } from "../utils/constants";
 import {
   generateBathroomId,
   generateBathroomRatingId,
   generateFountainId,
   generateFountainRatingId,
-  generatePictureId
+  generatePictureId,
+  generateS3PictureKey
 } from "../utils/generate";
 import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // TODO think about how to set correct status depending on response from database
@@ -158,10 +161,9 @@ export async function getFobPicturesUrl(req, res) {
           Bucket: bucketName,
           Key: key
         });
-        const expiresIn = 60 * 60; // 1 hour
         const signedUrl : IPictureSignedUrl = {
-          signed_url: await getSignedUrl(s3, command, { expiresIn }),
-          expires: Date.now() + (expiresIn * 1000)
+          signed_url: await getSignedUrl(s3, command, { expiresIn: S3_DOWNLOAD_URL_EXPIRATION }),
+          expires: Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000)
         }
         return signedUrl;
       })
@@ -174,26 +176,39 @@ export async function getFobPicturesUrl(req, res) {
 }
 
 export async function getFobPictureUploadUrl(req, res) {
-  // Create signed upload URL
-  const uploadUrl = "";
-
-  // Create a new picture
-  const newPicture : IPicture = {
-    id: generatePictureId(),
-    user_id: req.user.id,
-    fob_id: req.fob.id,
-    pending: true,
-    url: uploadUrl
-  };
-
-  // Create signed URL response
-  const newPictureSignedUrl : IPictureSignedUrl = {
-    signed_url: uploadUrl,
-    expires: 0
-  };
-
   try {
+    // S3 config - update these as needed for your environment
+    const s3 = new S3Client({ region: process.env.AWS_REGION });
+    const bucketName = process.env.AWS_S3_BUCKET_NAME;
+
+    // Generate a new picture ID and S3 key
+    const pictureId = generatePictureId();
+    const key = generateS3PictureKey(pictureId, req.fob.id);
+
+    // For upload, use PutObjectCommand
+    const putCommand = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: key
+    });
+    const signedUploadUrl = await getSignedUrl(s3, putCommand, { expiresIn: S3_UPLOAD_URL_EXPIRATION });
+
+    // Create a new picture entry in the DB with pending = true and the S3 key as url
+    const newPicture: IPicture = {
+      id: pictureId,
+      user_id: req.user.id,
+      fob_id: req.fob.id,
+      pending: true,
+      url: key
+    };
+
     await db.createPicture(newPicture);
+
+    // Respond with the signed upload URL and expiry
+    const newPictureSignedUrl: IPictureSignedUrl = {
+      signed_url: signedUploadUrl,
+      expires: Date.now() + (S3_UPLOAD_URL_EXPIRATION * 1000)
+    };
+
     res.status(HTTP_CREATED).json(newPictureSignedUrl);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
