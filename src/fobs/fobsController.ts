@@ -27,8 +27,8 @@ import {
 } from "../utils/generate";
 import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
-import {ratingDetailValueValidator, urlValidator} from "../utils/validation";
-import {IPicture} from "../pictures/types";
+import {ratingDetailValueValidator} from "../utils/validation";
+import {IPicture, IPictureSignedUrl} from "../pictures/types";
 
 // TODO think about how to set correct status depending on response from database
 // If id is invalid, should be 404 not found?
@@ -44,7 +44,7 @@ export async function ratingPermissionCheck(req, res, next) {
   // Get authenticated user id
   const userId = req.user.id;
 
-  // Get rating from database
+  // Get rating from the database
   const rating = await db.getRating(ratingId);
 
   // Check if user owns rating
@@ -54,6 +54,27 @@ export async function ratingPermissionCheck(req, res, next) {
 
   // User owns the rating, carry on
   return next();
+}
+
+export async function attachFobToReq(req, res, next) {
+  // Get path parameter
+  const fobId = req.params.id;
+
+  try {
+    // Try to get fob from the database
+    const fob = await db.getFob(fobId);
+
+    // If fob doesn't exist, return 404
+    if (fob === undefined || fob === null) {
+      return res.sendStatus(HTTP_NOT_FOUND);
+    }
+
+    // Fob exists, attach to request and continue
+    req.fob = fob;
+    return next();
+  } catch (error) {
+    return res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
 }
 
 export async function getFobs(req, res) {
@@ -97,46 +118,28 @@ export async function createFob(req, res) {
   }
 }
 
-export async function getFobById(req, res) {
-  // Get path parameter
-  const fobId = req.params.id;
-
-  // Get fountain
-  try {
-    const fob = await db.getFob(fobId);
-    if (fob === undefined || fob === null) {
-      return res.sendStatus(HTTP_NOT_FOUND);
-    }
-    res.status(HTTP_OK).json(fob);
-  } catch (error) {
-    res.status(HTTP_INTERNAL_ERROR).send(error);
-  }
+export async function returnFob(req, res) {
+  return res.status(HTTP_OK).json(req.fob);
 }
 
 export async function updateFob(req, res) {
-  // Get path parameter
-  const fobId = req.params.id;
-
   // Get fob info
   const fobUpdate : IFobInfo = req.body;
 
   // Update fob
   try {
-    const fob = await db.updateFob(fobId, fobUpdate);
+    const fob = await db.updateFob(req.fob.id, fobUpdate);
     res.status(HTTP_OK).json(fob);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }
 }
 
-export async function getFobPictures(req, res) {
-  // Get path parameter
-  const fobId = req.params.id;
-
+export async function getFobPicturesUrl(req, res) {
   // Get fountain pictures
   try {
-    const fobPictures = await db.getPicturesForFob(fobId);
-    // If there are no pictures, return blank
+    const fobPictures = await db.getPicturesForFob(req.fob.id);
+    // If there are no pictures, return
     res.status(HTTP_OK).json(fobPictures);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
@@ -144,27 +147,31 @@ export async function getFobPictures(req, res) {
 }
 
 export async function getFobPictureUploadUrl(req, res) {
-  // Get path parameter
-  const fobId = req.params.id;
-  // Get picture url from request
-  const pictureUrl = req.body.url;
+  // Create signed upload URL
+  const uploadUrl = "";
 
-  // Validate url
-  if (!urlValidator(pictureUrl)) {
-    return res.status(HTTP_BAD_REQUEST).send("Invalid picture URL!");
-  }
-
-  // Create picture
+  // Create a new picture
   const newPicture : IPicture = {
     id: generatePictureId(),
     user_id: req.user.id,
-    fob_id: fobId,
-    url: pictureUrl
-  }
+    fob_id: req.fob.id,
+    pending: true,
+    url: uploadUrl
+  };
+
+  // Create signed URL response
+  const newPictureSignedUrl : IPictureSignedUrl = {
+    signed_url: uploadUrl,
+    expires: 0
+  };
 
   try {
     const createdPicture = await db.createPicture(newPicture);
-    res.status(HTTP_CREATED).json(createdPicture);
+    if (createdPicture.url == uploadUrl) {
+      res.status(HTTP_CREATED).json(newPictureSignedUrl);
+    } else {
+      res.status(HTTP_INTERNAL_ERROR);
+    }
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }

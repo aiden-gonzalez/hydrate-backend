@@ -17,10 +17,12 @@ fobsRouter.post('/fobs',
 // fobs/:id
 fobsRouter.get('/fobs/:id',
   authenticateRequest, // authenticate request
-  fobsController.getFobById // get fob
+  fobsController.attachFobToReq, // attach fob to request
+  fobsController.returnFob // return fetched fob
 ); // Get fob
 fobsRouter.put('/fobs/:id',
   authenticateRequest, // authenticate request
+  fobsController.attachFobToReq, // attach fob to request
   fobsController.updateFob // update fob
 ); // Update fob
 
@@ -33,10 +35,12 @@ fobsRouter.get('/fobs/:id/details',
 // fobs/:id/pictures
 fobsRouter.get('/fobs/:id/pictures',
   authenticateRequest, // authenticate request
-  fobsController.getFobPictures // get fob pictures
-); // Get pictures for fob
+  fobsController.attachFobToReq, // attach fob to request
+  fobsController.getFobPicturesUrl // get fob pictures URL
+); // Get picture(s) URL for fob
 fobsRouter.get('/fobs/:id/pictures/upload',
   authenticateRequest, // authenticate request
+  fobsController.attachFobToReq, // attach fob to request
   fobsController.getFobPictureUploadUrl // get a fob picture upload url
 ); // Get fob picture upload url
 

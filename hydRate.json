@@ -356,7 +356,7 @@
                         "description": "Authentication/authorization failed"
                     },
                     "404": {
-                        "description": "Pictures of Fob do not exist!"
+                        "description": "Fob with given ID does not exist!"
                     }
                 },
                 "security": [

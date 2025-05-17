@@ -232,7 +232,7 @@ export interface paths {
         401: {
           content: never;
         };
-        /** @description Pictures of Fob do not exist! */
+        /** @description Fob with given ID does not exist! */
         404: {
           content: never;
         };
