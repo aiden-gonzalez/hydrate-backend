@@ -139,8 +139,19 @@ export async function getFobPicturesUrl(req, res) {
   // Get fountain pictures
   try {
     const fobPictures = await db.getPicturesForFob(req.fob.id);
-    // If there are no pictures, return
-    res.status(HTTP_OK).json(fobPictures);
+
+    // If there are no pictures, return with no body
+    if (fobPictures.length == 0) {
+      return res.sendStatus(HTTP_OK);
+    }
+
+    // Create S3 download URL for this set of pictures
+    const signedUrl : IPictureSignedUrl = {
+      signed_url: "",
+      expires: 0
+    };
+
+    res.status(HTTP_OK).json(signedUrl);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }
@@ -166,12 +177,8 @@ export async function getFobPictureUploadUrl(req, res) {
   };
 
   try {
-    const createdPicture = await db.createPicture(newPicture);
-    if (createdPicture.url == uploadUrl) {
-      res.status(HTTP_CREATED).json(newPictureSignedUrl);
-    } else {
-      res.status(HTTP_INTERNAL_ERROR);
-    }
+    await db.createPicture(newPicture);
+    res.status(HTTP_CREATED).json(newPictureSignedUrl);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }
