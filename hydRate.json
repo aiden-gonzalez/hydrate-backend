@@ -457,7 +457,43 @@
                 "summary": "Get a specific picture by ID"
             },
             "put": {
-
+                "summary": "Update the pending property of a Picture",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "pending": {
+                                        "type": "boolean",
+                                        "description": "Updated pending status of the picture"
+                                    }
+                                },
+                                "required": ["pending"]
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the picture's pending status"
+                    },
+                    "400": {
+                        "description": "Malformed request (missing or invalid ID or body)"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    },
+                    "404": {
+                        "description": "Picture with provided ID not found!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ]
             },
             "delete": {
                 "responses": {
