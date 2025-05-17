@@ -16,9 +16,9 @@ import {
   ratingPermissionCheck,
   getFobs,
   createFob,
-  getFobById,
+  returnFob,
   updateFob,
-  getFobPictures,
+  getFobPicturesUrl,
   addFobPicture,
   getFobRatings,
   addFobRating,
@@ -48,9 +48,9 @@ import {Fob, NewFob} from "../db/types";
 describe("FOBS: CRUD of all kinds", () => {
   const getFobsFuncs = [authenticateRequest, getFobs];
   const createFobFuncs = [authenticateRequest, createFob];
-  const getFobFuncs = [authenticateRequest, getFobById];
+  const getFobFuncs = [authenticateRequest, returnFob];
   const updateFobFuncs = [authenticateRequest, updateFob];
-  const getFobPicturesFuncs = [authenticateRequest, getFobPictures];
+  const getFobPicturesFuncs = [authenticateRequest, getFobPicturesUrl];
   const addFobPictureFuncs = [authenticateRequest, addFobPicture];
   const getFobRatingsFuncs = [authenticateRequest, getFobRatings];
   const addFobRatingFuncs = [authenticateRequest, addFobRating];
