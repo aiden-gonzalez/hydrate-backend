@@ -178,12 +178,9 @@ export async function getFobPictureUploadUrl(req, res) {
 }
 
 export async function getFobRatings(req, res) {
-  // Get path parameter
-  const fobId = req.params.id;
-
   // Get fountain ratings
   try {
-    const fobRatings = await db.getRatingsForFob(fobId);
+    const fobRatings = await db.getRatingsForFob(req.fob.id);
     res.status(HTTP_OK).json(fobRatings);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
@@ -194,15 +191,12 @@ export async function addFobRating(req, res) {
   // TODO we can create a rating for fountains and users that don't exist, can't we?
   // this is probably not a good thing :(
   // TODO one user can add unlimited ratings for the same fountain. Also not good :(
-  // Get path parameter
-  const fobId = req.params.id;
+
   // Get rating details from request
   const ratingDetails : IRatingDetails = req.body;
-  // Get authenticated user id
-  const userId = req.user.id;
 
   // Validate details
-  const isFountainRating = fobId.startsWith(FOUNTAIN_ID_PREFIX);
+  const isFountainRating = req.fob.id.startsWith(FOUNTAIN_ID_PREFIX);
   if (isFountainRating) {
     const fountainRatingDetails = (ratingDetails as IFountainRatingDetails);
     if (!ratingDetailValueValidator(fountainRatingDetails.taste)
@@ -224,8 +218,8 @@ export async function addFobRating(req, res) {
   // Create new fountain rating
   const newRating = {
     id: isFountainRating ? generateFountainRatingId() : generateBathroomRatingId(),
-    fob_id: fobId,
-    user_id: userId,
+    fob_id: req.fob.id,
+    user_id: req.user.id,
     details: ratingDetails
   } as IRating;
 
@@ -243,8 +237,8 @@ export async function addFobRating(req, res) {
 
 export async function getFobRating(req, res) {
   // Get path parameters
-  // TODO fountainId is not considered here, same potential issue as with pictures?
-  // const fountainId = req.params.id;
+  // TODO fobId is not considered here, same potential issue as with pictures?
+
   const ratingId = req.params.ratingId;
 
   // Get fountain rating
@@ -258,8 +252,8 @@ export async function getFobRating(req, res) {
 
 export async function updateFobRating(req, res) {
   // Get path parameters
-  // TODO fountainId is not considered here, same potential issue as with pictures?
-  // const fountainId = req.params.id;
+  // TODO fobId is not considered here, same potential issue as with pictures?
+
   const ratingId = req.params.ratingId;
   // Get new rating details from request
   const ratingUpdate : IRatingDetails = req.body;

@@ -47,20 +47,24 @@ fobsRouter.get('/fobs/:id/pictures/upload',
 // fobs/:id/ratings
 fobsRouter.get('/fobs/:id/ratings',
   authenticateRequest, // authenticate request
+  fobsController.attachFobToReq, // attach fob to request
   fobsController.getFobRatings // get fob ratings
 ); // Get fob ratings
 fobsRouter.post('/fobs/:id/ratings',
   authenticateRequest, // authenticate request
+  fobsController.attachFobToReq, // attach fob to request
   fobsController.addFobRating // create new fob rating
 ); // Create new fob rating
 
 // fobs/:id/ratings/:ratingId
 fobsRouter.get('/fobs/:id/ratings/:ratingId',
   authenticateRequest, // authenticate request
+  fobsController.attachFobToReq, // attach fob to request
   fobsController.getFobRating // get fob rating
 ); // Get fob rating
 fobsRouter.put('/fobs/:id/ratings/:ratingId',
   authenticateRequest, // authenticate request
+  fobsController.attachFobToReq, // attach fob to request
   fobsController.ratingPermissionCheck, // make sure user is allowed to update this rating
   fobsController.updateFobRating // update fob rating by id
 ); // Update fob rating
