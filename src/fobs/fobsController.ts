@@ -136,13 +136,14 @@ export async function getFobPictures(req, res) {
   // Get fountain pictures
   try {
     const fobPictures = await db.getPicturesForFob(fobId);
+    // If there are no pictures, return blank
     res.status(HTTP_OK).json(fobPictures);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }
 }
 
-export async function addFobPicture(req, res) {
+export async function getFobPictureUploadUrl(req, res) {
   // Get path parameter
   const fobId = req.params.id;
   // Get picture url from request
