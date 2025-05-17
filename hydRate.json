@@ -325,7 +325,7 @@
             ]
         },
         "/api/fobs/{id}/pictures": {
-            "summary": "Add, retrieve, and delete pictures for a Fob",
+            "summary": "Retrieve pictures for a Fob",
             "parameters": [
                 {
                     "name": "id",
@@ -371,8 +371,51 @@
                 "description": "Fetches all pictures if no offset is provided. Otherwise, fetches just the picture at the specified offset."
             }
         },
+        "/api/fobs/{id}/pictures/upload": {
+            "summary": "Retrieve a picture upload link for a Fob",
+            "parameters": [
+                {
+                    "name": "id",
+                    "description": "ID of the Fob",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PictureUpload"
+                                }
+                            }
+                        },
+                        "description": "Successful picture upload URL request"
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed"
+                    },
+                    "404": {
+                        "description": "Fob does not exist!"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
+                "summary": "Get picture upload link for a Fob"
+            }
+        },
        "/api/pictures/{id}": {
-            "summary": "Get or delete a specific picture by its ID",
+            "summary": "Get, update pending, or delete a specific picture by its ID",
             "parameters": [
                 {
                     "name": "id",
@@ -412,6 +455,9 @@
                     }
                 ],
                 "summary": "Get a specific picture by ID"
+            },
+            "put": {
+
             },
             "delete": {
                 "responses": {
@@ -1003,7 +1049,6 @@
                 }
             },
             "Picture": {
-                "description": "",
                 "required": [
                     "id",
                     "url",
@@ -1048,6 +1093,24 @@
                     "user_id": "some text",
                     "created_at": 9,
                     "updated_at": 86
+                }
+            },
+            "PictureUpload": {
+                "required": ["upload_url"],
+                "type": "object",
+                "properties": {
+                    "upload_url": {
+                        "description": "Upload URL for picture",
+                        "type": "string"
+                    },
+                    "expires": {
+                        "description": "Expiration time of the upload URL in Unix epoch milliseconds",
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "upload_url": "some text",
+                    "expires": 174857296748
                 }
             },
             "UserCredentials": {
