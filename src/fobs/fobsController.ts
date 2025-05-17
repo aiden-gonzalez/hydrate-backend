@@ -29,6 +29,8 @@ import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // TODO think about how to set correct status depending on response from database
 // If id is invalid, should be 404 not found?
@@ -136,22 +138,36 @@ export async function updateFob(req, res) {
 }
 
 export async function getFobPicturesUrl(req, res) {
-  // Get fountain pictures
   try {
     const fobPictures = await db.getPicturesForFob(req.fob.id);
 
     // If there are no pictures, return with no body
-    if (fobPictures.length == 0) {
+    if (fobPictures.length === 0) {
       return res.sendStatus(HTTP_OK);
     }
 
-    // Create S3 download URL for this set of pictures
-    const signedUrl : IPictureSignedUrl = {
-      signed_url: "",
-      expires: 0
-    };
+    // S3 config - update these as needed for your environment
+    const s3 = new S3Client({ region: process.env.AWS_REGION });
+    const bucketName = process.env.AWS_S3_BUCKET_NAME;
 
-    res.status(HTTP_OK).json(signedUrl);
+    // Generate signed URLs for each picture
+    const signedUrls = await Promise.all(
+      fobPictures.map(async (pic) => {
+        const key = pic.url; // assuming pic.url is the S3 object key
+        const command = new GetObjectCommand({
+          Bucket: bucketName,
+          Key: key
+        });
+        const expiresIn = 60 * 60; // 1 hour
+        const signedUrl : IPictureSignedUrl = {
+          signed_url: await getSignedUrl(s3, command, { expiresIn }),
+          expires: Date.now() + (expiresIn * 1000)
+        }
+        return signedUrl;
+      })
+    );
+
+    res.status(HTTP_OK).json(signedUrls);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }
