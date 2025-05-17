@@ -215,10 +215,6 @@ export interface paths {
      */
     get: {
       parameters: {
-        query?: {
-          /** @description Offset of photo to fetch (first picture is 0) */
-          offset?: number;
-        };
         path: {
           /** @description ID of the Fob */
           id: string;
@@ -239,34 +235,33 @@ export interface paths {
         401: {
           content: never;
         };
-        /** @description Picture of Fob with provided offset does not exist! */
+        /** @description Pictures of Fob do not exist! */
         404: {
           content: never;
         };
       };
     };
-    /** Add a picture for a Fob */
-    post: {
+    parameters: {
+      path: {
+        /** @description ID of the Fob */
+        id: string;
+      };
+    };
+  };
+  "/api/fobs/{id}/pictures/upload": {
+    /** Get picture upload link for a Fob */
+    get: {
       parameters: {
         path: {
           /** @description ID of the Fob */
           id: string;
         };
       };
-      /** @description Picture link */
-      requestBody: {
-        content: {
-          "application/json": {
-            /** @description URL of the picture */
-            url: string;
-          };
-        };
-      };
       responses: {
-        /** @description Successfully added picture! */
-        201: {
+        /** @description Successful picture upload URL request */
+        200: {
           content: {
-            "application/json": components["schemas"]["Picture"];
+            "application/json": components["schemas"]["PictureUpload"];
           };
         };
         /** @description Malformed request */
@@ -275,6 +270,10 @@ export interface paths {
         };
         /** @description Authentication/authorization failed */
         401: {
+          content: never;
+        };
+        /** @description Fob does not exist! */
+        404: {
           content: never;
         };
       };
@@ -303,6 +302,41 @@ export interface paths {
           };
         };
         /** @description Malformed request */
+        400: {
+          content: never;
+        };
+        /** @description Authentication/authorization failed */
+        401: {
+          content: never;
+        };
+        /** @description Picture with provided ID not found! */
+        404: {
+          content: never;
+        };
+      };
+    };
+    /** Update the pending property of a Picture */
+    put: {
+      parameters: {
+        path: {
+          /** @description ID of the picture */
+          id: string;
+        };
+      };
+      requestBody: {
+        content: {
+          "application/json": {
+            /** @description Updated pending status of the picture */
+            pending: boolean;
+          };
+        };
+      };
+      responses: {
+        /** @description Successfully updated the picture's pending status */
+        200: {
+          content: never;
+        };
+        /** @description Malformed request (missing or invalid ID or body) */
         400: {
           content: never;
         };
@@ -786,10 +820,24 @@ export interface components {
       url: string;
       /** @description ID of user that created the picture. */
       user_id: string;
+      /** @description Pending status of the picture (true or false). I.e., whether or not the picture is fully uploaded to S3 yet */
+      pending?: boolean;
       /** @description Created timestamp.  Unix epoch milliseconds. */
       created_at?: number;
       /** @description Updated timestamp.  Unix epoch milliseconds. */
       updated_at?: number;
+    };
+    /**
+     * @example {
+     *   "upload_url": "some text",
+     *   "expires": 174857296748
+     * }
+     */
+    PictureUpload: {
+      /** @description Upload URL for picture */
+      upload_url: string;
+      /** @description Expiration time of the upload URL in Unix epoch milliseconds */
+      expires?: number;
     };
     /**
      * @description Set of login credentials
