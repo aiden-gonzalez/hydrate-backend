@@ -14,12 +14,13 @@ import {expect} from "chai";
 import * as constants from "../utils/constants";
 import {
   ratingPermissionCheck,
+  attachFobToReq,
   getFobs,
   createFob,
   returnFob,
   updateFob,
   getFobPicturesUrl,
-  addFobPicture,
+  getFobPictureUploadUrl,
   getFobRatings,
   addFobRating,
   getFobRating,
@@ -48,14 +49,14 @@ import {Fob, NewFob} from "../db/types";
 describe("FOBS: CRUD of all kinds", () => {
   const getFobsFuncs = [authenticateRequest, getFobs];
   const createFobFuncs = [authenticateRequest, createFob];
-  const getFobFuncs = [authenticateRequest, returnFob];
-  const updateFobFuncs = [authenticateRequest, updateFob];
-  const getFobPicturesFuncs = [authenticateRequest, getFobPicturesUrl];
-  const addFobPictureFuncs = [authenticateRequest, addFobPicture];
-  const getFobRatingsFuncs = [authenticateRequest, getFobRatings];
-  const addFobRatingFuncs = [authenticateRequest, addFobRating];
-  const getFobRatingFuncs = [authenticateRequest, getFobRating];
-  const updateFobRatingFuncs = [authenticateRequest, ratingPermissionCheck, updateFobRating];
+  const getFobFuncs = [authenticateRequest, attachFobToReq, returnFob];
+  const updateFobFuncs = [authenticateRequest, attachFobToReq, updateFob];
+  const getFobPicturesFuncs = [authenticateRequest, attachFobToReq, getFobPicturesUrl];
+  const addFobPictureFuncs = [authenticateRequest, attachFobToReq, getFobPictureUploadUrl];
+  const getFobRatingsFuncs = [authenticateRequest, attachFobToReq, getFobRatings];
+  const addFobRatingFuncs = [authenticateRequest, attachFobToReq, addFobRating];
+  const getFobRatingFuncs = [authenticateRequest, attachFobToReq, getFobRating];
+  const updateFobRatingFuncs = [authenticateRequest, attachFobToReq, ratingPermissionCheck, updateFobRating];
   const getFobWithDetailsFuncs = [authenticateRequest, getFobWithDetails];
 
   // TODO add more unhappy paths? Malformed data, bad responses?
