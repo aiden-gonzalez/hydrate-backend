@@ -209,7 +209,7 @@ export async function getFobPictureUploadUrl(req, res) {
       expires: Date.now() + (S3_UPLOAD_URL_EXPIRATION * 1000)
     };
 
-    res.status(HTTP_CREATED).json(newPictureSignedUrl);
+    res.status(HTTP_OK).json(newPictureSignedUrl);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }

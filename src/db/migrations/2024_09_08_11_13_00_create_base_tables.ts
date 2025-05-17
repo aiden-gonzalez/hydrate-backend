@@ -46,6 +46,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('fob_id', 'text', col => col.references('fob.id').onDelete('cascade').notNull())
     .addColumn('user_id', 'text', col => col.notNull()) // no .references() because we don't want a foreign key constraint
     .addColumn('url', 'text', col => col.notNull())
+    .addColumn('pending', 'boolean', col => col.notNull())
     .addColumn('created_at', epochType, (col) => col.defaultTo(epochSql).notNull())
     .addColumn('updated_at', epochType, (col) => col.defaultTo(epochSql).notNull())
     .execute();

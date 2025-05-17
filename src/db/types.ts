@@ -127,6 +127,7 @@ export interface PictureTable {
   fob_id: string
   user_id: string
   url: string
+  pending: boolean
   created_at: DbCreatedAt
   updated_at: DbUpdatedAt
 }
