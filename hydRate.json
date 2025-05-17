@@ -327,17 +327,6 @@
         "/api/fobs/{id}/pictures": {
             "summary": "Add, retrieve, and delete pictures for a Fob",
             "get": {
-                "parameters": [
-                    {
-                        "name": "offset",
-                        "description": "Offset of photo to fetch (first picture is 0)",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "query",
-                        "required": false
-                    }
-                ],
                 "responses": {
                     "200": {
                         "content": {
@@ -359,7 +348,7 @@
                         "description": "Authentication/authorization failed"
                     },
                     "404": {
-                        "description": "Picture of Fob with provided offset does not exist!"
+                        "description": "Pictures of Fob do not exist!"
                     }
                 },
                 "security": [
@@ -1082,6 +1071,10 @@
                     "user_id": {
                         "description": "ID of user that created the picture.",
                         "type": "string"
+                    },
+                    "pending": {
+                        "description": "Pending status of the picture (true or false). I.e., whether or not the picture is fully uploaded to S3 yet",
+                        "type": "boolean"
                     },
                     "created_at": {
                         "description": "Created timestamp.  Unix epoch milliseconds.",
