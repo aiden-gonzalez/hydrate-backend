@@ -161,6 +161,10 @@ export function createAuth(auth : NewAuth) : Promise<Auth> {
   return parseTimestampsPromise(db.insertInto('auth').values(auth).returningAll().executeTakeFirstOrThrow());
 }
 
+export function getAuthForUser(userId : string) : Promise<Auth> {
+  return parseTimestampsPromise(db.selectFrom('auth').where('user_id', '=', userId).selectAll().executeTakeFirst());
+}
+
 // USER
 export function createUser(user: NewUser) : Promise<User> {
   return parseTimestampsPromise(db.insertInto('user').values(user).returningAll().executeTakeFirstOrThrow());

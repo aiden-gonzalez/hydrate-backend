@@ -1,6 +1,6 @@
 import {generateToken, isValidPass, validateToken} from "../utils/auth";
 import {IAuthRefreshRequest, IAuthRequest, IAuthSuccessResponse} from "./types";
-import {IUser} from "../utils/types";
+import {IHashedPassword, IUser} from "../utils/types";
 import * as constants from "../utils/constants";
 import * as db from "../db/queries";
 
@@ -24,7 +24,8 @@ export async function validatePassword (req, res) {
   const user : IUser = req.dbUser;
 
   // Check password
-  const passwordValid = await isValidPass(authRequest.user_credentials.password, user.hashed_password);
+  const hashed_password = await db.getAuthForUser(user.id) as IHashedPassword;
+  const passwordValid = await isValidPass(authRequest.user_credentials.password, hashed_password);
   if (!passwordValid) {
     return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
   }
