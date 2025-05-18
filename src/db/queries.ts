@@ -112,6 +112,10 @@ export function getRating(id: string) : Promise<Rating> {
   return parseTimestampsPromise(db.selectFrom('rating').where('id', '=', id).selectAll().executeTakeFirst());
 }
 
+export function getRatingByFobAndUser(fobId: string, userId: string) : Promise<Rating> {
+  return parseTimestampsPromise(db.selectFrom('rating').where('fob_id', '=', fobId).where('user_id', '=', userId).selectAll().executeTakeFirst());
+}
+
 export function getRatingsForFob(fobId: string) : Promise<Rating[]> {
   return parseArrayTimestampsPromise(db.selectFrom('rating').where('fob_id', '=', fobId).selectAll().execute());
 }

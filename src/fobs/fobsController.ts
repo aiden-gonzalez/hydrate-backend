@@ -40,14 +40,6 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 const s3 = new S3Client({ region: process.env.AWS_REGION });
 const bucketName = process.env.AWS_S3_BUCKET_NAME;
 
-// TODO think about how to set correct status depending on response from database
-// If id is invalid, should be 404 not found?
-// If request bad, should be 400?
-// If not allowed to edit something, should be 403 or 401?
-// If something goes wrong with the database, should be 500?
-
-// Also consider refactoring to get rid of all the duplicated code once you figure that out
-
 export async function ratingPermissionCheck(req, res, next) {
   // Get path parameter
   const ratingId = req.params.ratingId;
@@ -221,10 +213,6 @@ export async function getFobRatings(req, res) {
 }
 
 export async function addFobRating(req, res) {
-  // TODO we can create a rating for fountains and users that don't exist, can't we?
-  // this is probably not a good thing :(
-  // TODO one user can add unlimited ratings for the same fountain. Also not good :(
-
   // Get rating details from request
   const ratingDetails : IRatingDetails = req.body;
 
@@ -246,6 +234,12 @@ export async function addFobRating(req, res) {
       || !ratingDetailValueValidator(bathroomRatingDetails.privacy)) {
       return res.status(HTTP_BAD_REQUEST).send("Invalid rating detail value(s)!");
     }
+  }
+
+  // Check if user already rated this fountain
+  const existingRating = await db.getRatingByFobAndUser(req.fob.id, req.user.id);
+  if (existingRating) {
+    return res.status(HTTP_BAD_REQUEST).send("You have already rated this fountain!");
   }
 
   // Create new fountain rating
@@ -270,8 +264,6 @@ export async function addFobRating(req, res) {
 
 export async function getFobRating(req, res) {
   // Get path parameters
-  // TODO fobId is not considered here, same potential issue as with pictures?
-
   const ratingId = req.params.ratingId;
 
   // Get fountain rating
@@ -285,8 +277,6 @@ export async function getFobRating(req, res) {
 
 export async function updateFobRating(req, res) {
   // Get path parameters
-  // TODO fobId is not considered here, same potential issue as with pictures?
-
   const ratingId = req.params.ratingId;
   // Get new rating details from request
   const ratingUpdate : IRatingDetails = req.body;
