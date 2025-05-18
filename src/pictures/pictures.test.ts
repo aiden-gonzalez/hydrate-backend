@@ -8,7 +8,9 @@ import {
 } from "../testHelper.test";
 import * as constants from "../utils/constants";
 import {
+  attachPictureToReq,
   getPictureUrl,
+  updatePictureStatus,
   deletePicture
 } from "./picturesController";
 import {authenticateRequest} from '../utils/auth';
@@ -19,8 +21,9 @@ import {NewFob} from "../db/types";
 import * as testUtil from '../testHelper.test';
 
 describe("PICTURES: getting and deleting pictures", () => {
-  const getPictureFuncs = [authenticateRequest, getPictureUrl];
-  const deletePictureFuncs = [authenticateRequest, deletePicture];
+  const getPictureFuncs = [authenticateRequest, attachPictureToReq, getPictureUrl];
+  const updatePictureFuncs = [authenticateRequest, attachPictureToReq, updatePictureStatus];
+  const deletePictureFuncs = [authenticateRequest, attachPictureToReq, deletePicture];
 
   async function createFobs(user = null) {
     // Create user if necessary
@@ -117,6 +120,33 @@ describe("PICTURES: getting and deleting pictures", () => {
 
     // Try to get picture
     await simulateRouter(req, res, getPictureFuncs);
+
+    // Should have succeeded
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expectEntitiesEqual(res.message, createdPictures[0]);
+  });
+
+  it("successfully updates a picture status while authenticated", async () => {
+    const user = await getUser();
+    const req = getAuthedReqMockForUser(user);
+    const res = getResMock();
+
+    // Create bathrooms
+    const createdFobs = await createFobs();
+
+    // Add pictures
+    const createdPictures = await createPictures(createdFobs[0].id, user.id);
+
+    // Set up request
+    req.params = {
+      id: createdPictures[0].id
+    };
+    req.body = {
+      pending: false
+    }
+
+    // Try to update picture status
+    await simulateRouter(req, res, updatePictureFuncs);
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);

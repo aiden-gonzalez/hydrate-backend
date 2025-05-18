@@ -151,15 +151,13 @@ export async function getFobPicturesUrl(req, res) {
 
     // S3 config - update these as needed for your environment
     const s3 = new S3Client({ region: process.env.AWS_REGION });
-    const bucketName = process.env.AWS_S3_BUCKET_NAME;
 
     // Generate signed URLs for each picture
     const signedUrls = await Promise.all(
       fobPictures.map(async (pic) => {
-        const key = pic.url; // assuming pic.url is the S3 object key
         const command = new GetObjectCommand({
-          Bucket: bucketName,
-          Key: key
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Key: pic.url // assuming pic.url is the S3 object key
         });
         const signedUrl : IPictureSignedUrl = {
           signed_url: await getSignedUrl(s3, command, { expiresIn: S3_DOWNLOAD_URL_EXPIRATION }),
