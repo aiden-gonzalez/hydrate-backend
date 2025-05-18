@@ -1,7 +1,9 @@
 import { db } from './database';
 import {
+  Auth,
   Fob,
   FobUpdate,
+  NewAuth,
   NewFob, NewPicture,
   NewRating,
   NewUser, Picture,
@@ -152,6 +154,11 @@ export function updateRating(id: string, updateWith: IRatingDetails) : Promise<R
     details: updateWith
   };
   return parseTimestampsPromise(db.updateTable('rating').set(update).where('id', '=', id).returningAll().executeTakeFirst());
+}
+
+// AUTH
+export function createAuth(auth : NewAuth) : Promise<Auth> {
+  return parseTimestampsPromise(db.insertInto('auth').values(auth).returningAll().executeTakeFirstOrThrow());
 }
 
 // USER
