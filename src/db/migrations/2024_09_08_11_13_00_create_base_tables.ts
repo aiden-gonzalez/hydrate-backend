@@ -14,6 +14,12 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('updated_at', epochType, col => col.defaultTo(epochSql).notNull())
     .execute();
   await db.schema
+    .createTable('auth')
+    .addColumn('user_id', 'text', col => col.primaryKey().references('user.id').onDelete('cascade').notNull())
+    .addColumn('hash_pass', 'text', col => col.notNull())
+    .addColumn('hash_salt', 'text', col => col.notNull())
+    .execute();
+  await db.schema
     .createTable('fob')
     .addColumn('id', 'text', col => col.primaryKey())
     .addColumn('user_id', 'text', col => col.notNull()) // no .references() because we don't want a foreign key constraint
@@ -90,5 +96,6 @@ export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropTable('rating').execute();
   await db.schema.dropTable('fob_change').execute();
   await db.schema.dropTable('fob').execute();
+  await db.schema.dropTable('auth').execute();
   await db.schema.dropTable('user').execute();
 }

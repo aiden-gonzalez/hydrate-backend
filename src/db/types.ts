@@ -6,22 +6,32 @@ import {
   Selectable,
   Updateable
 } from "kysely";
-import {IHashedPassword, ILocation} from "../utils/types";
+import {ILocation} from "../utils/types";
 import {IProfile} from "../profiles/types";
 import {IFobInfo, IRatingDetails} from "../fobs/types";
 
 export interface Database {
-  fob: FobTable,
-  fob_change: FobChangeTable,
-  rating: RatingTable,
-  user: UserTable,
-  picture: PictureTable,
-  fob_with_rating: FobWithRatingView,
+  auth: AuthTable
+  fob: FobTable
+  fob_change: FobChangeTable
+  rating: RatingTable
+  user: UserTable
+  picture: PictureTable
+  fob_with_rating: FobWithRatingView
   rating_with_details: RatingWithDetailsView
 }
 
 type DbCreatedAt = ColumnType<number, number, never>
 type DbUpdatedAt = ColumnType<number, number, number>
+
+export interface AuthTable {
+  user_id: string
+  hash_pass: string
+  hash_salt: string
+}
+export type Auth = Selectable<AuthTable>
+export type NewAuth = Insertable<AuthTable>
+export type AuthUpdate = Updateable<AuthTable>
 
 // Should only be used in the "Database" type above, never as a result of a query
 export interface FobTable {
@@ -100,7 +110,6 @@ export interface RatingWithDetailsView {
   rating_updated_at: DbUpdatedAt
   username: string
   email: string
-  hashed_password: ColumnType<IHashedPassword, IHashedPassword, IHashedPassword>
   profile: ColumnType<IProfile, IProfile, IProfile>
   user_created_at: DbCreatedAt
   user_updated_at: DbUpdatedAt
@@ -112,7 +121,6 @@ export interface UserTable {
   id: string
   username: string
   email: string
-  hashed_password: ColumnType<IHashedPassword, IHashedPassword, IHashedPassword>
   profile: ColumnType<IProfile, IProfile, IProfile>
   created_at: DbCreatedAt
   updated_at: DbUpdatedAt
