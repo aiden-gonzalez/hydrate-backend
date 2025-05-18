@@ -429,11 +429,11 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Picture"
+                                    "$ref": "#/components/schemas/PictureSignedUrl"
                                 }
                             }
                         },
-                        "description": "Successful request, return picture"
+                        "description": "Successful request, return picture URL"
                     },
                     "400": {
                         "description": "Malformed request"

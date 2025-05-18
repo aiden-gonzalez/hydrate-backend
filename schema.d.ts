@@ -292,10 +292,10 @@ export interface paths {
         };
       };
       responses: {
-        /** @description Successful request, return picture */
+        /** @description Successful request, return picture URL */
         200: {
           content: {
-            "application/json": components["schemas"]["Picture"];
+            "application/json": components["schemas"]["PictureSignedUrl"];
           };
         };
         /** @description Malformed request */
