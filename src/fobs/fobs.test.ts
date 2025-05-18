@@ -291,7 +291,8 @@ describe("FOBS: CRUD of all kinds", () => {
 
   it("creates a fountain with authentication", async () => {
     const fountainToCreate = getFountain();
-    const req = getAuthedReqMockForUser(await getUser(), {
+    const user = await db.createUser(await getUser());
+    const req = getAuthedReqMockForUser(user, {
       name: fountainToCreate.name,
       location: fountainToCreate.location,
       info: fountainToCreate.info
@@ -318,12 +319,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("gets all fountains with authentication", async () => {
-    const user : IUser = await getUser();
+    const user : IUser = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create fountains
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Try to get all fountains
     await simulateRouter(req, res, getFobsFuncs);
@@ -337,12 +338,12 @@ describe("FOBS: CRUD of all kinds", () => {
   // Skipping this one because this feature is no longer implemented
   // but it'd be nice to re-implement it another time
   it.skip("gets all fountains with bottle fillers", async () => {
-    const user : IUser = await getUser();
+    const user : IUser = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create fountains
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Set up query
     req.query = {
@@ -358,12 +359,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it ("gets all bathrooms within a certain radius of a point", async () => {
-    const user : IUser = await getUser();
+    const user : IUser = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create bathrooms
-    const createdBathrooms = await createFobs();
+    const createdBathrooms = await createFobs(user);
 
     // Set up query
     req.query = {
@@ -401,12 +402,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it ("gets a particular bathroom", async () => {
-    const user : IUser = await getUser();
+    const user : IUser = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create bathrooms
-    const createdBathrooms = await createFobs();
+    const createdBathrooms = await createFobs(user);
 
     // Specify an ID in request
     req.params = {
@@ -443,12 +444,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it ("updates a fountain", async () => {
-    const user : IUser = await getUser();
+    const user : IUser = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create fountains
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Specify fountain updates in request
     createdFobs[0].info = createdFobs[1].info;
@@ -488,12 +489,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("can't create a fountain picture with invalid URL", async () => {
-    const user : IUser = await getUser();
+    const user : IUser = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create fountains
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Set up picture to create
     req.params = {
@@ -512,12 +513,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("creates a fountain picture", async () => {
-    const user : IUser = await getUser();
+    const user : IUser = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create fountains
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Set up picture to create
     req.params = {
@@ -563,12 +564,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("gets bathroom pictures", async () => {
-    const user = await getUser();
+    const user = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create bathrooms
-    const createdBathrooms = await createFobs();
+    const createdBathrooms = await createFobs(user);
 
     // Add pictures
     const createdPictures = await createPictures(createdBathrooms[0].id, user.id);
@@ -607,12 +608,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("can't create a fountain rating with invalid scores", async () => {
-    const user = await getUser();
+    const user = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create fountains
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Set up request
     req.params = {
@@ -629,12 +630,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("successfully creates a fountain rating", async () => {
-    const user = await getUser();
+    const user = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create fountains
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Set up request
     req.params = {
@@ -651,7 +652,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("successfully gets all ratings for a particular bathroom", async () => {
-    const user = await getUser();
+    const user = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -697,12 +698,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("successfully gets a particular bathroom rating", async () => {
-    const user = await getUser();
+    const user = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create bathrooms
-    const createdBathrooms = await createFobs();
+    const createdBathrooms = await createFobs(user);
 
     // Add ratings
     const createdBathroomRatings = await createBathroomRatings(user, createdBathrooms[0]);
@@ -745,12 +746,12 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it ("updates a fountain rating", async () => {
-    const user : IUser = await getUser();
+    const user : IUser = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create fountains
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Create ratings
     const createdFobRatings = await createRatings(user, createdFobs[0]);
@@ -814,7 +815,7 @@ describe("FOBS: CRUD of all kinds", () => {
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
     expect(res.message).to.deep.equal({
-      fob: createdFobs[0],
+      fob: {...createdFobs[0], average_rating: 2},
       user: user,
       pictures: createdPictures,
       ratingsWithDetails: createdRatings.map((rating) => { return {
@@ -825,7 +826,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("returns 404 for non-existent fob with details", async () => {
-    const user = await getUser();
+    const user = await db.createUser(getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
