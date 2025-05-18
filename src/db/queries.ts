@@ -133,7 +133,6 @@ export async function getRatingsWithDetailsForFob(fobId: string) : Promise<IRati
         id:  ratingWithDetails.user_id,
         username: ratingWithDetails.username,
         email: ratingWithDetails.email,
-        hashed_password: ratingWithDetails.hashed_password,
         profile: ratingWithDetails.profile,
         created_at: ratingWithDetails.user_created_at,
         updated_at: ratingWithDetails.user_updated_at

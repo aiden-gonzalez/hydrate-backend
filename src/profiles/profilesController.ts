@@ -45,7 +45,6 @@ export async function updateProfile(req, res) {
     id: undefined,
     username: undefined,
     email: undefined,
-    hashed_password: undefined,
     profile: req.body
   };
 

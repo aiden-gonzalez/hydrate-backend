@@ -8,7 +8,6 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('id', 'text', col => col.primaryKey())
     .addColumn('username', 'text', col => col.unique().notNull())
     .addColumn('email', 'text', col => col.unique().notNull())
-    .addColumn('hashed_password', 'jsonb', col => col.notNull())
     .addColumn('profile', 'jsonb', col => col.notNull())
     .addColumn('created_at', epochType, col => col.defaultTo(epochSql).notNull())
     .addColumn('updated_at', epochType, col => col.defaultTo(epochSql).notNull())
@@ -80,7 +79,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         rating.updated_at as rating_updated_at,
         "user".username,
         "user".email,
-        "user".hashed_password,
         "user".profile,
         "user".created_at as user_created_at,
         "user".updated_at as user_updated_at

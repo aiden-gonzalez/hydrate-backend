@@ -8,7 +8,7 @@ import {
   generatePictureId,
   generateUserId
 } from "./utils/generate";
-import {generateToken, hashPass} from "./utils/auth";
+import {generateToken} from "./utils/auth";
 import * as constants from "./utils/constants";
 import {findFobs} from "./db/queries";
 import {migrateToLatest} from "./db/migrate";
@@ -64,7 +64,6 @@ export async function getUser (username = "username", email = "email@gmail.com")
     id: generateUserId(),
     username: username,
     email: email,
-    hashed_password: await hashPass("password"),
     profile: {
       full_name: "Aiden Gonzalez",
       picture_link: "https://www.google.com"
