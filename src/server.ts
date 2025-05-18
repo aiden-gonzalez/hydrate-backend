@@ -56,7 +56,7 @@ app.get('/', (req, res) => {
 const fs = require('node:fs');
 
 const options = {
-  key: fs.readFileSync('./private-key.pem'),
+  key: fs.readFileSync('./https_private_key.pem'),
   cert: fs.readFileSync('./certificate.pem'),
 };
 
