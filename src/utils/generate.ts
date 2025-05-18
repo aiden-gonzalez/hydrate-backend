@@ -24,5 +24,5 @@ export function generatePictureId() {
   return generateId(constants.PICTURE_ID_PREFIX);
 }
 export function generateS3PictureKey(picId : string, fobId: string) {
-  return constants.S3_FOB_PICTURES_PATH + fobId + "/" + picId;
+  return `${constants.S3_FOB_PICTURES_FOLDER}/${fobId}/${picId}`;
 }

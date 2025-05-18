@@ -32,7 +32,7 @@ import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // Initialize S3 client once at the top level
@@ -147,18 +147,7 @@ export async function getFobPicturesUrl(req, res) {
 
     // Generate signed URLs for each picture in the fobPictures array
     const signedUrls = await Promise.all(fobPictures.map(async (picture) => {
-      // Create GetObject command for each picture
-      const command = new GetObjectCommand({
-        Bucket: bucketName,
-        Key: picture.url
-      });
-      
-      const signedUrl: IPictureSignedUrl = {
-        signed_url: await getSignedUrl(s3, command, { expiresIn: S3_DOWNLOAD_URL_EXPIRATION }),
-        expires: Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000) // Convert to milliseconds
-      };
-      
-      return signedUrl;
+      return `${process.env.AWS_CLOUDFRONT_URL}/${picture.url}`;
     }));
 
     res.status(HTTP_OK).json(signedUrls);

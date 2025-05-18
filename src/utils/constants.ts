@@ -43,6 +43,6 @@ export const PICTURE_ID_PREFIX  = "pic";
 export const URL_DEFAULT_PROFILE_PICTURE = "https://i.imgur.com/JGmoHaP.jpeg";
 
 // S3 bucket
-export const S3_FOB_PICTURES_PATH = "fob_pictures/";
+export const S3_FOB_PICTURES_FOLDER = "fob_pictures";
 export const S3_DOWNLOAD_URL_EXPIRATION = 60 * 60; // 1 hour
 export const S3_UPLOAD_URL_EXPIRATION = 60 * 10; // 10 minutes
