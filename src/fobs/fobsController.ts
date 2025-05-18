@@ -33,7 +33,8 @@ import {NewFob} from "../db/types";
 import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { getSignedUrl as s3GetSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { getSignedUrl as cfGetSignedUrl } from "@aws-sdk/cloudfront-signer";
 
 // Initialize S3 client once at the top level
 const s3 = new S3Client({ region: process.env.AWS_REGION });
@@ -146,9 +147,18 @@ export async function getFobPicturesUrl(req, res) {
     }
 
     // Generate signed URLs for each picture in the fobPictures array
-    const signedUrls = await Promise.all(fobPictures.map(async (picture) => {
-      return `${process.env.AWS_CLOUDFRONT_URL}/${picture.url}`;
-    }));
+    const signedUrls = fobPictures.map((picture) => {
+      const expiration = new Date(Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000));
+      return {
+        signed_url: cfGetSignedUrl({
+          url: `${process.env.AWS_CLOUDFRONT_URL}/${picture.url}`,
+          privateKey: process.env.AWS_CLOUDFRONT_PRIVATE_KEY,
+          keyPairId: process.env.AWS_CLOUDFRONT_KEY_PAIR_ID,
+          dateLessThan: expiration
+        }),
+        expires: expiration.getTime()
+      } as IPictureSignedUrl;
+    });
 
     res.status(HTTP_OK).json(signedUrls);
   } catch (error) {
@@ -167,7 +177,7 @@ export async function getFobPictureUploadUrl(req, res) {
       Bucket: bucketName,
       Key: key
     });
-    const signedUploadUrl = await getSignedUrl(s3, putCommand, { expiresIn: S3_UPLOAD_URL_EXPIRATION });
+    const signedUploadUrl = await s3GetSignedUrl(s3, putCommand, { expiresIn: S3_UPLOAD_URL_EXPIRATION });
 
     // Create a new picture entry in the DB with pending = true and the S3 key as url
     const newPicture: IPicture = {
