@@ -6,7 +6,11 @@ import {
   HTTP_OK,
   S3_DOWNLOAD_URL_EXPIRATION
 } from "../utils/constants";
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  GetObjectCommand,
+  DeleteObjectCommand
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { IPictureSignedUrl } from "./types";
 
@@ -91,12 +95,18 @@ export async function deletePicture(req, res) {
     }
 
     // First delete picture from S3
-    
-
+    const deleteCommand = new DeleteObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: picture.url
+    });
+    await s3Client.send(deleteCommand);
+  
     // Then delete picture from postgres db
     await db.deletePicture(picture.id);
-    res.status(HTTP_OK).send("Successfully removed picture");
+
+    res.sendStatus(HTTP_OK);
   } catch (error) {
+    console.error("Error deleting picture:", error);
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }
 }
