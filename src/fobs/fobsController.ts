@@ -18,7 +18,8 @@ import {
   FOUNTAIN_ID_PREFIX,
   HTTP_NOT_FOUND,
   S3_DOWNLOAD_URL_EXPIRATION,
-  S3_UPLOAD_URL_EXPIRATION
+  S3_UPLOAD_URL_EXPIRATION,
+  S3_FOB_PICTURES_PATH
 } from "../utils/constants";
 import {
   generateBathroomId,
@@ -32,7 +33,7 @@ import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
-import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, ListObjectsCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // Initialize S3 client once at the top level
@@ -156,22 +157,18 @@ export async function getFobPicturesUrl(req, res) {
     // S3 config - update these as needed for your environment
     const s3 = new S3Client({ region: process.env.AWS_REGION });
 
-    // Generate signed URLs for each picture
-    const signedUrls = await Promise.all(
-      fobPictures.map(async (pic) => {
-        const command = new GetObjectCommand({
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: pic.url // assuming pic.url is the S3 object key
-        });
-        const signedUrl : IPictureSignedUrl = {
-          signed_url: await getSignedUrl(s3, command, { expiresIn: S3_DOWNLOAD_URL_EXPIRATION }),
-          expires: Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000)
-        }
-        return signedUrl;
-      })
-    );
+    // Generate signed URL to list all pictures in the fob's S3 folder
+    const s3PicturesDir = S3_FOB_PICTURES_PATH + req.fob.id + "/";
+    const command = new ListObjectsCommand({
+      Bucket: bucketName,
+      Prefix: s3PicturesDir
+    });
+    const signedUrl : IPictureSignedUrl = {
+      signed_url: await getSignedUrl(s3, command, { expiresIn: S3_DOWNLOAD_URL_EXPIRATION }),
+      expires: Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000) // Convert to milliseconds
+    };
 
-    res.status(HTTP_OK).json(signedUrls);
+    res.status(HTTP_OK).json(signedUrl);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }
