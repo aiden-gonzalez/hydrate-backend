@@ -694,10 +694,6 @@ export interface components {
      * @example {
      *   "username": "some text",
      *   "email": "some text",
-     *   "hashed_password": {
-     *     "hash_pass": "some text",
-     *     "hash_salt": "some text"
-     *   },
      *   "profile": {
      *     "full_name": "some text",
      *     "picture_link": "some text"
@@ -712,7 +708,6 @@ export interface components {
       username: string;
       /** @description Email address of user */
       email: string;
-      hashed_password: components["schemas"]["HashedPassword"];
       profile: components["schemas"]["Profile"];
       /** @description Unique user id (not technically necessary but helpful) */
       id: string;
@@ -781,10 +776,6 @@ export interface components {
      *     "id": "user789",
      *     "username": "exampleUser",
      *     "email": "example@example.com",
-     *     "hashed_password": {
-     *       "hash_pass": "hashedPassword",
-     *       "hash_salt": "hashedSalt"
-     *     },
      *     "profile": {
      *       "full_name": "Example User",
      *       "picture_link": "https://example.com/profile.jpg"
@@ -848,19 +839,6 @@ export interface components {
       email: string;
       /** @description User's password */
       password: string;
-    };
-    /**
-     * @description SHA256 hashed password (with salt)
-     * @example {
-     *   "hash_pass": "some text",
-     *   "hash_salt": "some text"
-     * }
-     */
-    HashedPassword: {
-      /** @description Hashed password (SHA256) */
-      hash_pass: string;
-      /** @description Salt used for SHA256 hash */
-      hash_salt: string;
     };
     /**
      * @description Identify a unique location (longitude and latitude)
@@ -1153,10 +1131,6 @@ export interface components {
      *   "user": {
      *     "username": "some text",
      *     "email": "some text",
-     *     "hashed_password": {
-     *       "hash_pass": "some text",
-     *       "hash_salt": "some text"
-     *     },
      *     "profile": {
      *       "full_name": "some text",
      *       "picture_link": "some text"
@@ -1201,10 +1175,6 @@ export interface components {
      *         "id": "user789",
      *         "username": "exampleUser1",
      *         "email": "example1@example.com",
-     *         "hashed_password": {
-     *           "hash_pass": "hashedPassword1",
-     *           "hash_salt": "hashedSalt1"
-     *         },
      *         "profile": {
      *           "full_name": "Example User 1",
      *           "picture_link": "https://example.com/profile1.jpg"
@@ -1230,10 +1200,6 @@ export interface components {
      *         "id": "user456",
      *         "username": "exampleUser2",
      *         "email": "example2@example.com",
-     *         "hashed_password": {
-     *           "hash_pass": "hashedPassword2",
-     *           "hash_salt": "hashedSalt2"
-     *         },
      *         "profile": {
      *           "full_name": "Example User 2",
      *           "picture_link": "https://example.com/profile2.jpg"
