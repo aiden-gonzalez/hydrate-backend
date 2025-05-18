@@ -17,7 +17,7 @@ services:
       POSTGRES_USER: test_hydrate_admin # adminer "Username" field
       POSTGRES_PASSWORD: test_secret_password # adminer "Password" field
     ports:
-      - 5432:5432
+      - "5432:5432"
 
   adminer:
     image: adminer
@@ -25,4 +25,4 @@ services:
     container_name: test_hydrate_adminer
     # restart: always
     ports:
-      - 8282:8080
+      - "8282:8080"

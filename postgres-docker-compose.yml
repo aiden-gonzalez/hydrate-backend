@@ -17,7 +17,7 @@ services:
       POSTGRES_PASSWORD: secret_password # adminer "Password" field
       POSTGRES_DB: hydrate_db # adminer "Database" field
     ports:
-      - 5432:5432
+      - "5432:5432"
 
   adminer:
     image: adminer
@@ -25,4 +25,4 @@ services:
     container_name: hydrate_adminer
     # restart: always
     ports:
-      - 8282:8080
+      - "8282:8080"
