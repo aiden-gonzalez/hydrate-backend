@@ -25,3 +25,8 @@ local-ssl-proxy --source 3010 --target 3000 --cert <certificate .pem file> --key
 ```
 
 Then you would have an https server on port 3010 mimicing local 3000.
+
+### Generate a public / private key pair for Cloudfront CDN signed URLs
+To create a public / private key pair for Cloudfront, run `openssl genrsa -out cloudfront_private_key.pem 2048`.  Then copy the private key contents into the environment variable.
+
+To then create the corresponding public key, run `openssl rsa -pubout -in cloudfront_private_key.pem -out cloudfront_public_key.pem`.  Then upload that public key to Cloudfront.
