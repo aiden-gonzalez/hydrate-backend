@@ -17,7 +17,6 @@ import {
   HTTP_OK,
   FOUNTAIN_ID_PREFIX,
   HTTP_NOT_FOUND,
-  S3_DOWNLOAD_URL_EXPIRATION,
   S3_UPLOAD_URL_EXPIRATION
 } from "../utils/constants";
 import {
@@ -26,15 +25,14 @@ import {
   generateFountainId,
   generateFountainRatingId,
   generatePictureId,
-  generateS3PictureKey
 } from "../utils/generate";
+import {generateCloudfrontSignedUrl, generateS3PictureKey} from "../utils/aws";
 import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl as s3GetSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { getSignedUrl as cfGetSignedUrl } from "@aws-sdk/cloudfront-signer";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // Initialize S3 client once at the top level
 const s3 = new S3Client({ region: process.env.AWS_REGION });
@@ -147,18 +145,7 @@ export async function getFobPicturesUrl(req, res) {
     }
 
     // Generate signed URLs for each picture in the fobPictures array
-    const signedUrls = fobPictures.map((picture) => {
-      const expiration = new Date(Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000));
-      return {
-        signed_url: cfGetSignedUrl({
-          url: `${process.env.AWS_CLOUDFRONT_URL}/${picture.url}`,
-          privateKey: process.env.AWS_CLOUDFRONT_PRIVATE_KEY,
-          keyPairId: process.env.AWS_CLOUDFRONT_KEY_PAIR_ID,
-          dateLessThan: expiration
-        }),
-        expires: expiration.getTime()
-      } as IPictureSignedUrl;
-    });
+    const signedUrls = fobPictures.map(generateCloudfrontSignedUrl);
 
     res.status(HTTP_OK).json(signedUrls);
   } catch (error) {
@@ -170,14 +157,15 @@ export async function getFobPictureUploadUrl(req, res) {
   try {
     // Generate a new picture ID and S3 key
     const pictureId = generatePictureId();
-    const key = generateS3PictureKey(pictureId, req.fob.id);
+    const s3Key = generateS3PictureKey(pictureId, req.fob.id);
 
     // For upload, use PutObjectCommand
     const putCommand = new PutObjectCommand({
       Bucket: bucketName,
-      Key: key
+      Key: s3Key
     });
-    const signedUploadUrl = await s3GetSignedUrl(s3, putCommand, { expiresIn: S3_UPLOAD_URL_EXPIRATION });
+    const expiration = new Date(Date.now() + (S3_UPLOAD_URL_EXPIRATION * 1000));
+    const signedUploadUrl = await getSignedUrl(s3, putCommand, { expiresIn: S3_UPLOAD_URL_EXPIRATION });
 
     // Create a new picture entry in the DB with pending = true and the S3 key as url
     const newPicture: IPicture = {
@@ -185,7 +173,7 @@ export async function getFobPictureUploadUrl(req, res) {
       user_id: req.user.id,
       fob_id: req.fob.id,
       pending: true,
-      url: key
+      url: s3Key
     };
 
     await db.createPicture(newPicture);
@@ -193,7 +181,7 @@ export async function getFobPictureUploadUrl(req, res) {
     // Respond with the signed upload URL and expiry
     const newPictureSignedUrl: IPictureSignedUrl = {
       signed_url: signedUploadUrl,
-      expires: Date.now() + (S3_UPLOAD_URL_EXPIRATION * 1000)
+      expires: expiration.getTime()
     };
 
     res.status(HTTP_OK).json(newPictureSignedUrl);

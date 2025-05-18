@@ -12,6 +12,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl as cfGetSignedUrl } from "@aws-sdk/cloudfront-signer";
 import { IPictureSignedUrl } from "./types";
+import { generateCloudfrontSignedUrl } from "../utils/aws";
 
 // Initialize S3 client
 const s3Client = new S3Client({
@@ -41,16 +42,7 @@ export async function getPictureUrl(req, res) {
     const picture = req.picture;
     
     // Create signed Cloudfront URL for picture
-    const expiration = new Date(Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000));
-    const pictureSignedUrl : IPictureSignedUrl = {
-      signed_url: cfGetSignedUrl({
-        url: `${process.env.AWS_CLOUDFRONT_URL}/${picture.url}`,
-        privateKey: process.env.AWS_CLOUDFRONT_PRIVATE_KEY,
-        keyPairId: process.env.AWS_CLOUDFRONT_KEY_PAIR_ID,
-        dateLessThan: expiration
-      }),
-      expires: expiration.getTime()
-    };
+    const pictureSignedUrl = generateCloudfrontSignedUrl(picture);
 
     res.status(HTTP_OK).json(pictureSignedUrl);
   } catch (error) {
