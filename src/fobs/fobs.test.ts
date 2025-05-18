@@ -293,6 +293,7 @@ describe("FOBS: CRUD of all kinds", () => {
     const fountainToCreate = getFountain();
     const user = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user, {
+      type: "fountain",
       name: fountainToCreate.name,
       location: fountainToCreate.location,
       info: fountainToCreate.info
@@ -319,7 +320,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("gets all fountains with authentication", async () => {
-    const user : IUser = await db.createUser(getUser());
+    const user : IUser = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -338,7 +339,7 @@ describe("FOBS: CRUD of all kinds", () => {
   // Skipping this one because this feature is no longer implemented
   // but it'd be nice to re-implement it another time
   it.skip("gets all fountains with bottle fillers", async () => {
-    const user : IUser = await db.createUser(getUser());
+    const user : IUser = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -359,7 +360,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it ("gets all bathrooms within a certain radius of a point", async () => {
-    const user : IUser = await db.createUser(getUser());
+    const user : IUser = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -402,7 +403,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it ("gets a particular bathroom", async () => {
-    const user : IUser = await db.createUser(getUser());
+    const user : IUser = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -444,7 +445,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it ("updates a fountain", async () => {
-    const user : IUser = await db.createUser(getUser());
+    const user : IUser = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -489,7 +490,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("can't create a fountain picture with invalid URL", async () => {
-    const user : IUser = await db.createUser(getUser());
+    const user : IUser = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -513,7 +514,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("creates a fountain picture", async () => {
-    const user : IUser = await db.createUser(getUser());
+    const user : IUser = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -564,7 +565,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("gets bathroom pictures", async () => {
-    const user = await db.createUser(getUser());
+    const user = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -608,7 +609,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("can't create a fountain rating with invalid scores", async () => {
-    const user = await db.createUser(getUser());
+    const user = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -630,7 +631,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("successfully creates a fountain rating", async () => {
-    const user = await db.createUser(getUser());
+    const user = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -652,7 +653,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("successfully gets all ratings for a particular bathroom", async () => {
-    const user = await db.createUser(getUser());
+    const user = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -698,7 +699,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("successfully gets a particular bathroom rating", async () => {
-    const user = await db.createUser(getUser());
+    const user = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -746,7 +747,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it ("updates a fountain rating", async () => {
-    const user : IUser = await db.createUser(getUser());
+    const user : IUser = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
@@ -826,7 +827,7 @@ describe("FOBS: CRUD of all kinds", () => {
   });
 
   it("returns 404 for non-existent fob with details", async () => {
-    const user = await db.createUser(getUser());
+    const user = await db.createUser(await getUser());
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
