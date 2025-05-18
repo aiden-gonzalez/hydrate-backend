@@ -3,21 +3,24 @@ import {
   HTTP_FORBIDDEN,
   HTTP_INTERNAL_ERROR,
   HTTP_NOT_FOUND,
-  HTTP_OK,
-  S3_DOWNLOAD_URL_EXPIRATION
+  HTTP_OK
 } from "../utils/constants";
 import {
   S3Client,
   DeleteObjectCommand
 } from "@aws-sdk/client-s3";
-import { getSignedUrl as cfGetSignedUrl } from "@aws-sdk/cloudfront-signer";
-import { IPictureSignedUrl } from "./types";
+import { CloudFrontClient, CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
 import { generateCloudfrontSignedUrl } from "../utils/aws";
 
 // Initialize S3 client
 const s3Client = new S3Client({
   region: process.env.AWS_REGION
 });
+
+// Initialize Cloudfront client
+const cfClient = new CloudFrontClient({
+  region: process.env.AWS_REGION
+})
 
 export async function attachPictureToReq(req, res, next) {
   // Get path parameter
@@ -91,8 +94,21 @@ export async function deletePicture(req, res) {
       Key: picture.url
     });
     await s3Client.send(deleteCommand);
+
+    // Then invalidate Cloudfront cache
+    const invalidationCommand = new CreateInvalidationCommand({
+      DistributionId: process.env.AWS_CLOUDFRONT_DISTRIBUTION_ID,
+      InvalidationBatch: {
+        CallerReference: picture.url,
+        Paths: {
+          Quantity: 1,
+          Items: [`/${picture.url}`]
+        }
+      }
+    });
+    await cfClient.send(invalidationCommand);
   
-    // Then delete picture from postgres db
+    // Finally delete picture from postgres db
     await db.deletePicture(picture.id);
 
     res.sendStatus(HTTP_OK);
