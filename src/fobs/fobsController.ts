@@ -35,6 +35,10 @@ import {IPicture, IPictureSignedUrl} from "../pictures/types";
 import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+// Initialize S3 client once at the top level
+const s3 = new S3Client({ region: process.env.AWS_REGION });
+const bucketName = process.env.AWS_S3_BUCKET_NAME;
+
 // TODO think about how to set correct status depending on response from database
 // If id is invalid, should be 404 not found?
 // If request bad, should be 400?
@@ -175,10 +179,6 @@ export async function getFobPicturesUrl(req, res) {
 
 export async function getFobPictureUploadUrl(req, res) {
   try {
-    // S3 config - update these as needed for your environment
-    const s3 = new S3Client({ region: process.env.AWS_REGION });
-    const bucketName = process.env.AWS_S3_BUCKET_NAME;
-
     // Generate a new picture ID and S3 key
     const pictureId = generatePictureId();
     const key = generateS3PictureKey(pictureId, req.fob.id);
