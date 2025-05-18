@@ -8,10 +8,9 @@ import {
 } from "../utils/constants";
 import {
   S3Client,
-  GetObjectCommand,
   DeleteObjectCommand
 } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { getSignedUrl as cfGetSignedUrl } from "@aws-sdk/cloudfront-signer";
 import { IPictureSignedUrl } from "./types";
 
 // Initialize S3 client
@@ -41,21 +40,21 @@ export async function getPictureUrl(req, res) {
     // Get picture from request
     const picture = req.picture;
     
-    // Create pre-signed URL for S3 object
-    const command = new GetObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
-      Key: picture.url // Assuming the url is the S3 key
-    });
-    
-    // Generate pre-signed URL
+    // Create signed Cloudfront URL for picture
+    const expiration = new Date(Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000));
     const pictureSignedUrl : IPictureSignedUrl = {
-      signed_url: await getSignedUrl(s3Client, command, { expiresIn: S3_DOWNLOAD_URL_EXPIRATION }),
-      expires: Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000) // Convert to milliseconds
+      signed_url: cfGetSignedUrl({
+        url: `${process.env.AWS_CLOUDFRONT_URL}/${picture.url}`,
+        privateKey: process.env.AWS_CLOUDFRONT_PRIVATE_KEY,
+        keyPairId: process.env.AWS_CLOUDFRONT_KEY_PAIR_ID,
+        dateLessThan: expiration
+      }),
+      expires: expiration.getTime()
     };
 
     res.status(HTTP_OK).json(pictureSignedUrl);
   } catch (error) {
-    console.error("Error generating pre-signed URL:", error);
+    console.error("Error generating cloudfront signed URL:", error);
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }
 }
