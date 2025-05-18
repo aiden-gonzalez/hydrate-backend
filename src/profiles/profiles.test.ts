@@ -3,7 +3,8 @@ import {
   getAuthedReqMockForUser, getBathroom, getBathroomRating, getFountain, getFountainRating, getLocation, getPicture,
   getReqMock,
   getResMock,
-  getUser, removeAverageRating,
+  getUser,
+  removeAverageRatingArray,
   simulateRouter
 } from "../testHelper.test";
 import * as constants from "../utils/constants";
@@ -213,7 +214,7 @@ describe("PROFILES: getting and updating profiles", () => {
     copyTimestamps(contributions.ratings[1], res.message.ratings[1]);
     copyTimestamps(contributions.pictures[0], res.message.pictures[0]);
     copyTimestamps(contributions.pictures[1], res.message.pictures[1]);
-    removeAverageRating(res.message.fobs);
+    removeAverageRatingArray(res.message.fobs);
     expectEntitiesEqual(contributions, res.message);
   });
 

@@ -79,8 +79,13 @@ export function getLocation (latitude = 40.4237, longitude  = -86.9212) : ILocat
   } as ILocation;
 }
 
-export function removeAverageRating(fobs : IFob[]) : IFob[] {
-  fobs.forEach(x => delete x.average_rating);
+export function removeAverageRating(fob : IFob) : IFob {
+  delete fob.average_rating;
+  return fob;
+}
+
+export function removeAverageRatingArray(fobs : IFob[]) : IFob[] {
+  fobs.forEach(removeAverageRating);
   return fobs;
 }
 
