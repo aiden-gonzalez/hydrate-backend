@@ -7,8 +7,12 @@ const picturesRouter = express.Router();
 // pictures
 picturesRouter.get('/pictures/:id',
   authenticateRequest, // authenticate request
-  picturesController.getPicture // return picture
+  picturesController.getPictureUrl // return picture URL
 ); // get picture by id
+picturesRouter.put('/pictures/:id',
+  authenticateRequest, // authenticate request
+  picturesController.updatePictureStatus // update picture status
+); // update picture status
 picturesRouter.delete('/pictures/:id',
   authenticateRequest, // authenticate request
   picturesController.deletePicture // delete picture

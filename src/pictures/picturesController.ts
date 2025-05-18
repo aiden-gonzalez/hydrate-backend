@@ -6,7 +6,7 @@ import {
   HTTP_OK
 } from "../utils/constants";
 
-export async function getPicture(req, res) {
+export async function getPictureUrl(req, res) {
   // Get path parameter
   const id = req.params.id;
 
@@ -20,6 +20,16 @@ export async function getPicture(req, res) {
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }
+}
+
+export async function updatePictureStatus(req, res) {
+  // Get path parameter
+  const id = req.params.id;
+
+  // Get status from request body
+
+
+  // Update picture status
 }
 
 export async function deletePicture(req, res) {

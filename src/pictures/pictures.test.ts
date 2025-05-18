@@ -8,7 +8,7 @@ import {
 } from "../testHelper.test";
 import * as constants from "../utils/constants";
 import {
-  getPicture,
+  getPictureUrl,
   deletePicture
 } from "./picturesController";
 import {authenticateRequest} from '../utils/auth';
@@ -19,7 +19,7 @@ import {NewFob} from "../db/types";
 import * as testUtil from '../testHelper.test';
 
 describe("PICTURES: getting and deleting pictures", () => {
-  const getPictureFuncs = [authenticateRequest, getPicture];
+  const getPictureFuncs = [authenticateRequest, getPictureUrl];
   const deletePictureFuncs = [authenticateRequest, deletePicture];
 
   async function createFobs(user = null) {
