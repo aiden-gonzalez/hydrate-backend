@@ -18,8 +18,7 @@ import {
   FOUNTAIN_ID_PREFIX,
   HTTP_NOT_FOUND,
   S3_DOWNLOAD_URL_EXPIRATION,
-  S3_UPLOAD_URL_EXPIRATION,
-  S3_FOB_PICTURES_PATH
+  S3_UPLOAD_URL_EXPIRATION
 } from "../utils/constants";
 import {
   generateBathroomId,
@@ -33,7 +32,7 @@ import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
-import { S3Client, PutObjectCommand, ListObjectsCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // Initialize S3 client once at the top level
@@ -141,26 +140,28 @@ export async function getFobPicturesUrl(req, res) {
   try {
     const fobPictures = await db.getPicturesForFob(req.fob.id);
 
-    // If there are no pictures, return with no body
+    // If there are no pictures, return with empty array
     if (fobPictures.length === 0) {
-      return res.sendStatus(HTTP_OK);
+      return res.status(HTTP_OK).json([]);
     }
 
-    // S3 config - update these as needed for your environment
-    const s3 = new S3Client({ region: process.env.AWS_REGION });
+    // Generate signed URLs for each picture in the fobPictures array
+    const signedUrls = await Promise.all(fobPictures.map(async (picture) => {
+      // Create GetObject command for each picture
+      const command = new GetObjectCommand({
+        Bucket: bucketName,
+        Key: picture.url
+      });
+      
+      const signedUrl: IPictureSignedUrl = {
+        signed_url: await getSignedUrl(s3, command, { expiresIn: S3_DOWNLOAD_URL_EXPIRATION }),
+        expires: Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000) // Convert to milliseconds
+      };
+      
+      return signedUrl;
+    }));
 
-    // Generate signed URL to list all pictures in the fob's S3 folder
-    const s3PicturesDir = S3_FOB_PICTURES_PATH + req.fob.id + "/";
-    const command = new ListObjectsCommand({
-      Bucket: bucketName,
-      Prefix: s3PicturesDir
-    });
-    const signedUrl : IPictureSignedUrl = {
-      signed_url: await getSignedUrl(s3, command, { expiresIn: S3_DOWNLOAD_URL_EXPIRATION }),
-      expires: Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000) // Convert to milliseconds
-    };
-
-    res.status(HTTP_OK).json(signedUrl);
+    res.status(HTTP_OK).json(signedUrls);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }

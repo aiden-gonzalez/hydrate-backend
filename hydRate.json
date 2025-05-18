@@ -343,7 +343,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/PictureSignedUrl"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PictureSignedUrl"
+                                    }
                                 }
                             }
                         },
@@ -411,7 +414,7 @@
             }
         },
        "/api/pictures/{id}": {
-            "summary": "Get, update pending, or delete a specific picture by its ID",
+            "summary": "Get, update status, or delete a specific picture by its ID",
             "parameters": [
                 {
                     "name": "id",

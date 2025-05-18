@@ -221,7 +221,7 @@ export interface paths {
         /** @description Successful pictures request */
         200: {
           content: {
-            "application/json": components["schemas"]["PictureSignedUrl"];
+            "application/json": components["schemas"]["PictureSignedUrl"][];
           };
         };
         /** @description Malformed request (may be missing required parameters) */
