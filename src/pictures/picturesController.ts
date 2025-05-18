@@ -8,6 +8,7 @@ import {
 } from "../utils/constants";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { IPictureSignedUrl } from "./types";
 
 // Initialize S3 client
 const s3Client = new S3Client({
@@ -43,15 +44,12 @@ export async function getPictureUrl(req, res) {
     });
     
     // Generate pre-signed URL
-    const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: S3_DOWNLOAD_URL_EXPIRATION });
-    
-    // Add the URL to the picture object
-    const pictureWithUrl = {
-      ...picture,
-      url: presignedUrl
+    const pictureSignedUrl : IPictureSignedUrl = {
+      signed_url: await getSignedUrl(s3Client, command, { expiresIn: S3_DOWNLOAD_URL_EXPIRATION }),
+      expires: Date.now() + (S3_DOWNLOAD_URL_EXPIRATION * 1000) // Convert to milliseconds
     };
 
-    res.status(HTTP_OK).json(pictureWithUrl);
+    res.status(HTTP_OK).json(pictureSignedUrl);
   } catch (error) {
     console.error("Error generating pre-signed URL:", error);
     res.status(HTTP_INTERNAL_ERROR).send(error);
