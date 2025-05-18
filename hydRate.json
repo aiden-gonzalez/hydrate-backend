@@ -916,7 +916,6 @@
                 "required": [
                     "username",
                     "email",
-                    "hashed_password",
                     "profile",
                     "id"
                 ],
@@ -929,9 +928,6 @@
                     "email": {
                         "description": "Email address of user",
                         "type": "string"
-                    },
-                    "hashed_password": {
-                        "$ref": "#/components/schemas/HashedPassword"
                     },
                     "profile": {
                         "$ref": "#/components/schemas/Profile"
@@ -952,10 +948,6 @@
                 "example": {
                     "username": "some text",
                     "email": "some text",
-                    "hashed_password": {
-                        "hash_pass": "some text",
-                        "hash_salt": "some text"
-                    },
                     "profile": {
                         "full_name": "some text",
                         "picture_link": "some text"
@@ -1067,10 +1059,6 @@
                         "id": "user789",
                         "username": "exampleUser",
                         "email": "example@example.com",
-                        "hashed_password": {
-                            "hash_pass": "hashedPassword",
-                            "hash_salt": "hashedSalt"
-                        },
                         "profile": {
                             "full_name": "Example User",
                             "picture_link": "https://example.com/profile.jpg"
@@ -1165,28 +1153,6 @@
                 "example": {
                     "email": "some text",
                     "password": "some text"
-                }
-            },
-            "HashedPassword": {
-                "description": "SHA256 hashed password (with salt)",
-                "required": [
-                    "hash_pass",
-                    "hash_salt"
-                ],
-                "type": "object",
-                "properties": {
-                    "hash_pass": {
-                        "description": "Hashed password (SHA256)",
-                        "type": "string"
-                    },
-                    "hash_salt": {
-                        "description": "Salt used for SHA256 hash",
-                        "type": "string"
-                    }
-                },
-                "example": {
-                    "hash_pass": "some text",
-                    "hash_salt": "some text"
                 }
             },
             "Location": {
@@ -1698,10 +1664,6 @@
                     "user": {
                         "username": "some text",
                         "email": "some text",
-                        "hashed_password": {
-                            "hash_pass": "some text",
-                            "hash_salt": "some text"
-                        },
                         "profile": {
                             "full_name": "some text",
                             "picture_link": "some text"
@@ -1746,10 +1708,6 @@
                                 "id": "user789",
                                 "username": "exampleUser1",
                                 "email": "example1@example.com",
-                                "hashed_password": {
-                                    "hash_pass": "hashedPassword1",
-                                    "hash_salt": "hashedSalt1"
-                                },
                                 "profile": {
                                     "full_name": "Example User 1",
                                     "picture_link": "https://example.com/profile1.jpg"
@@ -1775,10 +1733,6 @@
                                 "id": "user456",
                                 "username": "exampleUser2",
                                 "email": "example2@example.com",
-                                "hashed_password": {
-                                    "hash_pass": "hashedPassword2",
-                                    "hash_salt": "hashedSalt2"
-                                },
                                 "profile": {
                                     "full_name": "Example User 2",
                                     "picture_link": "https://example.com/profile2.jpg"
