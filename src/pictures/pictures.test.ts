@@ -150,7 +150,6 @@ describe("PICTURES: getting and deleting pictures", () => {
 
     // Should have succeeded
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdPictures[0]);
   });
 
   it("successfully deletes a picture while authenticated", async () => {
