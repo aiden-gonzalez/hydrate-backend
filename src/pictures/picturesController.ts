@@ -68,9 +68,14 @@ export async function updatePictureStatus(req, res) {
     if (picture.user_id != req.user.id) {
       return res.sendStatus(HTTP_FORBIDDEN);
     }
+
     // Update status
-    await db.updatePictureStatus(picture.id, pending);
-    res.status(HTTP_OK).send("Successfully updated picture status");
+    const updatedPicture = await db.updatePictureStatus(picture.id, pending);
+    if (updatedPicture !== undefined && updatedPicture !== null && updatedPicture.pending === pending) {
+      return res.status(HTTP_OK);
+    } else {
+      throw new Error("Failed to update picture status");
+    }
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }

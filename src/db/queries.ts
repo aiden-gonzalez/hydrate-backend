@@ -217,6 +217,10 @@ export function getPicturesByUser(userId: string) : Promise<Picture[]> {
   return parseArrayTimestampsPromise(db.selectFrom('picture').where('user_id', '=', userId).selectAll().execute());
 }
 
+export function updatePictureStatus(id: string, pending: boolean) : Promise<Picture> {
+  return parseTimestampsPromise(db.updateTable('picture').set({pending: pending}).where('id', '=', id).returningAll().executeTakeFirst());
+}
+
 export function deletePicture(id: string) : Promise<Picture> {
   return db.deleteFrom('picture').where('id', '=', id).returningAll().executeTakeFirst();
 }
