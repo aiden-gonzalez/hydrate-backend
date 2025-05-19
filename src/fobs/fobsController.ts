@@ -180,6 +180,7 @@ export async function getFobPictureUploadUrl(req, res) {
 
     // Respond with the signed upload URL and expiry
     const newPictureSignedUrl: IPictureSignedUrl = {
+      picture_id: pictureId,
       signed_url: signedUploadUrl,
       expires: expiration.getTime()
     };

@@ -1119,7 +1119,7 @@
                 }
             },
             "PictureSignedUrl": {
-                "required": ["picture_id, signed_url, expires"],
+                "required": ["picture_id", "signed_url", "expires"],
                 "type": "object",
                 "properties": {
                     "picture_id": {

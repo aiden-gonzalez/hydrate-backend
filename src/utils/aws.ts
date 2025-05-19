@@ -9,6 +9,7 @@ export function generateS3PictureKey(picId : string, fobId: string) {
 export function generateCloudfrontSignedUrl(picture: IPicture) : IPictureSignedUrl {
   const expiration = new Date(Date.now() + (constants.S3_DOWNLOAD_URL_EXPIRATION * 1000));
   return {
+    picture_id: picture.id,
     signed_url: cfGetSignedUrl({
       url: `${process.env.AWS_CLOUDFRONT_URL}/${picture.url}`,
       privateKey: process.env.AWS_CLOUDFRONT_PRIVATE_KEY,

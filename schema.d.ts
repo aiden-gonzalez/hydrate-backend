@@ -824,11 +824,11 @@ export interface components {
      */
     PictureSignedUrl: {
       /** @description ID of the picture */
-      picture_id?: string;
+      picture_id: string;
       /** @description Signed URL for picture */
-      signed_url?: string;
+      signed_url: string;
       /** @description Expiration time of the signed URL in Unix epoch milliseconds */
-      expires?: number;
+      expires: number;
     };
     /**
      * @description Set of login credentials
