@@ -817,13 +817,16 @@ export interface components {
     };
     /**
      * @example {
+     *   "picture_id": "some text",
      *   "signed_url": "some text",
      *   "expires": 174857296748
      * }
      */
     PictureSignedUrl: {
+      /** @description ID of the picture */
+      picture_id?: string;
       /** @description Signed URL for picture */
-      signed_url: string;
+      signed_url?: string;
       /** @description Expiration time of the signed URL in Unix epoch milliseconds */
       expires?: number;
     };

@@ -1119,9 +1119,13 @@
                 }
             },
             "PictureSignedUrl": {
-                "required": ["signed_url"],
+                "required": ["picture_id, signed_url, expires"],
                 "type": "object",
                 "properties": {
+                    "picture_id": {
+                        "description": "ID of the picture",
+                        "type": "string"
+                    },
                     "signed_url": {
                         "description": "Signed URL for picture",
                         "type": "string"
@@ -1132,6 +1136,7 @@
                     }
                 },
                 "example": {
+                    "picture_id": "some text",
                     "signed_url": "some text",
                     "expires": 174857296748
                 }
