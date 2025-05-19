@@ -8,12 +8,15 @@ import fobsRouter from "./fobs/fobsRouter";
 import authRouter from './auth/authRouter';
 import profilesRouter from './profiles/profilesRouter';
 import signupRouter from './signup/signupRouter';
+import picturesRouter from './pictures/picturesRouter';
 
 // Server port
 const port = process.env.PORT;
 
 // Server
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const https = require("https");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const http = require("http");
 const app = express();
 
@@ -46,6 +49,7 @@ app.use('/api/', fobsRouter);
 app.use('/api/', authRouter);
 app.use('/api/', profilesRouter);
 app.use('/api/', signupRouter);
+app.use('/api/', picturesRouter);
 
 // Base endpoint
 app.get('/', (req, res) => {
