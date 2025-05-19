@@ -33,9 +33,15 @@ import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { fromSSO } from "@aws-sdk/credential-provider-sso";
 
 // Initialize S3 client once at the top level
-const s3 = new S3Client({ region: process.env.AWS_REGION });
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  ...(process.env.NODE_ENV === 'local' && process.env.AWS_SSO_PROFILE
+    ? { credentials: fromSSO({ profile: process.env.AWS_SSO_PROFILE }) }
+    : {}) // Empty object for production - uses default provider chain
+});
 const bucketName = process.env.AWS_S3_BUCKET_NAME;
 
 export async function ratingPermissionCheck(req, res, next) {
@@ -135,7 +141,7 @@ export async function updateFob(req, res) {
   }
 }
 
-export async function getFobPicturesUrl(req, res) {
+export async function getFobPicturesUrls(req, res) {
   try {
     const fobPictures = await db.getPicturesForFob(req.fob.id);
 

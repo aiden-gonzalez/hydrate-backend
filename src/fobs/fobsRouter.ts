@@ -36,7 +36,7 @@ fobsRouter.get('/fobs/:id/details',
 fobsRouter.get('/fobs/:id/pictures',
   authenticateRequest, // authenticate request
   fobsController.attachFobToReq, // attach fob to request
-  fobsController.getFobPicturesUrl // get fob pictures URL
+  fobsController.getFobPicturesUrls // get fob pictures URL
 ); // Get picture(s) URL for fob
 fobsRouter.get('/fobs/:id/pictures/upload',
   authenticateRequest, // authenticate request
