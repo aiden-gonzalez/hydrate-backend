@@ -26,22 +26,16 @@ import {
   generateFountainRatingId,
   generatePictureId,
 } from "../utils/generate";
-import {generateCloudfrontSignedUrl, generateS3PictureKey} from "../utils/aws";
+import {generateCloudfrontSignedUrl, generateS3PictureKey, getS3Client} from "../utils/aws";
 import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { fromSSO } from "@aws-sdk/credential-provider-sso";
 
 // Initialize S3 client once at the top level
-const s3 = new S3Client({
-  region: process.env.AWS_REGION,
-  ...(process.env.NODE_ENV === 'local' && process.env.AWS_SSO_PROFILE
-    ? { credentials: fromSSO({ profile: process.env.AWS_SSO_PROFILE }) }
-    : {}) // Empty object for production - uses default provider chain
-});
+const s3 = getS3Client();
 const bucketName = process.env.AWS_S3_BUCKET_NAME;
 
 export async function ratingPermissionCheck(req, res, next) {

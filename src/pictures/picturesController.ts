@@ -5,22 +5,13 @@ import {
   HTTP_NOT_FOUND,
   HTTP_OK
 } from "../utils/constants";
-import {
-  S3Client,
-  DeleteObjectCommand
-} from "@aws-sdk/client-s3";
-import { CloudFrontClient, CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
-import { generateCloudfrontSignedUrl } from "../utils/aws";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
+import { generateCloudfrontSignedUrl, getCloudfrontClient, getS3Client } from "../utils/aws";
 
-// Initialize S3 client
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION
-});
-
-// Initialize Cloudfront client
-const cfClient = new CloudFrontClient({
-  region: process.env.AWS_REGION
-})
+// Initialize AWS clients
+const s3Client = getS3Client();
+const cfClient = getCloudfrontClient();
 
 export async function attachPictureToReq(req, res, next) {
   // Get path parameter
