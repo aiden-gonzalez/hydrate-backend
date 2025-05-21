@@ -144,8 +144,10 @@ export async function getFobPicturesUrls(req, res) {
       return res.status(HTTP_OK).json([]);
     }
 
-    // Generate signed URLs for each picture in the fobPictures array
-    const signedUrls = fobPictures.map(generateCloudfrontSignedUrl);
+    // Generate signed URLs for each picture in the fobPictures array that is not pending
+    const signedUrls = fobPictures
+      .filter((picture) => !picture.pending)
+      .map(generateCloudfrontSignedUrl);
 
     res.status(HTTP_OK).json(signedUrls);
   } catch (error) {

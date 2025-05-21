@@ -34,6 +34,11 @@ export async function getPictureUrl(req, res) {
   try {
     // Get picture from request
     const picture = req.picture;
+
+    // If the picture is pending, return 404
+    if (picture.pending) {
+      return res.sendStatus(HTTP_NOT_FOUND);
+    }
     
     // Create signed Cloudfront URL for picture
     const pictureSignedUrl = generateCloudfrontSignedUrl(picture);
