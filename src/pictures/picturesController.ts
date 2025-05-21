@@ -61,7 +61,7 @@ export async function updatePictureStatus(req, res) {
     // Update status
     const updatedPicture = await db.updatePictureStatus(picture.id, pending);
     if (updatedPicture !== undefined && updatedPicture !== null && updatedPicture.pending === pending) {
-      return res.status(HTTP_OK);
+      return res.sendStatus(HTTP_OK);
     } else {
       throw new Error("Failed to update picture status");
     }
