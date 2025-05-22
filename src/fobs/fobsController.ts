@@ -295,11 +295,19 @@ export async function getFobWithDetails(req, res) {
     }
 
     // Fetch associated pictures and ratings
-    const [user, pictures, ratingsWithDetails] = await Promise.all([
+    const [user, dbPictures, ratingsWithDetails] = await Promise.all([
       db.getUserById(fob.user_id),
       db.getPicturesForFob(fobId),
       db.getRatingsWithDetailsForFob(fobId)
     ]);
+
+    // Filter for pending and replace picture URLs with signed cloudfront URLs
+    const pictures = dbPictures
+      .filter((picture) => !picture.pending)
+      .map((picture) => ({
+        ...picture,
+        url: generateCloudfrontSignedUrl(picture).signed_url
+      }));
 
     // Combine details
     const fobWithDetails : IFobWithDetails = {
