@@ -2,6 +2,7 @@ import nodeCrypto from "crypto";
 import jwt from "jsonwebtoken";
 import {IHashedPassword, IUser} from "./types";
 import * as constants from "./constants";
+import * as db from "../db/queries";
 
 // expiresIn is an integer representing number of seconds until expiration
 export function generateToken (user : IUser, expiration : number) {
@@ -26,6 +27,19 @@ export async function authenticateRequest (req, res, next) {
 
   try {
     const tokenUser = await validateToken(token);
+
+    // TODO avoiding premature optimization for now, but ideally this db call wouldn't be necessary in the future
+    const dbUser = await db.getUserById(tokenUser.id)
+
+    // If user doesn't exist in the database, return 401. User account may have been deleted or banned.
+    if (dbUser == null) {
+      return res.sendStatus(constants.HTTP_UNAUTHORIZED);
+    }
+
+    // TODO consider also adding the dbUser to the request object
+    // THe token user could have basic information, the DB user could have more?
+    // OR we could attach roles based info from the DB to the request or something,
+    // if we really wanted to get fancy with authorization
     req.user = tokenUser;
     next();
   } catch (error) {
