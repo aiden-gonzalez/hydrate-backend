@@ -115,6 +115,23 @@ export interface paths {
     };
   };
   "/api/auth": {
+    /** Simple endpoint to check if auth token / user account is valid */
+    get: {
+      responses: {
+        /** @description Auth token / user account OK */
+        200: {
+          content: never;
+        };
+        /** @description Malformed request (missing access token?) */
+        400: {
+          content: never;
+        };
+        /** @description Authentication/authorization failed (token invalid or account not found) */
+        401: {
+          content: never;
+        };
+      };
+    };
     /** Password authentication */
     post: {
       requestBody: {

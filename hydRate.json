@@ -236,6 +236,20 @@
                     }
                 },
                 "summary": "Password authentication"
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Auth token / user account OK"
+                    },
+                    "400": {
+                        "description": "Malformed request (missing access token?)"
+                    },
+                    "401": {
+                        "description": "Authentication/authorization failed (token invalid or account not found)"
+                    }
+                },
+                "summary": "Simple endpoint to check if auth token / user account is valid"
             }
         },
         "/api/profiles/{username}": {

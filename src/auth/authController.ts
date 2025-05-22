@@ -55,6 +55,10 @@ export async function validateRefresh(req, res) {
   });
 }
 
+export function success(req, res) {
+  res.sendStatus(constants.HTTP_OK);
+}
+
 function getAuthSuccessResponse(user : IUser) : IAuthSuccessResponse {
   return {
     access_token: generateToken(user, constants.JWT_ACCESS_EXPIRATION),
