@@ -36,11 +36,8 @@ export async function authenticateRequest (req, res, next) {
       return res.sendStatus(constants.HTTP_UNAUTHORIZED);
     }
 
-    // TODO consider also adding the dbUser to the request object
-    // THe token user could have basic information, the DB user could have more?
-    // OR we could attach roles based info from the DB to the request or something,
-    // if we really wanted to get fancy with authorization
     req.user = tokenUser;
+    req.dbUser = dbUser;
     next();
   } catch (error) {
     res.sendStatus(constants.HTTP_UNAUTHORIZED);

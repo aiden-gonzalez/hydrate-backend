@@ -11,13 +11,13 @@ import {
   HTTP_OK
 } from "../utils/constants";
 
-export async function getUserMiddleware(req, res, next) {
+export async function getUserByUsernameMiddleware(req, res, next) {
   const username = req.params.username;
   const user : IUser = await db.getUserByUsername(username);
   if (user == null) {
     return res.status(HTTP_NOT_FOUND).send(HTTP_NOT_FOUND_MESSAGE);
   }
-  req.dbUser = user;
+  req.usernameUser = user;
   return next();
 }
 
@@ -32,8 +32,8 @@ export function profilePermissionCheck(req, res, next) {
 }
 
 export function getProfileForUser(req, res) {
-  if (req.dbUser && req.dbUser.profile) {
-    return res.status(HTTP_OK).json(req.dbUser.profile);
+  if (req.usernameUser && req.usernameUser.profile) {
+    return res.status(HTTP_OK).json(req.usernameUser.profile);
   }
   return res.status(HTTP_INTERNAL_ERROR).send(HTTP_INTERNAL_ERROR_MESSAGE);
 }
@@ -58,7 +58,7 @@ export async function updateProfile(req, res) {
 }
 
 export async function getContributionsForUser(req, res) {
-  const userId : string = req.dbUser.id;
+  const userId : string = req.usernameUser.id;
 
   return new Promise((resolve) => {
     db.getUserContributions(userId, req.query as IUserContributionQueryParams).then((contributions) => {
