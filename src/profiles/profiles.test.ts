@@ -1,4 +1,5 @@
 import {
+  createAuthInDb,
   expectEntitiesEqual,
   getAuthedReqMockForUser, getBathroom, getBathroomRating, getFountain, getFountainRating, getLocation, getPicture,
   getReqMock,
@@ -49,9 +50,11 @@ describe("PROFILES: getting and updating profiles", () => {
 
   it("fails to find a profile for user that doesn't exist", async () => {
     const user = await getUser();
+    db.createUser(user);
+    createAuthInDb(user.id, "password");
     const req = getAuthedReqMockForUser(user);
     req.params = {
-      username: user.username
+      username: "nonexistent username"
     };
     const res = getResMock();
 
