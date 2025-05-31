@@ -19,10 +19,10 @@ describe("AUTH: logging in user", () => {
   const authFuncs = [findUserMiddleware, validatePassword];
   const refreshFuncs = [validateRefresh];
 
-  async function createAuthInDb() {
-    const hash = await hashPass(authRequest.user_credentials.password);
+  async function createAuthInDb(userId : string, password : string) {
+    const hash = await hashPass(password);
     await db.createAuth({
-      user_id: user.id,
+      user_id: userId,
       hash_pass: hash.hash_pass,
       hash_salt: hash.hash_salt
     });
@@ -46,7 +46,7 @@ describe("AUTH: logging in user", () => {
 
     // Create user before login attempt
     await db.createUser(user);
-    await createAuthInDb();
+    await createAuthInDb(user.id, "wrong password");
     await simulateRouter(req, res, authFuncs);
 
     // User should have been found
@@ -58,10 +58,9 @@ describe("AUTH: logging in user", () => {
   it("fails to return tokens if password is wrong", async () => {
     // Create user before login attempt
     await db.createUser(user);
-    await createAuthInDb();
+    await createAuthInDb(user.id, "password");
 
     // Try to validate incorrect password
-    authRequest.user_credentials.password = "wrong password";
     const req = getReqMock(null, authRequest);
     await simulateRouter(req, res, authFuncs);
 
@@ -76,7 +75,7 @@ describe("AUTH: logging in user", () => {
 
     // Create user before login attempt
     await db.createUser(user);
-    await createAuthInDb();
+    await createAuthInDb(user.id, "password");
     await simulateRouter(req, res, authFuncs);
 
     // Try to validate password
@@ -91,7 +90,7 @@ describe("AUTH: logging in user", () => {
 
     // Create user before login attempt
     await db.createUser(user);
-    await createAuthInDb();
+    await createAuthInDb(user.id, "password");
     await simulateRouter(req, res, authFuncs);
 
     // Validate password
