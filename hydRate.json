@@ -924,6 +924,55 @@
                     "required": true
                 }
             ]
+        },
+        "/api/profiles/me/contributions": {
+            "summary": "Endpoint for getting the authenticated user's contributions",
+            "description": "",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "from_date",
+                        "description": "Limit query to contributions on and after this date. Unix epoch milliseconds timestamp.",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "to_date",
+                        "description": "Limit query to contributions up to and on this date. Unix epoch milliseconds timestamp.",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserContributions"
+                                }
+                            }
+                        },
+                        "description": "Request successful. Returns authenticated user's contributions."
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Authorization/authentication failed (access token invalid)"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
+                "summary": "Get contributions for the authenticated user",
+                "description": "Uses an optimized database query to get the authenticated user's created fountains, bathrooms, ratings, and pictures without requiring the username in the path."
+            }
         }
     },
     "components": {

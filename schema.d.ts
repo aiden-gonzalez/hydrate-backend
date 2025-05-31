@@ -701,6 +701,38 @@ export interface paths {
       };
     };
   };
+  "/api/profiles/me/contributions": {
+    /**
+     * Get contributions for the authenticated user
+     * @description Uses an optimized database query to get the authenticated user's created fountains, bathrooms, ratings, and pictures without requiring the username in the path.
+     */
+    get: {
+      parameters: {
+        query?: {
+          /** @description Limit query to contributions on and after this date. Unix epoch milliseconds timestamp. */
+          from_date?: number;
+          /** @description Limit query to contributions up to and on this date. Unix epoch milliseconds timestamp. */
+          to_date?: number;
+        };
+      };
+      responses: {
+        /** @description Request successful. Returns authenticated user's contributions. */
+        200: {
+          content: {
+            "application/json": components["schemas"]["UserContributions"];
+          };
+        };
+        /** @description Malformed request */
+        400: {
+          content: never;
+        };
+        /** @description Authorization/authentication failed (access token invalid) */
+        401: {
+          content: never;
+        };
+      };
+    };
+  };
 }
 
 export type webhooks = Record<string, never>;
