@@ -5,6 +5,7 @@ import {IAuthRefreshRequest, IAuthRequest} from "./types";
 import {IUser} from "../utils/types";
 import {expect} from "chai";
 import * as db from '../db/queries';
+import { hashPass } from "../utils/auth";
 
 describe("AUTH: logging in user", () => {
   let user : IUser = null;
@@ -17,6 +18,15 @@ describe("AUTH: logging in user", () => {
   const res = getResMock();
   const authFuncs = [findUserMiddleware, validatePassword];
   const refreshFuncs = [validateRefresh];
+
+  async function createAuthInDb() {
+    const hash = await hashPass(authRequest.user_credentials.password);
+    await db.createAuth({
+      user_id: user.id,
+      hash_pass: hash.hash_pass,
+      hash_salt: hash.hash_salt
+    });
+  }
 
   it("fails to find an unknown user", async () => {
     user = await getUser();
@@ -36,6 +46,7 @@ describe("AUTH: logging in user", () => {
 
     // Create user before login attempt
     await db.createUser(user);
+    await createAuthInDb();
     await simulateRouter(req, res, authFuncs);
 
     // User should have been found
@@ -45,13 +56,13 @@ describe("AUTH: logging in user", () => {
   });
 
   it("fails to return tokens if password is wrong", async () => {
-    const req = getReqMock(null, authRequest);
-
     // Create user before login attempt
     await db.createUser(user);
-    await simulateRouter(req, res, authFuncs);
+    await createAuthInDb();
 
-    // Try to validate password
+    // Try to validate incorrect password
+    authRequest.user_credentials.password = "wrong password";
+    const req = getReqMock(null, authRequest);
     await simulateRouter(req, res, authFuncs);
 
     // Login should have failed
@@ -65,6 +76,7 @@ describe("AUTH: logging in user", () => {
 
     // Create user before login attempt
     await db.createUser(user);
+    await createAuthInDb();
     await simulateRouter(req, res, authFuncs);
 
     // Try to validate password
@@ -79,6 +91,7 @@ describe("AUTH: logging in user", () => {
 
     // Create user before login attempt
     await db.createUser(user);
+    await createAuthInDb();
     await simulateRouter(req, res, authFuncs);
 
     // Validate password
