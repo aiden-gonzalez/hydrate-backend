@@ -11,7 +11,7 @@ import * as constants from "../utils/constants";
 import {
   getContributionsForUser,
   getProfileForUser,
-  getUserMiddleware,
+  getUserByUsernameMiddleware,
   profilePermissionCheck,
   updateProfile
 } from "./profilesController";
@@ -26,9 +26,9 @@ function copyTimestamps(obj_a, obj_b) {
 }
 
 describe("PROFILES: getting and updating profiles", () => {
-  const getProfileFuncs = [authenticateRequest, getUserMiddleware, getProfileForUser];
-  const updateProfileFuncs = [authenticateRequest, getUserMiddleware, profilePermissionCheck, updateProfile];
-  const getContributionsFunc = [authenticateRequest, getUserMiddleware, getContributionsForUser];
+  const getProfileFuncs = [authenticateRequest, getUserByUsernameMiddleware, getProfileForUser];
+  const updateProfileFuncs = [authenticateRequest, getUserByUsernameMiddleware, profilePermissionCheck, updateProfile];
+  const getContributionsFunc = [authenticateRequest, getUserByUsernameMiddleware, getContributionsForUser];
 
   it("can't get a user profile without authentication", async () => {
     const user = await getUser();
