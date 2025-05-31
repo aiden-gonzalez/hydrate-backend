@@ -24,7 +24,7 @@ profilesRouter.get('/profiles/:username/contributions',
 ); // get contributions by username
 profilesRouter.get('/profiles/me/contributions',
   authenticateRequest, // authenticate request
-  (req : any, res, next) => {req.usernameUser = req.dbUser; next();}, // map dbUser to usernameUser
+  profilesController.mapDbUserToUsernameUser, // map dbUser to usernameUser
   profilesController.getContributionsForUser // return contributions for user
 ); // get contributions by username
 

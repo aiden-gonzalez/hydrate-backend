@@ -31,6 +31,11 @@ export function profilePermissionCheck(req, res, next) {
   return next();
 }
 
+export function mapDbUserToUsernameUser(req, res, next) {
+  req.usernameUser = req.dbUser;
+  next();
+}
+
 export function getProfileForUser(req, res) {
   if (req.usernameUser && req.usernameUser.profile) {
     return res.status(HTTP_OK).json(req.usernameUser.profile);
