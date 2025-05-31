@@ -16,7 +16,7 @@ import {
   pictureIdRegex,
   userIdRegex
 } from "./regex";
-import {getFountain, getPicture, getReqMock, getResMock, getUser} from "../testHelper.test";
+import {createAuthInDb, getFountain, getPicture, getReqMock, getResMock, getUser} from "../testHelper.test";
 import {IUser} from "./types";
 import {expect} from "chai";
 import * as db from '../db/queries';
@@ -63,6 +63,8 @@ describe("UTIL: auth tests", () => {
 
   it ("authenticates a token", async () => {
     const user : IUser = await getUser();
+    await db.createUser(user);
+    await createAuthInDb(user.id, "password");
     const token = generateToken(user, constants.JWT_ACCESS_EXPIRATION);
     const req = getReqMock(token);
     const res = getResMock();

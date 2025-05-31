@@ -166,9 +166,11 @@ describe("PROFILES: getting and updating profiles", () => {
 
   it("fails to get user contributions for a user that doesn't exist", async () => {
     const user = await getUser();
+    await db.createUser(user);
+    await createAuthInDb(user.id, "password");
     const req = getAuthedReqMockForUser(user);
     req.params = {
-      username: user.username
+      username: "nonexistent_username"
     };
     const res = getResMock();
 
