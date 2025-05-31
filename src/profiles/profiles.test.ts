@@ -50,8 +50,8 @@ describe("PROFILES: getting and updating profiles", () => {
 
   it("fails to find a profile for user that doesn't exist", async () => {
     const user = await getUser();
-    db.createUser(user);
-    createAuthInDb(user.id, "password");
+    await db.createUser(user);
+    await createAuthInDb(user.id, "password");
     const req = getAuthedReqMockForUser(user);
     req.params = {
       username: "nonexistent username"
