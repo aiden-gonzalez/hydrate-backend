@@ -8,7 +8,7 @@ import {
   generatePictureId,
   generateUserId
 } from "./utils/generate";
-import {generateToken} from "./utils/auth";
+import {generateToken, hashPass} from "./utils/auth";
 import * as constants from "./utils/constants";
 import {findFobs} from "./db/queries";
 import {migrateToLatest} from "./db/migrate";
@@ -22,6 +22,7 @@ import {
   IRating
 } from "./fobs/types";
 import {getDb} from "./db/database";
+import { createAuth } from './db/queries';
 
 describe("Connect to database and run tests", function () {
   it("Should connect to database", async () => {
@@ -164,6 +165,15 @@ export function getPicture (fobId = generateFountainId(), userId = generateUserI
     user_id: userId,
     url: url
   }
+}
+
+export async function createAuthInDb(userId : string, password : string) {
+  const hash = await hashPass(password);
+  await createAuth({
+    user_id: userId,
+    hash_pass: hash.hash_pass,
+    hash_salt: hash.hash_salt
+  });
 }
 
 export function getReqMock (token : string = null, body : any = null) {

@@ -1,11 +1,10 @@
-import {getReqMock, getResMock, getUser, simulateRouter} from "../testHelper.test";
+import {createAuthInDb, getReqMock, getResMock, getUser, simulateRouter} from "../testHelper.test";
 import {findUserMiddleware, validatePassword, validateRefresh} from "./authController";
 import * as constants from "../utils/constants";
 import {IAuthRefreshRequest, IAuthRequest} from "./types";
 import {IUser} from "../utils/types";
 import {expect} from "chai";
 import * as db from '../db/queries';
-import { hashPass } from "../utils/auth";
 
 describe("AUTH: logging in user", () => {
   let user : IUser = null;
@@ -18,15 +17,6 @@ describe("AUTH: logging in user", () => {
   const res = getResMock();
   const authFuncs = [findUserMiddleware, validatePassword];
   const refreshFuncs = [validateRefresh];
-
-  async function createAuthInDb(userId : string, password : string) {
-    const hash = await hashPass(password);
-    await db.createAuth({
-      user_id: userId,
-      hash_pass: hash.hash_pass,
-      hash_salt: hash.hash_salt
-    });
-  }
 
   it("fails to find an unknown user", async () => {
     user = await getUser();

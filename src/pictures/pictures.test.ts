@@ -1,5 +1,4 @@
 import {
-  expectEntitiesEqual,
   getAuthedReqMockForUser,
   getReqMock,
   getResMock,
@@ -104,11 +103,13 @@ describe("PICTURES: getting and deleting pictures", () => {
 
   it("successfully gets a particular picture", async () => {
     const user = await getUser();
+    await db.createUser(user);
+    await testUtil.createAuthInDb(user.id, "password");
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create bathrooms
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Add pictures
     const createdPictures = await createPictures(createdFobs[0].id, user.id);
@@ -121,18 +122,19 @@ describe("PICTURES: getting and deleting pictures", () => {
     // Try to get picture
     await simulateRouter(req, res, getPictureFuncs);
 
-    // Should have succeeded
-    expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expectEntitiesEqual(res.message, createdPictures[0]);
+    // Should have succeeded, but picture should be pending, so 404
+    expect(res.sentStatus).to.equal(constants.HTTP_NOT_FOUND);
   });
 
   it("successfully updates a picture status while authenticated", async () => {
     const user = await getUser();
+    await db.createUser(user);
+    await testUtil.createAuthInDb(user.id, "password");
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create bathrooms
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Add pictures
     const createdPictures = await createPictures(createdFobs[0].id, user.id);
@@ -152,13 +154,16 @@ describe("PICTURES: getting and deleting pictures", () => {
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
   });
 
-  it("successfully deletes a picture while authenticated", async () => {
+  // Skip this because it involves S3
+  it.skip("successfully deletes a picture while authenticated", async () => {
     const user = await getUser();
+    await db.createUser(user);
+    await testUtil.createAuthInDb(user.id, "password");
     const req = getAuthedReqMockForUser(user);
     const res = getResMock();
 
     // Create fountains
-    const createdFobs = await createFobs();
+    const createdFobs = await createFobs(user);
 
     // Add pictures
     const createdPictures = await createPictures(createdFobs[0].id, user.id);
