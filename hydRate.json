@@ -1540,10 +1540,8 @@
             "UserContributions": {
                 "description": "Summary of user contributions",
                 "required": [
-                    "fountains",
-                    "bathrooms",
-                    "fountain_ratings",
-                    "bathroom_ratings",
+                    "fobs",
+                    "ratings",
                     "pictures"
                 ],
                 "type": "object",

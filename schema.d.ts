@@ -1132,9 +1132,9 @@ export interface components {
      */
     UserContributions: {
       /** @description Fobs created by the user */
-      fobs?: components["schemas"]["Fob"][];
+      fobs: components["schemas"]["Fob"][];
       /** @description Fob ratings created by user */
-      ratings?: components["schemas"]["Rating"][];
+      ratings: components["schemas"]["Rating"][];
       /** @description Pictures created by user */
       pictures: components["schemas"]["Picture"][];
     };
