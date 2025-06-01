@@ -45,11 +45,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.use('/api/', fobsRouter);
-app.use('/api/', authRouter);
-app.use('/api/', profilesRouter);
-app.use('/api/', signupRouter);
-app.use('/api/', picturesRouter);
+app.use('/api', fobsRouter);
+app.use('/api', authRouter);
+app.use('/api', profilesRouter);
+app.use('/api', signupRouter);
+app.use('/api', picturesRouter);
 
 // Base endpoint
 app.get('/', (req, res) => {

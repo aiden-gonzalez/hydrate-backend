@@ -701,7 +701,7 @@ export interface paths {
       };
     };
   };
-  "/api/profiles/me/contributions": {
+  "/api/me/contributions": {
     /**
      * Get contributions for the authenticated user
      * @description Uses an optimized database query to get the authenticated user's created fountains, bathrooms, ratings, and pictures without requiring the username in the path.

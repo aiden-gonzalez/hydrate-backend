@@ -22,7 +22,7 @@ profilesRouter.get('/profiles/:username/contributions',
   profilesController.getUserByUsernameMiddleware, // get user from db by username
   profilesController.getContributionsForUser // return contributions for user
 ); // get contributions by username
-profilesRouter.get('/profiles/me/contributions',
+profilesRouter.get('/me/contributions',
   authenticateRequest, // authenticate request
   profilesController.mapDbUserToUsernameUser, // map dbUser to usernameUser
   profilesController.getContributionsForUser // return contributions for user
