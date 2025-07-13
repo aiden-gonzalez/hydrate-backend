@@ -114,7 +114,11 @@ export async function createFob(req, res) {
     const createdFob = await db.createFob(newFob);
     res.status(HTTP_CREATED).json(createdFob);
   } catch (error) {
-    res.status(HTTP_INTERNAL_ERROR).send(error);
+    // If the error is fob already exists, return 400
+    if (error.message.includes("duplicate key value")) {
+      return res.status(HTTP_BAD_REQUEST).send("Fob already exists at this location!");
+    }
+    return res.status(HTTP_INTERNAL_ERROR).send(error);
   }
 }
 
