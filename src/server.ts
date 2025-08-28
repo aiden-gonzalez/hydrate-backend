@@ -56,18 +56,20 @@ app.get('/', (req, res) => {
   return res.send('Server OK');
 });
 
-// Https stuff
-const fs = require('node:fs');
-
-const options = {
-  key: fs.readFileSync('./https_private_key.pem'),
-  cert: fs.readFileSync('./certificate.pem'),
-};
-
+// Start up http server
 http.createServer(app).listen(port);
 console.log("Express is listening on port", port);
-https.createServer(options, app).listen('3001');
-console.log("Https express is listening on port 3001");
+
+// Create and start https server (only when not in non-docker / non-cloud env)
+if (process.env.NODE_ENV.toLowerCase() !== "cloud") {
+  const fs = require('node:fs');
+  const httpsOptions = {
+    key: fs.readFileSync('./https_private_key.pem'),
+    cert: fs.readFileSync('./certificate.pem'),
+  };
+  https.createServer(httpsOptions, app).listen('3001');
+  console.log("Https express is listening on port 3001");
+}
 
 // Connect to postgres
 async function main() {
