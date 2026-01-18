@@ -5,6 +5,8 @@
   "main": "src/server.ts",
   "scripts": {
     "build": "tsc",
+    "build_cloud_image": "docker build --file CloudDockerfile --tag hydrate_cloud:latest .",
+    "build_local_image": "docker build --file LocalDockerfile --tag hydrate_local:latest .",
     "test": "tsc && sudo docker compose -f test-postgres-docker-compose.yml up -d && export NODE_ENV=test && mocha --recursive --exit",
     "local": "tsc && sudo docker compose -f postgres-docker-compose.yml up -d && export NODE_ENV=local && node dist/server.js",
     "cloud": "tsc && export NODE_ENV=cloud && node dist/server.js",
