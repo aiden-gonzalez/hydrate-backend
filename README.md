@@ -16,7 +16,7 @@ Then, in the folder with your project:
 mkcert localhost
 ```
 
-Then you can rename the private key file outputted to https_private_key.pem.
+Then you can rename the private key file outputted to `https_private_key.pem`, and the certificate outputted to `certificate.pem`.
 
 This next step isn't necessary because node runs its own https server, but if you want to simply use a ssl proxy, you can run the following:
 
