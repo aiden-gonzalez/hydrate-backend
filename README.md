@@ -23,15 +23,23 @@ Create app and postgres deployments:
 npm run local_kube
 ```
 
-The app will then be available at `http://<minikube-ip>:30000`.  The port is 30000 because NodePort must be in the range 30000-32767 by default in Kubernetes.  The adminer instance will be available at `http://<minikube-ip>:30082`.  Use "postgres" as the server value at login, since that's the name of the PostgreSQL service. Kubernetes DNS should resolve that to the correct pod IP within the cluster (unconfirmed).
+With the docker driver on macOS, the minikube IP is not directly accessible from the host, because the cluster runs inside a Docker network. So to create a tunnel and get a working localhost URL, use this command:
 
-Top stop the app, simply run:
+```
+minikube service hydrate-api --url
+```
+
+Minikube will keep the tunnel running as long as you let it run uninterrupted.  You may then copy the URL and start using it.
+
+You can also do the same thing for the adminer service (`minikube service adminer --url`).  Use "postgres" as the server value at login, since that's the name of the PostgreSQL service. Kubernetes DNS should resolve that to the correct pod IP within the cluster.
+
+To stop the app and database / adminer, simply run:
 
 ```
 npm run delete_local_kube
 ```
 
-and both the app and database deployments will be destroyed.
+and everything will be destroyed.
 
 ### Generating a local certificate for HTTPS
 To generate a local certificate.pem and https_private_key.pem, run the following commands to install mkcert:
