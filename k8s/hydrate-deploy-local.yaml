@@ -24,25 +24,26 @@ spec:
         ports:
           - containerPort: 3000
         env:
+          # App environment
+          - name: NODE_ENV
+            value: "local"
           # App port
           - name: PORT
             value: "3000"
           # Database connection environment variables
-          - name: POSTGRES_HOST
+          - name: LOCAL_PG_HOST
             value: postgres
-          - name: POSTGRES_PORT
-            value: "5432"
-          - name: POSTGRES_DB
+          - name: LOCAL_PG_DB
             valueFrom:
               configMapKeyRef:
                 name: postgres-config
                 key: POSTGRES_DB
-          - name: POSTGRES_USER
+          - name: LOCAL_PG_USER
             valueFrom:
               configMapKeyRef:
                 name: postgres-config
                 key: POSTGRES_USER
-          - name: POSTGRES_PASSWORD
+          - name: LOCAL_PG_PASS
             valueFrom:
               secretKeyRef:
                 name: postgres-secret

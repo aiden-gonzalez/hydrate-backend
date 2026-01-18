@@ -28,7 +28,7 @@ The app will then be available at `http://<minikube-ip>:30000`.  The port is 300
 Top stop the app, simply run:
 
 ```
-npm run stop_local_kube
+npm run delete_local_kube
 ```
 
 and both the app and database deployments will be destroyed.
