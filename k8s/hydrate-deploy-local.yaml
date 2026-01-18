@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hydrate-deploy-local
+  name: hydrate-deploy-local
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hydrate-deploy-local
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: hydrate-deploy-local
+    spec:
+      containers:
+      - image: hydrate_local:latest
+        name: hydrate-local-kznrd
+        resources: {}
+        # Never try to pull image from a remote repository
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 3000
+        env:
+          # App port
+          - name: PORT
+            value: "3000"
+          # Database connection environment variables
+          - name: POSTGRES_HOST
+            value: postgres
+          - name: POSTGRES_PORT
+            value: "5432"
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-config
+                key: POSTGRES_DB
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-config
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: POSTGRES_PASSWORD
+status: {}
+
+---
+# Service to expose the app
+apiVersion: v1
+kind: Service
+metadata:
+  name: hydrate-api
+  labels:
+    app: hydrate-deploy-local
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30000
+  selector:
+    app: hydrate-deploy-local
