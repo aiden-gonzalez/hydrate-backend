@@ -11,7 +11,7 @@ export async function findUserMiddleware (req, res, next) {
   // Find user in database
   const user = await db.getUserByEmail(authRequest.user_credentials.email);
   if (user === null || user === undefined) {
-    return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
+    return res.sendStatus(constants.HTTP_UNAUTHORIZED);
   }
 
   req.dbUser = user;
@@ -27,7 +27,7 @@ export async function validatePassword (req, res) {
   const hashed_password = await db.getAuthForUser(user.id) as IHashedPassword;
   const passwordValid = await isValidPass(authRequest.user_credentials.password, hashed_password);
   if (!passwordValid) {
-    return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
+    return res.sendStatus(constants.HTTP_UNAUTHORIZED);
   }
 
   // Send tokens
@@ -45,13 +45,13 @@ export async function validateRefresh(req, res) {
 
     // If user account is non-existent, then we consider the tokens invalid
     if (dbUser === undefined || dbUser === null) {
-      return res.status(constants.HTTP_UNAUTHORIZED).send(constants.HTTP_UNAUTHORIZED_MESSAGE);
+      return res.sendStatus(constants.HTTP_UNAUTHORIZED);
     }
 
     // Send new tokens
     return res.status(constants.HTTP_OK).send(getAuthSuccessResponse(user));
   }).catch((error) => {
-    return res.status(constants.HTTP_UNAUTHORIZED).send(error);
+    return res.sendStatus(constants.HTTP_UNAUTHORIZED);
   });
 }
 

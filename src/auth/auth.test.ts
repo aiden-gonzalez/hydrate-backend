@@ -23,11 +23,12 @@ describe("AUTH: logging in user", () => {
     const req = getReqMock(null, authRequest);
 
     // Don't create user before attempting to log in
+    res.message = null; // reset
     await simulateRouter(req, res, authFuncs);
 
     // Login should have failed
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
+    expect(res.message).to.be.null;
   });
 
   it("finds a known user", async () => {
@@ -52,11 +53,12 @@ describe("AUTH: logging in user", () => {
 
     // Try to validate incorrect password
     const req = getReqMock(null, authRequest);
+    res.message = null; // reset
     await simulateRouter(req, res, authFuncs);
 
     // Login should have failed
     expect(res.sentStatus).to.equal(constants.HTTP_UNAUTHORIZED);
-    expect(res.message).to.equal(constants.HTTP_UNAUTHORIZED_MESSAGE);
+    expect(res.message).to.be.null;
   });
 
   it("returns tokens if password is correct", async () => {
