@@ -111,7 +111,7 @@ export async function resetPassword(req, res) {
   // Get token
   const tokenRecord = await db.getPasswordResetToken(resetRequest.token);
   if (!tokenRecord || tokenRecord.used || tokenRecord.expires_at < Date.now()) {
-    return res.status(constants.HTTP_BAD_REQUEST).send({ message: "Invalid or expired token." });
+    return res.status(constants.HTTP_BAD_REQUEST).send({ message: "Invalid or expired password reset token." });
   }
 
   // Update password
