@@ -1,5 +1,5 @@
 import {createAuthInDb, getReqMock, getResMock, getUser, simulateRouter} from "../testHelper.test";
-import {findUserMiddleware, validatePassword, validateRefresh} from "./authController";
+import {findUserMiddleware, validatePassword, validateRefresh, requestPasswordReset} from "./authController";
 import * as constants from "../utils/constants";
 import {IAuthRefreshRequest, IAuthRequest} from "./types";
 import {IUser} from "../utils/types";
@@ -105,6 +105,37 @@ describe("AUTH: logging in user", () => {
     // Refresh should have succeeded
     expectAuthResponse(res);
   });
+});
+
+describe("PASSWORD RESET", () => {
+  let user: IUser = null;
+  const res = getResMock();
+  const passwordResetRequestFuncs = [requestPasswordReset];
+
+  beforeEach(async () => {
+    user = await getUser();
+    await db.createUser(user);
+    await createAuthInDb(user.id, "password");
+    res.message = null;
+  });
+
+  it("requests password reset for existing user", async () => {
+    const req = getReqMock(null, { email: user.email });
+    await simulateRouter(req, res, passwordResetRequestFuncs);
+
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expect(res.message.message).to.equal("If an account exists with that email, a password reset email has been sent.");
+  });
+
+  it("requests password reset for non-existing user", async () => {
+    const req = getReqMock(null, { email: "nonexistent@example.com" });
+    await simulateRouter(req, res, passwordResetRequestFuncs);
+
+    expect(res.sentStatus).to.equal(constants.HTTP_OK);
+    expect(res.message.message).to.equal("If an account exists with that email, a password reset email has been sent.");
+  });
+
+  // Note: Testing reset would require mocking the token creation, but for now, basic structure is there.
 });
 
 function expectAuthResponse(res) {

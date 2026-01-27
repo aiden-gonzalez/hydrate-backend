@@ -55,3 +55,7 @@ export function bathroomIdValidator(bathroomId: string) {
 export function ratingDetailValueValidator(ratingDetailValue : number) {
   return Number.isInteger(ratingDetailValue) && ratingDetailValue >= 1 && ratingDetailValue <= 5;
 }
+
+export function passwordValidator(password: string) {
+  return password.length >= 8;
+}

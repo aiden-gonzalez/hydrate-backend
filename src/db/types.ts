@@ -19,6 +19,7 @@ export interface Database {
   picture: PictureTable
   fob_with_rating: FobWithRatingView
   rating_with_details: RatingWithDetailsView
+  password_reset_token: PasswordResetTokenTable
 }
 
 type DbCreatedAt = ColumnType<number, number, never>
@@ -143,6 +144,18 @@ export interface PictureTable {
 export type Picture = Selectable<PictureTable>
 export type NewPicture = Insertable<PictureTable>
 export type PictureUpdate = Updateable<PictureTable>
+
+export interface PasswordResetTokenTable {
+  id: Generated<number>
+  user_id: string
+  token: string
+  expires_at: number
+  used: boolean
+  created_at: DbCreatedAt
+}
+
+export type PasswordResetToken = Selectable<PasswordResetTokenTable>
+export type NewPasswordResetToken = Insertable<PasswordResetTokenTable>
 
 export type UserContributions = {
   fobs: Fob[],

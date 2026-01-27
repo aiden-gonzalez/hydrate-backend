@@ -22,7 +22,7 @@ export type IRatingDetails = IFountainRatingDetails | IBathroomRatingDetails;
 export type IRatingWithDetails = components["schemas"]["RatingWithDetails"];
 export type IFobCreationDetails = components["schemas"]["FobCreationDetails"];
 export type IFobWithDetails = components["schemas"]["FobWithDetails"];
-export type IFobQueryParams =  paths["/api/fobs"]["get"]["parameters"]["query"];
+export type IFobQueryParams =  paths["/api/fobs/"]["get"]["parameters"]["query"];
 
 export function isFountain(fob: IFob) {
   return fob.id.startsWith(constants.FOUNTAIN_ID_PREFIX);

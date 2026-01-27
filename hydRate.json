@@ -15,7 +15,7 @@
         }
     },
     "paths": {
-        "/api/signup": {
+        "/api/signup/": {
             "summary": "Request creation of new user account",
             "post": {
                 "requestBody": {
@@ -39,7 +39,7 @@
                 "summary": "Create new user account"
             }
         },
-        "/api/fobs": {
+        "/api/fobs/": {
             "summary": "Primary endpoint for retrieving (GET) and adding (POST) Fobs",
             "get": {
                 "parameters": [
@@ -204,7 +204,7 @@
                 "summary": "Auth token refresh"
             }
         },
-        "/api/auth": {
+        "/api/auth/": {
             "summary": "Primary endpoint for password authentication scheme",
             "post": {
                 "requestBody": {
@@ -250,6 +250,68 @@
                     }
                 },
                 "summary": "Simple endpoint to check if auth token / user account is valid"
+            }
+        },
+        "/api/auth/password-reset/request": {
+            "summary": "Request a password reset email",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordResetRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetResponse"
+                                }
+                            }
+                        },
+                        "description": "Password reset email sent if account exists"
+                    },
+                    "400": {
+                        "description": "Request is missing required information or is incorrectly formatted"
+                    }
+                },
+                "summary": "Request password reset"
+            }
+        },
+        "/api/auth/password-reset/reset": {
+            "summary": "Reset password using token",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordResetResetRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthSuccessResponse"
+                                }
+                            }
+                        },
+                        "description": "Password reset successful, returns auth tokens"
+                    },
+                    "400": {
+                        "description": "Request is missing required information, passwords don't match, or token invalid"
+                    }
+                },
+                "summary": "Reset password"
             }
         },
         "/api/profiles/{username}": {
@@ -1535,6 +1597,66 @@
                         "email": "some text",
                         "password": "some text"
                     }
+                }
+            },
+            "PasswordResetRequest": {
+                "description": "Request to send password reset email",
+                "required": [
+                    "email"
+                ],
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "description": "Email address of the account",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "email": "user@example.com"
+                }
+            },
+            "PasswordResetResponse": {
+                "description": "Response for password reset request",
+                "required": [
+                    "message"
+                ],
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "description": "Confirmation message",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "message": "If an account exists with that email, a password reset email has been sent."
+                }
+            },
+            "PasswordResetResetRequest": {
+                "description": "Request to reset password",
+                "required": [
+                    "token",
+                    "new_password",
+                    "confirm_password"
+                ],
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "description": "Password reset token",
+                        "type": "string"
+                    },
+                    "new_password": {
+                        "description": "New password",
+                        "type": "string"
+                    },
+                    "confirm_password": {
+                        "description": "Confirm new password",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "token": "abc123...",
+                    "new_password": "newpassword",
+                    "confirm_password": "newpassword"
                 }
             },
             "UserContributions": {

@@ -4,11 +4,16 @@ import {
   Fob,
   FobUpdate,
   NewAuth,
-  NewFob, NewPicture,
+  NewFob,
+  NewPasswordResetToken,
+  NewPicture,
   NewRating,
-  NewUser, Picture,
+  NewUser,
+  PasswordResetToken,
+  Picture,
   Rating,
-  RatingUpdate, RatingWithDetails,
+  RatingUpdate,
+  RatingWithDetails,
   User,
   UserUpdate
 } from './types';
@@ -23,6 +28,7 @@ import {calculateLocationAtDistance} from "../utils/calculation";
 import {ILocation, IUser} from "../utils/types";
 import {IUserContributionQueryParams, IUserContributions} from "../profiles/types";
 import * as constants from "../utils/constants";
+import { hashPass } from "../utils/auth";
 
 // FOUNTAIN OR BATHROOM (FOB)
 export function createFob(fob: NewFob) : Promise<Fob> {
@@ -169,6 +175,12 @@ export function getAuthForUser(userId : string) : Promise<Auth> {
   return parseTimestampsPromise(db.selectFrom('auth').where('user_id', '=', userId).selectAll().executeTakeFirst());
 }
 
+export function updateAuthForUser(userId: string, newPassword: string): Promise<Auth> {
+  return hashPass(newPassword).then((hashed) => {
+    return parseTimestampsPromise(db.updateTable('auth').set({ hash_pass: hashed.hash_pass, hash_salt: hashed.hash_salt }).where('user_id', '=', userId).returningAll().executeTakeFirstOrThrow());
+  });
+}
+
 // USER
 export function createUser(user: NewUser) : Promise<User> {
   return parseTimestampsPromise(db.insertInto('user').values(user).returningAll().executeTakeFirstOrThrow());
@@ -237,6 +249,23 @@ export function updatePictureStatus(id: string, pending: boolean) : Promise<Pict
 
 export function deletePicture(id: string) : Promise<Picture> {
   return db.deleteFrom('picture').where('id', '=', id).returningAll().executeTakeFirst();
+}
+
+// PASSWORD RESET
+export function createPasswordResetToken(input: Omit<NewPasswordResetToken, 'used'>): Promise<PasswordResetToken> {
+  const token: NewPasswordResetToken = {
+    ...input,
+    used: false
+  };
+  return parseTimestampsPromise(db.insertInto('password_reset_token').values(token).returningAll().executeTakeFirstOrThrow());
+}
+
+export function getPasswordResetToken(token: string): Promise<PasswordResetToken> {
+  return parseTimestampsPromise(db.selectFrom('password_reset_token').where('token', '=', token).selectAll().executeTakeFirst());
+}
+
+export function invalidatePasswordResetToken(token: string): Promise<PasswordResetToken> {
+  return parseTimestampsPromise(db.updateTable('password_reset_token').set({ used: true }).where('token', '=', token).returningAll().executeTakeFirst());
 }
 
 function parseTimestampsPromise(item : Promise<any>) : Promise<any> {

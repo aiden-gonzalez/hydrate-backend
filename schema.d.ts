@@ -5,7 +5,7 @@
 
 
 export interface paths {
-  "/api/signup": {
+  "/api/signup/": {
     /** Create new user account */
     post: {
       requestBody: {
@@ -25,7 +25,7 @@ export interface paths {
       };
     };
   };
-  "/api/fobs": {
+  "/api/fobs/": {
     /** Get a group of Fobs (query) */
     get: {
       parameters: {
@@ -114,7 +114,7 @@ export interface paths {
       };
     };
   };
-  "/api/auth": {
+  "/api/auth/": {
     /** Simple endpoint to check if auth token / user account is valid */
     get: {
       responses: {
@@ -152,6 +152,50 @@ export interface paths {
         };
         /** @description User credentials are incorrect */
         401: {
+          content: never;
+        };
+      };
+    };
+  };
+  "/api/auth/password-reset/request": {
+    /** Request password reset */
+    post: {
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["PasswordResetRequest"];
+        };
+      };
+      responses: {
+        /** @description Password reset email sent if account exists */
+        200: {
+          content: {
+            "application/json": components["schemas"]["PasswordResetResponse"];
+          };
+        };
+        /** @description Request is missing required information or is incorrectly formatted */
+        400: {
+          content: never;
+        };
+      };
+    };
+  };
+  "/api/auth/password-reset/reset": {
+    /** Reset password */
+    post: {
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["PasswordResetResetRequest"];
+        };
+      };
+      responses: {
+        /** @description Password reset successful, returns auth tokens */
+        200: {
+          content: {
+            "application/json": components["schemas"]["AuthSuccessResponse"];
+          };
+        };
+        /** @description Request is missing required information, passwords don't match, or token invalid */
+        400: {
           content: never;
         };
       };
@@ -1046,6 +1090,42 @@ export interface components {
      */
     AuthRequest: {
       user_credentials: components["schemas"]["UserCredentials"];
+    };
+    /**
+     * @description Request to send password reset email
+     * @example {
+     *   "email": "user@example.com"
+     * }
+     */
+    PasswordResetRequest: {
+      /** @description Email address of the account */
+      email: string;
+    };
+    /**
+     * @description Response for password reset request
+     * @example {
+     *   "message": "If an account exists with that email, a password reset email has been sent."
+     * }
+     */
+    PasswordResetResponse: {
+      /** @description Confirmation message */
+      message: string;
+    };
+    /**
+     * @description Request to reset password
+     * @example {
+     *   "token": "abc123...",
+     *   "new_password": "newpassword",
+     *   "confirm_password": "newpassword"
+     * }
+     */
+    PasswordResetResetRequest: {
+      /** @description Password reset token */
+      token: string;
+      /** @description New password */
+      new_password: string;
+      /** @description Confirm new password */
+      confirm_password: string;
     };
     /**
      * @description Summary of user contributions

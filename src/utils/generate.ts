@@ -1,5 +1,6 @@
 import { v4 } from "uuid";
 import * as constants from "./constants";
+import { randomBytes } from "crypto";
 
 // generate ID
 function generateId (prefix: string) : string {
@@ -22,4 +23,8 @@ export function generateFountainRatingId() {
 }
 export function generatePictureId() {
   return generateId(constants.PICTURE_ID_PREFIX);
+}
+
+export function generatePasswordResetToken(): string {
+  return randomBytes(24).toString('hex'); // 48 characters
 }

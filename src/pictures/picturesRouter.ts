@@ -5,17 +5,17 @@ import {authenticateRequest} from '../utils/auth';
 const picturesRouter = express.Router();
 
 // pictures
-picturesRouter.get('/pictures/:id',
+picturesRouter.get('/:id',
   authenticateRequest, // authenticate request
   picturesController.attachPictureToReq, // attach picture to request
   picturesController.getPictureUrl // return picture URL
 ); // get picture by id
-picturesRouter.put('/pictures/:id',
+picturesRouter.put('/:id',
   authenticateRequest, // authenticate request
   picturesController.attachPictureToReq, // attach picture to request
   picturesController.updatePictureStatus // update picture status
 ); // update picture status
-picturesRouter.delete('/pictures/:id',
+picturesRouter.delete('/:id',
   authenticateRequest, // authenticate request
   picturesController.attachPictureToReq, // attach picture to request
   picturesController.deletePicture // delete picture
