@@ -1,26 +1,23 @@
-# Use official Node.js LTS image
-FROM node:22-alpine
+# Production image: compile TypeScript in a build stage, then ship only compiled JS + runtime deps
 
-# Set working directory
+FROM node:22-alpine AS build
 WORKDIR /app
-
-# Copy package.json and package-lock.json
 COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code
-COPY . .
-
-# Build TypeScript
+RUN npm ci
+COPY tsconfig.json hydRate.json schema.d.ts ./
+COPY src ./src
 RUN npm run build
 
-# Expose the port the app runs on
-EXPOSE 3000
-
-# Set environment variable for cloud deployment
+FROM node:22-alpine
+WORKDIR /app
 ENV NODE_ENV=cloud
-
-# Start the server
+COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=build /app/dist ./dist
+# The OpenAPI validator loads the spec from the working directory at runtime
+COPY hydRate.json ./
+USER node
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
+  CMD wget -qO- http://127.0.0.1:${PORT:-3000}/ || exit 1
 CMD ["node", "dist/server.js"]
