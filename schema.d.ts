@@ -22,6 +22,12 @@ export interface paths {
         401: {
           content: never;
         };
+        /** @description Too many requests from this IP address, try again later */
+        429: {
+          content: {
+            "application/json": components["schemas"]["PasswordResetResponse"];
+          };
+        };
       };
     };
   };
@@ -154,11 +160,17 @@ export interface paths {
         401: {
           content: never;
         };
+        /** @description Too many requests from this IP address, try again later */
+        429: {
+          content: {
+            "application/json": components["schemas"]["PasswordResetResponse"];
+          };
+        };
       };
     };
   };
   "/api/auth/password-reset/request": {
-    /** Request password reset */
+    /** Request a password reset code by email */
     post: {
       requestBody: {
         content: {
@@ -175,6 +187,12 @@ export interface paths {
         /** @description Request is missing required information or is incorrectly formatted */
         400: {
           content: never;
+        };
+        /** @description Too many requests from this IP address, try again later */
+        429: {
+          content: {
+            "application/json": components["schemas"]["PasswordResetResponse"];
+          };
         };
       };
     };
@@ -194,9 +212,17 @@ export interface paths {
             "application/json": components["schemas"]["AuthSuccessResponse"];
           };
         };
-        /** @description Request is missing required information, passwords don't match, or token invalid */
+        /** @description Passwords don't match, password too weak, or code invalid / expired */
         400: {
-          content: never;
+          content: {
+            "application/json": components["schemas"]["PasswordResetResponse"];
+          };
+        };
+        /** @description Too many requests from this IP address, try again later */
+        429: {
+          content: {
+            "application/json": components["schemas"]["PasswordResetResponse"];
+          };
         };
       };
     };
@@ -1204,7 +1230,7 @@ export interface components {
      * }
      */
     PasswordResetResetRequest: {
-      /** @description Password reset token */
+      /** @description Password reset code from the email (case insensitive, spaces and dashes ignored) */
       token: string;
       /** @description New password */
       new_password: string;

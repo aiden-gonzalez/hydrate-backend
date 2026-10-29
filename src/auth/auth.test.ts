@@ -124,7 +124,7 @@ describe("PASSWORD RESET", () => {
     await simulateRouter(req, res, passwordResetRequestFuncs);
 
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expect(res.message.message).to.equal("If an account exists with that email, a password reset email has been sent.");
+    expect(res.message.message).to.equal(constants.PASSWORD_RESET_REQUEST_MESSAGE);
   });
 
   it("requests password reset for non-existing user", async () => {
@@ -132,7 +132,7 @@ describe("PASSWORD RESET", () => {
     await simulateRouter(req, res, passwordResetRequestFuncs);
 
     expect(res.sentStatus).to.equal(constants.HTTP_OK);
-    expect(res.message.message).to.equal("If an account exists with that email, a password reset email has been sent.");
+    expect(res.message.message).to.equal(constants.PASSWORD_RESET_REQUEST_MESSAGE);
   });
 
   // Note: Testing reset would require mocking the token creation, but for now, basic structure is there.

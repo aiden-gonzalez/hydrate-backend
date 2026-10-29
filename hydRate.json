@@ -34,6 +34,16 @@
                     },
                     "401": {
                         "description": "Credentials invalid!"
+                    },
+                    "429": {
+                        "description": "Too many requests from this IP address, try again later",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "summary": "Create new user account"
@@ -236,6 +246,16 @@
                     },
                     "401": {
                         "description": "User credentials are incorrect"
+                    },
+                    "429": {
+                        "description": "Too many requests from this IP address, try again later",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "summary": "Password authentication"
@@ -281,9 +301,19 @@
                     },
                     "400": {
                         "description": "Request is missing required information or is incorrectly formatted"
+                    },
+                    "429": {
+                        "description": "Too many requests from this IP address, try again later",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetResponse"
+                                }
+                            }
+                        }
                     }
                 },
-                "summary": "Request password reset"
+                "summary": "Request a password reset code by email"
             }
         },
         "/api/auth/password-reset/reset": {
@@ -311,7 +341,24 @@
                         "description": "Password reset successful, returns auth tokens"
                     },
                     "400": {
-                        "description": "Request is missing required information, passwords don't match, or token invalid"
+                        "description": "Passwords don't match, password too weak, or code invalid / expired",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too many requests from this IP address, try again later",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "summary": "Reset password"
@@ -1766,7 +1813,7 @@
                 "type": "object",
                 "properties": {
                     "token": {
-                        "description": "Password reset token",
+                        "description": "Password reset code from the email (case insensitive, spaces and dashes ignored)",
                         "type": "string"
                     },
                     "new_password": {

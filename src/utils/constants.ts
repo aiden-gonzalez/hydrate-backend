@@ -28,7 +28,8 @@ export const JWT_REFRESH_EXPIRATION  = 604800; // 1 week
 // Hashing parameters
 export const HASH_LEN  = 64;
 export const HASH_ENCODING : BufferEncoding = "hex";
-export const HASH_ITERATIONS  = 100;
+export const HASH_ITERATIONS  = 210000; // OWASP recommendation for PBKDF2-HMAC-SHA512
+export const HASH_ITERATIONS_LEGACY = 100; // Used for accounts created before hash_iterations was stored
 export const HASH_DIGEST  = "sha512";
 
 // ID prefixes
@@ -46,6 +47,20 @@ export const URL_DEFAULT_PROFILE_PICTURE = "https://i.imgur.com/JGmoHaP.jpeg";
 export const S3_FOB_PICTURES_FOLDER = "fob_pictures";
 export const S3_DOWNLOAD_URL_EXPIRATION = 60 * 60; // 1 hour
 export const S3_UPLOAD_URL_EXPIRATION = 60 * 10; // 10 minutes
+
+// Password reset
+export const PASSWORD_RESET_CODE_LENGTH = 8;
+export const PASSWORD_RESET_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // No 0/O or 1/I to avoid typos
+export const PASSWORD_RESET_EXPIRATION = 15 * 60 * 1000; // 15 minutes
+export const PASSWORD_RESET_REQUEST_MESSAGE = "If an account exists with that email, a password reset code has been sent.";
+
+// Rate limits (per IP address)
+export const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+export const RATE_LIMIT_LOGIN = 20; // login attempts per window
+export const RATE_LIMIT_SIGNUP = 10; // signups per window
+export const RATE_LIMIT_PASSWORD_RESET_REQUEST = 5; // reset code emails per window
+export const RATE_LIMIT_PASSWORD_RESET = 10; // attempts to use a reset code per window
+export const RATE_LIMIT_GENERAL = 600; // all other requests per window
 
 // Moderation
 // Pictures are automatically hidden once this many different users have reported them

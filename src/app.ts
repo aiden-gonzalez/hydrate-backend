@@ -1,4 +1,5 @@
 import express from 'express';
+import { generalRateLimit } from './utils/rateLimit';
 import * as OpenApiValidator from "express-openapi-validator";
 
 // Routers
@@ -12,8 +13,16 @@ import reportsRouter from './reports/reportsRouter';
 
 const app = express();
 
+// When running behind a reverse proxy (e.g. Caddy), trust it for the client IP used by rate limiting
+if (process.env.TRUST_PROXY) {
+  app.set('trust proxy', parseInt(process.env.TRUST_PROXY) || process.env.TRUST_PROXY);
+}
+app.disable('x-powered-by');
+
+app.use(generalRateLimit);
+
 // Body parser middleware
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
 app.use(express.text());
 app.use(express.urlencoded({ extended: false }));
 

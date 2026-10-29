@@ -3,10 +3,10 @@ import {expect} from "chai";
 import app from "./app";
 import * as db from "./db/queries";
 import * as constants from "./utils/constants";
-import {generateToken} from "./utils/auth";
+import {generateToken, hashPass, hashPassWithSalt} from "./utils/auth";
 import {getDb} from "./db/database";
 import {getFountain, getFountainRating, getLocation, getPicture, getUser} from "./testHelper.test";
-import {hashPass} from "./utils/auth";
+import {hashPasswordResetCode} from "./utils/generate";
 import {IUser} from "./utils/types";
 
 // These tests go through the full express app (routing, OpenAPI validation, error handling)
@@ -275,6 +275,105 @@ describe("API: end to end requests through the express app", () => {
         .get(`/api/pictures/${picture.id}`)
         .set(constants.HTTP_AUTHORIZATION_HEADER, tokenFor(viewer));
       expect(res.status).to.equal(constants.HTTP_NOT_FOUND);
+    });
+  });
+
+  describe("passwords", () => {
+    async function login(email: string, password: string) {
+      return request(app).post("/api/auth/").send({user_credentials: {email, password}});
+    }
+
+    it("upgrades legacy password hashes on login", async () => {
+      const user = await db.createUser(await getUser("legacy", "legacy@example.com"));
+      const salt = "legacysalt";
+      await db.createAuth({
+        user_id: user.id,
+        hash_salt: salt,
+        hash_pass: await hashPassWithSalt("password123", salt, constants.HASH_ITERATIONS_LEGACY),
+        hash_iterations: constants.HASH_ITERATIONS_LEGACY
+      });
+
+      expect((await login("legacy@example.com", "password123")).status).to.equal(constants.HTTP_OK);
+
+      const upgraded = await db.getAuthForUser(user.id);
+      expect(upgraded.hash_iterations).to.equal(constants.HASH_ITERATIONS);
+      expect((await login("legacy@example.com", "password123")).status).to.equal(constants.HTTP_OK);
+      expect((await login("legacy@example.com", "wrong password")).status).to.equal(constants.HTTP_UNAUTHORIZED);
+    });
+
+    it("resets a password with an emailed code, accepting lower case and dashes", async () => {
+      const user = await createUser("forgetful", "forgetful@example.com");
+      await db.createPasswordResetToken({
+        user_id: user.id,
+        token: hashPasswordResetCode("ABCD2345"),
+        expires_at: Date.now() + constants.PASSWORD_RESET_EXPIRATION
+      });
+
+      const res = await request(app)
+        .post("/api/auth/password-reset/reset")
+        .send({token: "abcd-2345", new_password: "brandnewpass", confirm_password: "brandnewpass"});
+      expect(res.status).to.equal(constants.HTTP_OK);
+      expect(res.body.username).to.equal("forgetful");
+
+      expect((await login("forgetful@example.com", "brandnewpass")).status).to.equal(constants.HTTP_OK);
+      expect((await login("forgetful@example.com", "password123")).status).to.equal(constants.HTTP_UNAUTHORIZED);
+
+      // Codes only work once
+      const reused = await request(app)
+        .post("/api/auth/password-reset/reset")
+        .send({token: "ABCD2345", new_password: "anotherpass", confirm_password: "anotherpass"});
+      expect(reused.status).to.equal(constants.HTTP_BAD_REQUEST);
+    });
+
+    it("invalidates older codes when a new one is requested", async () => {
+      const user = await createUser("forgetful", "forgetful@example.com");
+      await db.createPasswordResetToken({
+        user_id: user.id,
+        token: hashPasswordResetCode("OLDC0DE2"),
+        expires_at: Date.now() + constants.PASSWORD_RESET_EXPIRATION
+      });
+
+      const requested = await request(app)
+        .post("/api/auth/password-reset/request")
+        .send({email: "forgetful@example.com"});
+      expect(requested.status).to.equal(constants.HTTP_OK);
+      expect(requested.body.message).to.equal(constants.PASSWORD_RESET_REQUEST_MESSAGE);
+
+      const res = await request(app)
+        .post("/api/auth/password-reset/reset")
+        .send({token: "OLDC0DE2", new_password: "brandnewpass", confirm_password: "brandnewpass"});
+      expect(res.status).to.equal(constants.HTTP_BAD_REQUEST);
+    });
+
+    it("rejects expired codes", async () => {
+      const user = await createUser("forgetful", "forgetful@example.com");
+      await db.createPasswordResetToken({
+        user_id: user.id,
+        token: hashPasswordResetCode("EXP1RED2"),
+        expires_at: Date.now() - 1000
+      });
+
+      const res = await request(app)
+        .post("/api/auth/password-reset/reset")
+        .send({token: "EXP1RED2", new_password: "brandnewpass", confirm_password: "brandnewpass"});
+      expect(res.status).to.equal(constants.HTTP_BAD_REQUEST);
+    });
+  });
+
+  describe("rate limiting", () => {
+    before(() => { process.env.RATE_LIMIT_DISABLED = "false"; });
+    after(() => { process.env.RATE_LIMIT_DISABLED = "true"; });
+
+    it("limits password reset requests per IP", async () => {
+      const statuses = [];
+      for (let i = 0; i <= constants.RATE_LIMIT_PASSWORD_RESET_REQUEST; i++) {
+        const res = await request(app)
+          .post("/api/auth/password-reset/request")
+          .send({email: "nobody@example.com"});
+        statuses.push(res.status);
+      }
+      expect(statuses.slice(0, -1).every((status) => status === constants.HTTP_OK)).to.equal(true);
+      expect(statuses[statuses.length - 1]).to.equal(429);
     });
   });
 });
