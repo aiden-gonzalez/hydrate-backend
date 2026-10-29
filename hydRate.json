@@ -15,7 +15,7 @@
         }
     },
     "paths": {
-        "/api/signup/": {
+        "/api/signup": {
             "summary": "Request creation of new user account",
             "post": {
                 "requestBody": {
@@ -49,7 +49,7 @@
                 "summary": "Create new user account"
             }
         },
-        "/api/fobs/": {
+        "/api/fobs": {
             "summary": "Primary endpoint for retrieving (GET) and adding (POST) Fobs",
             "get": {
                 "parameters": [
@@ -219,7 +219,7 @@
                 "summary": "Auth token refresh"
             }
         },
-        "/api/auth/": {
+        "/api/auth": {
             "summary": "Primary endpoint for password authentication scheme",
             "post": {
                 "requestBody": {
