@@ -26,6 +26,16 @@ app.use(express.json({ limit: '100kb' }));
 app.use(express.text());
 app.use(express.urlencoded({ extended: false }));
 
+// Treat "/api/fobs/" and "/api/fobs" the same. The OpenAPI validator matches paths exactly and the
+// spec has no trailing slashes, while express routes accept both.
+app.use((req, res, next) => {
+  const [path, query] = req.url.split(/\?(.*)/s, 2);
+  if (path.length > 1 && path.endsWith('/')) {
+    req.url = path.replace(/\/+$/, '') + (query !== undefined ? `?${query}` : '');
+  }
+  next();
+});
+
 // Setup validator middleware (using to validate requests)
 app.use(
   OpenApiValidator.middleware({

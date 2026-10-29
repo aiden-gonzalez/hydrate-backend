@@ -5,7 +5,7 @@
 
 
 export interface paths {
-  "/api/signup/": {
+  "/api/signup": {
     /** Create new user account */
     post: {
       requestBody: {
@@ -31,7 +31,7 @@ export interface paths {
       };
     };
   };
-  "/api/fobs/": {
+  "/api/fobs": {
     /** Get a group of Fobs (query) */
     get: {
       parameters: {
@@ -120,7 +120,7 @@ export interface paths {
       };
     };
   };
-  "/api/auth/": {
+  "/api/auth": {
     /** Simple endpoint to check if auth token / user account is valid */
     get: {
       responses: {
