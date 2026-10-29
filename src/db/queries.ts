@@ -8,12 +8,14 @@ import {
   NewPasswordResetToken,
   NewPicture,
   NewRating,
+  NewReport,
   NewUser,
   PasswordResetToken,
   Picture,
   Rating,
   RatingUpdate,
   RatingWithDetails,
+  Report,
   User,
   UserUpdate
 } from './types';
@@ -207,6 +209,16 @@ export function getUserByEmail(email: string) : Promise<User> {
   return parseTimestampsPromise(db.selectFrom('user').where('email', '=', email).selectAll().executeTakeFirst());
 }
 
+// Permanently delete a user along with their ratings and pictures. Credentials, password reset
+// tokens and reports they filed cascade with the user row. Fobs they created are kept.
+export async function deleteUserAndContent(userId: string) : Promise<void> {
+  await db.transaction().execute(async (trx) => {
+    await trx.deleteFrom('rating').where('user_id', '=', userId).execute();
+    await trx.deleteFrom('picture').where('user_id', '=', userId).execute();
+    await trx.deleteFrom('user').where('id', '=', userId).execute();
+  });
+}
+
 export function updateUserProfileByUsername(username: string, updateWith : UserUpdate) : Promise<User> {
   return db.updateTable('user').set({profile: updateWith.profile}).where('username', '=', username).returningAll().executeTakeFirst();
 }
@@ -256,6 +268,10 @@ export function updatePictureStatus(id: string, pending: boolean) : Promise<Pict
   return parseTimestampsPromise(db.updateTable('picture').set({pending: pending}).where('id', '=', id).returningAll().executeTakeFirst());
 }
 
+export function setPictureHidden(id: string, hidden: boolean) : Promise<Picture> {
+  return parseTimestampsPromise(db.updateTable('picture').set({hidden: hidden}).where('id', '=', id).returningAll().executeTakeFirst());
+}
+
 export function deletePicture(id: string) : Promise<Picture> {
   return db.deleteFrom('picture').where('id', '=', id).returningAll().executeTakeFirst();
 }
@@ -275,6 +291,34 @@ export function getPasswordResetToken(token: string): Promise<PasswordResetToken
 
 export function invalidatePasswordResetToken(token: string): Promise<PasswordResetToken> {
   return parseTimestampsPromise(db.updateTable('password_reset_token').set({ used: true }).where('token', '=', token).returningAll().executeTakeFirst());
+}
+
+// REPORTS
+// Reporting the same content twice is a no-op; returns undefined in that case
+export function createReport(report: NewReport) : Promise<Report> {
+  return db.insertInto('report').values(report)
+    .onConflict((oc) => oc.constraint('report_reporter_content_unique').doNothing())
+    .returningAll().executeTakeFirst();
+}
+
+export async function countReportersForContent(contentType: string, contentId: string) : Promise<number> {
+  const result = await db.selectFrom('report')
+    .where('content_type', '=', contentType)
+    .where('content_id', '=', contentId)
+    .where('resolved', '=', false)
+    .select((eb) => eb.fn.count<string>('reporter_id').distinct().as('count'))
+    .executeTakeFirst();
+  return parseInt(result.count);
+}
+
+export function getUnresolvedReports() : Promise<Report[]> {
+  return db.selectFrom('report').where('resolved', '=', false).orderBy('created_at').selectAll().execute();
+}
+
+export function resolveReportsForContent(contentType: string, contentId: string) : Promise<Report[]> {
+  return db.updateTable('report').set({resolved: true})
+    .where('content_type', '=', contentType).where('content_id', '=', contentId)
+    .returningAll().execute();
 }
 
 function parseTimestampsPromise(item : Promise<any>) : Promise<any> {

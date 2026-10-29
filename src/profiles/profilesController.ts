@@ -1,6 +1,9 @@
 import {IUserContributionQueryParams} from "./types";
 import {IUser} from "../utils/types";
 import * as db from "../db/queries";
+import {isValidPass} from "../utils/auth";
+import {deletePictureObjects} from "../utils/aws";
+import {IHashedPassword} from "../utils/types";
 import {
   HTTP_FORBIDDEN,
   HTTP_FORBIDDEN_MESSAGE,
@@ -8,7 +11,8 @@ import {
   HTTP_INTERNAL_ERROR_MESSAGE,
   HTTP_NOT_FOUND,
   HTTP_NOT_FOUND_MESSAGE,
-  HTTP_OK
+  HTTP_OK,
+  HTTP_UNAUTHORIZED
 } from "../utils/constants";
 
 export async function getUserByUsernameMiddleware(req, res, next) {
@@ -72,4 +76,26 @@ export async function getContributionsForUser(req, res) {
       resolve(res.status(HTTP_INTERNAL_ERROR).send(error));
     })
   })
+}
+
+export async function deleteAccount(req, res) {
+  const userId : string = req.dbUser.id;
+
+  try {
+    // Require the current password so a stolen access token alone can't delete an account
+    const hashedPassword = await db.getAuthForUser(userId) as IHashedPassword;
+    if (!hashedPassword || !(await isValidPass(req.body.password, hashedPassword))) {
+      return res.sendStatus(HTTP_UNAUTHORIZED);
+    }
+
+    // Remove picture files from storage, then all of the user's data from the database
+    const pictures = await db.getPicturesByUser(userId);
+    await deletePictureObjects(pictures);
+    await db.deleteUserAndContent(userId);
+
+    return res.sendStatus(HTTP_OK);
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    return res.status(HTTP_INTERNAL_ERROR).send(HTTP_INTERNAL_ERROR_MESSAGE);
+  }
 }

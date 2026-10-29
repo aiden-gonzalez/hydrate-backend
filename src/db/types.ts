@@ -20,6 +20,7 @@ export interface Database {
   fob_with_rating: FobWithRatingView
   rating_with_details: RatingWithDetailsView
   password_reset_token: PasswordResetTokenTable
+  report: ReportTable
 }
 
 type DbCreatedAt = ColumnType<number, number, never>
@@ -137,6 +138,7 @@ export interface PictureTable {
   user_id: string
   url: string
   pending: boolean
+  hidden: Generated<boolean>
   created_at: DbCreatedAt
   updated_at: DbUpdatedAt
 }
@@ -156,6 +158,20 @@ export interface PasswordResetTokenTable {
 
 export type PasswordResetToken = Selectable<PasswordResetTokenTable>
 export type NewPasswordResetToken = Insertable<PasswordResetTokenTable>
+
+export interface ReportTable {
+  id: Generated<number>
+  reporter_id: string
+  content_type: string
+  content_id: string
+  reason: string
+  details: string | null
+  resolved: Generated<boolean>
+  created_at: Generated<number>
+}
+
+export type Report = Selectable<ReportTable>
+export type NewReport = Insertable<ReportTable>
 
 export type UserContributions = {
   fobs: Fob[],

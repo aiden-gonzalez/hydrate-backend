@@ -804,6 +804,61 @@ export interface paths {
       };
     };
   };
+  "/api/me": {
+    /**
+     * Permanently delete the authenticated user's account
+     * @description Deletes the user, their credentials, ratings and pictures. Fobs (places) they created are kept as community data but are no longer linked to an account.
+     */
+    delete: {
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["DeleteAccountRequest"];
+        };
+      };
+      responses: {
+        /** @description Account and the user's ratings and pictures were permanently deleted */
+        200: {
+          content: never;
+        };
+        /** @description Malformed request */
+        400: {
+          content: never;
+        };
+        /** @description Invalid auth or wrong password */
+        401: {
+          content: never;
+        };
+      };
+    };
+  };
+  "/api/reports": {
+    /** Report a Fob, picture or user */
+    post: {
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["ReportRequest"];
+        };
+      };
+      responses: {
+        /** @description Report received */
+        201: {
+          content: never;
+        };
+        /** @description Malformed request */
+        400: {
+          content: never;
+        };
+        /** @description Invalid auth */
+        401: {
+          content: never;
+        };
+        /** @description Reported content not found */
+        404: {
+          content: never;
+        };
+      };
+    };
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -934,6 +989,8 @@ export interface components {
       created_at?: number;
       /** @description Updated timestamp.  Unix epoch milliseconds. */
       updated_at?: number;
+      /** @description Whether the picture has been hidden by moderation (e.g. after multiple reports). */
+      hidden?: boolean;
     };
     /**
      * @example {
@@ -1372,11 +1429,42 @@ export interface components {
      */
     FobWithDetails: {
       fob: components["schemas"]["Fob"];
-      user: components["schemas"]["User"];
+      /** @description User that created the Fob. Absent if that user has deleted their account. */
+      user?: components["schemas"]["User"];
       /** @description Array of pictures associated with the Fob */
       pictures: components["schemas"]["Picture"][];
       /** @description Array of ratings (with details) associated with the Fob */
       ratingsWithDetails: components["schemas"]["RatingWithDetails"][];
+    };
+    /** @description Request to permanently delete the authenticated user's account */
+    DeleteAccountRequest: {
+      /** @description Current password, to confirm the deletion */
+      password: string;
+    };
+    /**
+     * @description Report objectionable user-generated content
+     * @example {
+     *   "content_type": "picture",
+     *   "content_id": "pic_123",
+     *   "reason": "inappropriate",
+     *   "details": "Not a picture of a fountain"
+     * }
+     */
+    ReportRequest: {
+      /**
+       * @description Type of content being reported
+       * @enum {string}
+       */
+      content_type: "fob" | "picture" | "user";
+      /** @description ID of the Fob or picture, or username of the user, being reported */
+      content_id: string;
+      /**
+       * @description Reason for the report
+       * @enum {string}
+       */
+      reason: "spam" | "inappropriate" | "offensive" | "inaccurate" | "other";
+      /** @description Optional extra details from the reporter */
+      details?: string;
     };
   };
   responses: never;

@@ -1,6 +1,6 @@
 import { IPicture, IPictureSignedUrl } from '../pictures/types';
 import * as constants from './constants';
-import { S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { CloudFrontClient } from "@aws-sdk/client-cloudfront";
 import { fromSSO } from "@aws-sdk/credential-provider-sso";
 import { getSignedUrl as cfGetSignedUrl } from "@aws-sdk/cloudfront-signer";
@@ -39,4 +39,20 @@ export function getCloudfrontClient() {
       ? { credentials: fromSSO({ profile: process.env.AWS_SSO_PROFILE }) }
       : {}) // Empty object for production - uses default provider chain
   });
+}
+
+let sharedS3Client: S3Client;
+
+// Best-effort removal of picture files from S3 (used when the owning fob / user is deleted).
+// Failures are logged rather than thrown so the database cleanup still happens.
+export async function deletePictureObjects(pictures: IPicture[]) : Promise<void> {
+  // There is no S3 in the test environment
+  if (process.env.NODE_ENV === "test" || pictures.length === 0) {
+    return;
+  }
+  sharedS3Client = sharedS3Client ?? getS3Client();
+  await Promise.all(pictures.map((picture) => sharedS3Client.send(new DeleteObjectCommand({
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Key: picture.url
+  })).catch((error) => console.error("Error deleting picture from S3:", error))));
 }
