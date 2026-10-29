@@ -96,7 +96,7 @@ export function findFobs(params : IFobQueryParams) : Promise<Fob[]> {
   //   query = query.where(sql<boolean>`info->'sanitary_products' = ${params.sanitary_products}`)
   // }
 
-  return parseArrayTimestampsPromise(query.selectAll().execute());
+  return parseArrayTimestampsPromise(query.selectAll().limit(constants.FOB_QUERY_LIMIT).execute());
 }
 
 export function updateFob(id: string, updateWith: IFobInfo) : Promise<Fob> {
@@ -197,8 +197,12 @@ export function updateAuthForUser(userId: string, newPassword: string): Promise<
 }
 
 // USER
+export function normalizeEmail(email: string) : string {
+  return email.trim().toLowerCase();
+}
+
 export function createUser(user: NewUser) : Promise<User> {
-  return parseTimestampsPromise(db.insertInto('user').values(user).returningAll().executeTakeFirstOrThrow());
+  return parseTimestampsPromise(db.insertInto('user').values({...user, email: normalizeEmail(user.email)}).returningAll().executeTakeFirstOrThrow());
 }
 
 export function getUserById(id: string) : Promise<User> {
@@ -210,7 +214,7 @@ export function getUserByUsername(username: string) : Promise<User> {
 }
 
 export function getUserByEmail(email: string) : Promise<User> {
-  return parseTimestampsPromise(db.selectFrom('user').where('email', '=', email).selectAll().executeTakeFirst());
+  return parseTimestampsPromise(db.selectFrom('user').where('email', '=', normalizeEmail(email)).selectAll().executeTakeFirst());
 }
 
 // Permanently delete a user along with their ratings and pictures. Credentials, password reset

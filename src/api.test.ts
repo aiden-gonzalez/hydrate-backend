@@ -376,4 +376,42 @@ describe("API: end to end requests through the express app", () => {
       expect(statuses[statuses.length - 1]).to.equal(429);
     });
   });
+
+  describe("signup validation and email case", () => {
+    function signup(username: string, email: string, password: string) {
+      return request(app).post("/api/signup/").send({username, user_credentials: {email, password}});
+    }
+
+    it("treats emails case-insensitively", async () => {
+      expect((await signup("casey", "Casey@Example.com", "password123")).status).to.equal(constants.HTTP_OK);
+      expect((await db.getUserByUsername("casey")).email).to.equal("casey@example.com");
+
+      const login = await request(app).post("/api/auth/")
+        .send({user_credentials: {email: "CASEY@example.COM", password: "password123"}});
+      expect(login.status).to.equal(constants.HTTP_OK);
+
+      // Same address with different case is still a duplicate
+      expect((await signup("casey2", "casey@example.com", "password123")).status).to.equal(constants.HTTP_FORBIDDEN);
+    });
+
+    it("rejects invalid usernames, emails and short passwords", async () => {
+      expect((await signup("no spaces", "a@example.com", "password123")).status).to.equal(constants.HTTP_BAD_REQUEST);
+      expect((await signup("ab", "a@example.com", "password123")).status).to.equal(constants.HTTP_BAD_REQUEST);
+      expect((await signup("../admin", "a@example.com", "password123")).status).to.equal(constants.HTTP_BAD_REQUEST);
+      expect((await signup("valid_name", "not an email", "password123")).status).to.equal(constants.HTTP_BAD_REQUEST);
+      expect((await signup("valid_name", "a@example.com", "short")).status).to.equal(constants.HTTP_BAD_REQUEST);
+      expect(await db.getUserByUsername("valid_name")).to.equal(undefined);
+    });
+  });
+
+  it("rejects fob searches with a huge radius", async () => {
+    const user = await createUser("searcher", "searcher@example.com");
+
+    const res = await request(app)
+      .get("/api/fobs/")
+      .query({latitude: 40, longitude: -86, radius: 1000000})
+      .set(constants.HTTP_AUTHORIZATION_HEADER, tokenFor(user));
+
+    expect(res.status).to.equal(constants.HTTP_BAD_REQUEST);
+  });
 });

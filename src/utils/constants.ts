@@ -62,6 +62,9 @@ export const RATE_LIMIT_PASSWORD_RESET_REQUEST = 5; // reset code emails per win
 export const RATE_LIMIT_PASSWORD_RESET = 10; // attempts to use a reset code per window
 export const RATE_LIMIT_GENERAL = 600; // all other requests per window
 
+// Maximum number of fobs returned by one search
+export const FOB_QUERY_LIMIT = 500;
+
 // Moderation
 // Pictures are automatically hidden once this many different users have reported them
 export const REPORT_HIDE_PICTURE_THRESHOLD = 3;
