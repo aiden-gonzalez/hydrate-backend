@@ -414,4 +414,28 @@ describe("API: end to end requests through the express app", () => {
 
     expect(res.status).to.equal(constants.HTTP_BAD_REQUEST);
   });
+
+  it("accepts paths with or without a trailing slash", async () => {
+    const user = await createUser("slasher", "slasher@example.com");
+    await db.createFob(getFountain(user.id));
+
+    for (const path of ["/api/fobs", "/api/fobs/"]) {
+      const res = await request(app)
+        .get(path)
+        .query({type: "fountain"})
+        .set(constants.HTTP_AUTHORIZATION_HEADER, tokenFor(user));
+      expect(res.status, path).to.equal(constants.HTTP_OK);
+      expect(res.body, path).to.have.length(1);
+    }
+
+    for (const path of ["/api/auth", "/api/auth/"]) {
+      const res = await request(app).post(path)
+        .send({user_credentials: {email: "slasher@example.com", password: "password123"}});
+      expect(res.status, path).to.equal(constants.HTTP_OK);
+    }
+
+    const signupRes = await request(app).post("/api/signup")
+      .send({username: "noslash", user_credentials: {email: "noslash@example.com", password: "password123"}});
+    expect(signupRes.status).to.equal(constants.HTTP_OK);
+  });
 });
