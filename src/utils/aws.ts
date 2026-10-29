@@ -15,7 +15,8 @@ export function generateCloudfrontSignedUrl(picture: IPicture) : IPictureSignedU
     picture_id: picture.id,
     signed_url: cfGetSignedUrl({
       url: `${process.env.AWS_CLOUDFRONT_URL}/${picture.url}`,
-      privateKey: process.env.AWS_CLOUDFRONT_PRIVATE_KEY,
+      // Docker env files don't expand "\n", so allow the key to be given on one line
+      privateKey: process.env.AWS_CLOUDFRONT_PRIVATE_KEY?.replace(/\\n/g, "\n"),
       keyPairId: process.env.AWS_CLOUDFRONT_KEY_PAIR_ID,
       dateLessThan: expiration
     }),

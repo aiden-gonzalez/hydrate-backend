@@ -1,0 +1,6 @@
+# Caddy gets and renews a free Let's Encrypt certificate for $DOMAIN automatically.
+# Ports 80 and 443 must be reachable from the internet (router port forwarding).
+{$DOMAIN} {
+	encode gzip
+	reverse_proxy api:3000
+}
