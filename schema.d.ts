@@ -555,7 +555,7 @@ export interface paths {
       };
       requestBody: {
         content: {
-          "application/json": components["schemas"]["Rating"];
+          "application/json": components["schemas"]["FountainRatingDetails"] | components["schemas"]["BathroomRatingDetails"];
         };
       };
       responses: {
@@ -643,6 +643,33 @@ export interface paths {
           content: never;
         };
         /** @description Insufficient auth */
+        403: {
+          content: never;
+        };
+        /** @description Fob not found */
+        404: {
+          content: never;
+        };
+      };
+    };
+    /** Delete a Fob (creator only) */
+    delete: {
+      parameters: {
+        path: {
+          /** @description ID of the Fob */
+          id: string;
+        };
+      };
+      responses: {
+        /** @description Fob successfully deleted */
+        200: {
+          content: never;
+        };
+        /** @description Invalid auth */
+        401: {
+          content: never;
+        };
+        /** @description Only the creator of a Fob may delete it */
         403: {
           content: never;
         };
@@ -799,8 +826,8 @@ export interface components {
     User: {
       /** @description Username of user */
       username: string;
-      /** @description Email address of user */
-      email: string;
+      /** @description Email address of user. Only included when the user is the authenticated user. */
+      email?: string;
       profile: components["schemas"]["Profile"];
       /** @description Unique user id (not technically necessary but helpful) */
       id: string;

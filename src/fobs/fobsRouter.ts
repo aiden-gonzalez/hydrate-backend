@@ -25,6 +25,12 @@ fobsRouter.put('/:id',
   fobsController.attachFobToReq, // attach fob to request
   fobsController.updateFob // update fob
 ); // Update fob
+fobsRouter.delete('/:id',
+  authenticateRequest, // authenticate request
+  fobsController.attachFobToReq, // attach fob to request
+  fobsController.fobPermissionCheck, // only the creator may delete a fob
+  fobsController.deleteFob // delete fob
+); // Delete fob
 
 // fobs/:id/details
 fobsRouter.get('/:id/details',
