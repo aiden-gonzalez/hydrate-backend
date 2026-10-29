@@ -84,9 +84,11 @@
                     },
                     {
                         "name": "radius",
-                        "description": "Radius to fetch Fobs within (in meters)",
+                        "description": "Radius to fetch Fobs within (in meters) (max 25000)",
                         "schema": {
-                            "type": "number"
+                            "type": "number",
+                            "minimum": 1,
+                            "maximum": 25000
                         },
                         "in": "query",
                         "required": false
@@ -1248,7 +1250,8 @@
                 "properties": {
                     "full_name": {
                         "description": "Full name of user",
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "picture_link": {
                         "description": "Link to profile photo",
@@ -1487,11 +1490,12 @@
                 "type": "object",
                 "properties": {
                     "username": {
-                        "description": "New username for new user",
-                        "type": "string"
+                        "description": "New username: 3 to 30 letters, numbers, underscores or periods",
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9_.]{3,30}$"
                     },
                     "user_credentials": {
-                        "$ref": "#/components/schemas/UserCredentials"
+                        "$ref": "#/components/schemas/SignupCredentials"
                     }
                 },
                 "example": {
@@ -1962,7 +1966,8 @@
                     },
                     "name": {
                         "description": "Name of the Fob",
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "location": {
                         "$ref": "#/components/schemas/Location"
@@ -2176,6 +2181,32 @@
                     "content_id": "pic_123",
                     "reason": "inappropriate",
                     "details": "Not a picture of a fountain"
+                }
+            },
+            "SignupCredentials": {
+                "description": "Login credentials for a new account",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "description": "Email address of user",
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 254
+                    },
+                    "password": {
+                        "description": "Password (8 to 200 characters)",
+                        "type": "string",
+                        "minLength": 8,
+                        "maxLength": 200
+                    }
+                },
+                "example": {
+                    "email": "user@example.com",
+                    "password": "a long password"
                 }
             }
         },

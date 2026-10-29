@@ -42,7 +42,7 @@ export interface paths {
           latitude?: number;
           /** @description Longitude to fetch Fobs around. If provided, must also provide latitude! */
           longitude?: number;
-          /** @description Radius to fetch Fobs within (in meters) */
+          /** @description Radius to fetch Fobs within (in meters) (max 25000) */
           radius?: number;
           /** @description ID of user that created the Fob(s) */
           user_id?: string;
@@ -1070,9 +1070,9 @@ export interface components {
      * }
      */
     SignupRequest: {
-      /** @description New username for new user */
+      /** @description New username: 3 to 30 letters, numbers, underscores or periods */
       username: string;
-      user_credentials: components["schemas"]["UserCredentials"];
+      user_credentials: components["schemas"]["SignupCredentials"];
     };
     /** @description Fountain or bathroom information */
     Fob: {
@@ -1491,6 +1491,22 @@ export interface components {
       reason: "spam" | "inappropriate" | "offensive" | "inaccurate" | "other";
       /** @description Optional extra details from the reporter */
       details?: string;
+    };
+    /**
+     * @description Login credentials for a new account
+     * @example {
+     *   "email": "user@example.com",
+     *   "password": "a long password"
+     * }
+     */
+    SignupCredentials: {
+      /**
+       * Format: email
+       * @description Email address of user
+       */
+      email: string;
+      /** @description Password (8 to 200 characters) */
+      password: string;
     };
   };
   responses: never;
