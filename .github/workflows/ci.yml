@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: test_hydrate_db
+          POSTGRES_USER: test_hydrate_admin
+          POSTGRES_PASSWORD: test_secret_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test_hydrate_admin -d test_hydrate_db"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      NODE_ENV: test
+      TEST_PG_DB: test_hydrate_db
+      TEST_PG_HOST: localhost
+      TEST_PG_USER: test_hydrate_admin
+      TEST_PG_PASS: test_secret_password
+      JWT_SECRET: ci-only-jwt-secret
+      AWS_REGION: us-east-2
+      AWS_S3_BUCKET_NAME: ci-bucket
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc
+      - run: npx eslint src
+      - run: npx mocha --recursive --exit
