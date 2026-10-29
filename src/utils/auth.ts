@@ -45,25 +45,20 @@ export async function authenticateRequest (req, res, next) {
 }
 
 export function hashPass (password : string) : Promise<IHashedPassword> {
-  return new Promise((resolve, reject) => {
-    const salt = nodeCrypto.randomBytes(constants.HASH_LEN).toString(constants.HASH_ENCODING);
-    hashPassWithSalt(password, salt).then((hash) => {
-      resolve({
-        hash_pass: hash,
-        hash_salt: salt
-      });
-    }).catch((error) => {
-      reject(error);
-    });
-  });
+  const salt = nodeCrypto.randomBytes(constants.HASH_LEN).toString(constants.HASH_ENCODING);
+  return hashPassWithSalt(password, salt, constants.HASH_ITERATIONS).then((hash) => ({
+    hash_pass: hash,
+    hash_salt: salt,
+    hash_iterations: constants.HASH_ITERATIONS
+  }));
 }
 
-export function hashPassWithSalt (password : string, salt : string): Promise<string> {
+export function hashPassWithSalt (password : string, salt : string, iterations : number): Promise<string> {
   return new Promise((resolve, reject) => {
     nodeCrypto.pbkdf2(
       password,
       salt,
-      constants.HASH_ITERATIONS,
+      iterations,
       constants.HASH_LEN,
       constants.HASH_DIGEST,
       (err, hash) => {
@@ -75,10 +70,16 @@ export function hashPassWithSalt (password : string, salt : string): Promise<str
   });
 }
 
-export function isValidPass (password : string, actualPassword : IHashedPassword) {
-  return new Promise((resolve, reject) => {
-    hashPassWithSalt(password, actualPassword.hash_salt)
-      .then((passwordHash) => resolve(actualPassword.hash_pass === passwordHash))
-      .catch((err) => reject(err));
-  });
+export async function isValidPass (password : string, actualPassword : IHashedPassword) : Promise<boolean> {
+  const iterations = actualPassword.hash_iterations ?? constants.HASH_ITERATIONS_LEGACY;
+  const passwordHash = await hashPassWithSalt(password, actualPassword.hash_salt, iterations);
+  // Constant time comparison so response timing doesn't leak how much of the hash matched
+  const expected = Buffer.from(actualPassword.hash_pass, constants.HASH_ENCODING);
+  const actual = Buffer.from(passwordHash, constants.HASH_ENCODING);
+  return expected.length === actual.length && nodeCrypto.timingSafeEqual(expected, actual);
+}
+
+// Whether a stored hash should be re-hashed with the current parameters
+export function needsRehash (hashedPassword : IHashedPassword) : boolean {
+  return (hashedPassword.hash_iterations ?? constants.HASH_ITERATIONS_LEGACY) < constants.HASH_ITERATIONS;
 }

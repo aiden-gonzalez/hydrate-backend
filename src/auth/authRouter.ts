@@ -1,6 +1,7 @@
 import { authenticateRequest } from "../utils/auth";
 import * as authController from "./authController";
 import express from "express";
+import { loginRateLimit, passwordResetRateLimit, passwordResetRequestRateLimit } from "../utils/rateLimit";
 
 const authRouter = express.Router();
 
@@ -10,6 +11,7 @@ authRouter.get('/',
   authController.success // return success message if we get this far
 ); // check if access token / user account is still valid
 authRouter.post('/',
+  loginRateLimit,
   authController.findUserMiddleware,
   authController.validatePassword
 ); // login user and return new access token and refresh token
@@ -21,10 +23,12 @@ authRouter.post('/refresh',
 
 // password reset
 authRouter.post('/password-reset/request',
+  passwordResetRequestRateLimit,
   authController.requestPasswordReset
 ); // request password reset email
 
 authRouter.post('/password-reset/reset',
+  passwordResetRateLimit,
   authController.resetPassword
 ); // reset password with token
 

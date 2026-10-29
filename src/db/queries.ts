@@ -188,7 +188,11 @@ export function getAuthForUser(userId : string) : Promise<Auth> {
 
 export function updateAuthForUser(userId: string, newPassword: string): Promise<Auth> {
   return hashPass(newPassword).then((hashed) => {
-    return parseTimestampsPromise(db.updateTable('auth').set({ hash_pass: hashed.hash_pass, hash_salt: hashed.hash_salt }).where('user_id', '=', userId).returningAll().executeTakeFirstOrThrow());
+    return parseTimestampsPromise(db.updateTable('auth').set({
+      hash_pass: hashed.hash_pass,
+      hash_salt: hashed.hash_salt,
+      hash_iterations: hashed.hash_iterations
+    }).where('user_id', '=', userId).returningAll().executeTakeFirstOrThrow());
   });
 }
 
@@ -285,12 +289,13 @@ export function createPasswordResetToken(input: Omit<NewPasswordResetToken, 'use
   return parseTimestampsPromise(db.insertInto('password_reset_token').values(token).returningAll().executeTakeFirstOrThrow());
 }
 
-export function getPasswordResetToken(token: string): Promise<PasswordResetToken> {
-  return parseTimestampsPromise(db.selectFrom('password_reset_token').where('token', '=', token).selectAll().executeTakeFirst());
+// Mark all of a user's outstanding reset codes as used (e.g. when a new one is issued)
+export function invalidatePasswordResetTokensForUser(userId: string): Promise<PasswordResetToken[]> {
+  return db.updateTable('password_reset_token').set({ used: true }).where('user_id', '=', userId).where('used', '=', false).returningAll().execute();
 }
 
-export function invalidatePasswordResetToken(token: string): Promise<PasswordResetToken> {
-  return parseTimestampsPromise(db.updateTable('password_reset_token').set({ used: true }).where('token', '=', token).returningAll().executeTakeFirst());
+export function getPasswordResetToken(token: string): Promise<PasswordResetToken> {
+  return parseTimestampsPromise(db.selectFrom('password_reset_token').where('token', '=', token).selectAll().executeTakeFirst());
 }
 
 // REPORTS
