@@ -108,3 +108,7 @@ dist
 
 # HTTPS files
 *.pem
+
+# Production deploy secrets and backups
+deploy/.env.prod
+deploy/backups/

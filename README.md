@@ -1,6 +1,20 @@
 # hydrate-backend
 Backend Node.js server for hydRate
 
+### Production
+
+See [deploy/README.md](deploy/README.md) for the self-hosted Docker Compose stack
+(Postgres + API + automatic HTTPS + nightly backups).
+
+### Tests
+
+`npm test` starts a Postgres container with `sudo docker compose`. If you already have a Postgres
+running with the `TEST_PG_*` credentials from `.env`, run the suite directly instead:
+
+```
+npx tsc && NODE_ENV=test npx mocha --recursive --exit
+```
+
 ### Run on local kubernetes
 
 To run the app locally, first make sure minikube is up and running on your machine.
