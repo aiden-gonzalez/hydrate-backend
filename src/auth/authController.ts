@@ -1,9 +1,9 @@
-import {generateToken, isValidPass, validateToken} from "../utils/auth";
+import {generateToken, isValidPass, needsRehash, validateToken} from "../utils/auth";
 import {IPasswordResetRequest, IPasswordResetResetRequest, IAuthRefreshRequest, IAuthRequest, IAuthSuccessResponse} from "./types";
 import {IHashedPassword, IUser} from "../utils/types";
 import * as constants from "../utils/constants";
 import * as db from "../db/queries";
-import { generatePasswordResetToken } from "../utils/generate";
+import { generatePasswordResetCode, hashPasswordResetCode } from "../utils/generate";
 import { passwordValidator } from "../utils/validation";
 import { sendPasswordResetEmail } from "../utils/email";
 
@@ -31,6 +31,11 @@ export async function validatePassword (req, res) {
   const passwordValid = await isValidPass(authRequest.user_credentials.password, hashed_password);
   if (!passwordValid) {
     return res.sendStatus(constants.HTTP_UNAUTHORIZED);
+  }
+
+  // Upgrade hashes made with older, weaker parameters now that we have the plain password
+  if (needsRehash(hashed_password)) {
+    await db.updateAuthForUser(user.id, authRequest.user_credentials.password);
   }
 
   // Send tokens
@@ -75,26 +80,29 @@ function getAuthSuccessResponse(user : IUser) : IAuthSuccessResponse {
 export async function requestPasswordReset(req, res) {
   const resetRequest: IPasswordResetRequest = req.body;
 
-  // Check if user exists
-  const user = await db.getUserByEmail(resetRequest.email);
-  if (user) {
-    // Generate token
-    const token = generatePasswordResetToken();
-    const expiresAt = Date.now() + 15 * 60 * 1000; // 15 minutes
+  try {
+    // Check if user exists
+    const user = await db.getUserByEmail(resetRequest.email);
+    if (user) {
+      // Only the newest code is valid
+      await db.invalidatePasswordResetTokensForUser(user.id);
 
-    await db.createPasswordResetToken({
-      user_id: user.id,
-      token,
-      expires_at: expiresAt
-    });
+      const code = generatePasswordResetCode();
+      await db.createPasswordResetToken({
+        user_id: user.id,
+        token: hashPasswordResetCode(code),
+        expires_at: Date.now() + constants.PASSWORD_RESET_EXPIRATION
+      });
 
-    // Send email
-    const resetLink = `https://yourapp.com/reset-password?token=${token}`;
-    await sendPasswordResetEmail(resetRequest.email, resetLink);
+      await sendPasswordResetEmail(user.email, code);
+    }
+  } catch (error) {
+    // Log, but respond the same way so the response doesn't reveal whether the account exists
+    console.error("Error handling password reset request:", error);
   }
 
   // Always respond the same way
-  res.status(constants.HTTP_OK).send({ message: "If an account exists with that email, a password reset email has been sent." });
+  res.status(constants.HTTP_OK).send({ message: constants.PASSWORD_RESET_REQUEST_MESSAGE });
 }
 
 export async function resetPassword(req, res) {
@@ -109,7 +117,7 @@ export async function resetPassword(req, res) {
   }
 
   // Get token
-  const tokenRecord = await db.getPasswordResetToken(resetRequest.token);
+  const tokenRecord = await db.getPasswordResetToken(hashPasswordResetCode(resetRequest.token));
   if (!tokenRecord || tokenRecord.used || tokenRecord.expires_at < Date.now()) {
     return res.status(constants.HTTP_BAD_REQUEST).send({ message: "Invalid or expired password reset token." });
   }
@@ -117,8 +125,8 @@ export async function resetPassword(req, res) {
   // Update password
   await db.updateAuthForUser(tokenRecord.user_id, resetRequest.new_password);
 
-  // Invalidate token
-  await db.invalidatePasswordResetToken(resetRequest.token);
+  // Invalidate token (and any others for this user)
+  await db.invalidatePasswordResetTokensForUser(tokenRecord.user_id);
 
   // Get user and return auth response
   const user = await db.getUserById(tokenRecord.user_id);

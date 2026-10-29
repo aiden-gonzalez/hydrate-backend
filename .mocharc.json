@@ -1,5 +1,5 @@
 {
   "extension": ["ts"],
   "spec": "src/**/*.test.ts",
-  "require": ["dotenv/config", "chai/register-expect.js", "ts-node/register"]
+  "require": ["./test-env.js", "dotenv/config", "chai/register-expect.js", "ts-node/register"]
 }
