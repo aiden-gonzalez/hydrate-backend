@@ -4,6 +4,12 @@ import {authenticateRequest} from '../utils/auth';
 
 const meRouter = express.Router();
 
+// me
+meRouter.delete('/',
+  authenticateRequest, // authenticate request
+  profilesController.deleteAccount // permanently delete the authenticated user's account
+); // delete account
+
 // me/contributions
 meRouter.get('/contributions',
   authenticateRequest, // authenticate request

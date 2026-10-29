@@ -12,6 +12,7 @@
     "test": "tsc && sudo docker compose -f test-postgres-docker-compose.yml up -d && export NODE_ENV=test && mocha --recursive --exit",
     "local": "tsc && sudo docker compose -f postgres-docker-compose.yml up -d && export NODE_ENV=local && node dist/server.js",
     "cloud": "tsc && export NODE_ENV=cloud && node dist/server.js",
+    "moderate": "tsc && node dist/scripts/moderate.js",
     "lint": "eslint .",
     "lint_fix": "eslint --fix .",
     "generate_schema": "npx openapi-typescript ./hydRate.json -o ./schema.d.ts",

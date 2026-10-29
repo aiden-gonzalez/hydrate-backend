@@ -35,8 +35,8 @@ export async function getPictureUrl(req, res) {
     // Get picture from request
     const picture = req.picture;
 
-    // If the picture is pending, return 404
-    if (picture.pending) {
+    // If the picture is pending, or hidden by moderation (except to its owner), return 404
+    if (picture.pending || (picture.hidden && picture.user_id !== req.user.id)) {
       return res.sendStatus(HTTP_NOT_FOUND);
     }
     

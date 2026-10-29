@@ -46,3 +46,7 @@ export const URL_DEFAULT_PROFILE_PICTURE = "https://i.imgur.com/JGmoHaP.jpeg";
 export const S3_FOB_PICTURES_FOLDER = "fob_pictures";
 export const S3_DOWNLOAD_URL_EXPIRATION = 60 * 60; // 1 hour
 export const S3_UPLOAD_URL_EXPIRATION = 60 * 10; // 10 minutes
+
+// Moderation
+// Pictures are automatically hidden once this many different users have reported them
+export const REPORT_HIDE_PICTURE_THRESHOLD = 3;
