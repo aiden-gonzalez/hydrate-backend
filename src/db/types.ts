@@ -30,7 +30,6 @@ export interface AuthTable {
   user_id: string
   hash_pass: string
   hash_salt: string
-  hash_iterations: Generated<number>
 }
 export type Auth = Selectable<AuthTable>
 export type NewAuth = Insertable<AuthTable>

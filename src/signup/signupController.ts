@@ -51,8 +51,7 @@ export async function createAccount(req, res) {
     const auth : Auth = {
       user_id: dbUser.id,
       hash_pass: hash.hash_pass,
-      hash_salt: hash.hash_salt,
-      hash_iterations: hash.hash_iterations
+      hash_salt: hash.hash_salt
     };
     const dbAuth = await db.createAuth(auth);
     if (dbAuth === undefined || dbAuth === null) {

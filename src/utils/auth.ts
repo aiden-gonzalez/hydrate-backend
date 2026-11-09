@@ -46,19 +46,18 @@ export async function authenticateRequest (req, res, next) {
 
 export function hashPass (password : string) : Promise<IHashedPassword> {
   const salt = nodeCrypto.randomBytes(constants.HASH_LEN).toString(constants.HASH_ENCODING);
-  return hashPassWithSalt(password, salt, constants.HASH_ITERATIONS).then((hash) => ({
+  return hashPassWithSalt(password, salt).then((hash) => ({
     hash_pass: hash,
-    hash_salt: salt,
-    hash_iterations: constants.HASH_ITERATIONS
+    hash_salt: salt
   }));
 }
 
-export function hashPassWithSalt (password : string, salt : string, iterations : number): Promise<string> {
+export function hashPassWithSalt (password : string, salt : string): Promise<string> {
   return new Promise((resolve, reject) => {
     nodeCrypto.pbkdf2(
       password,
       salt,
-      iterations,
+      constants.HASH_ITERATIONS,
       constants.HASH_LEN,
       constants.HASH_DIGEST,
       (err, hash) => {
@@ -71,15 +70,9 @@ export function hashPassWithSalt (password : string, salt : string, iterations :
 }
 
 export async function isValidPass (password : string, actualPassword : IHashedPassword) : Promise<boolean> {
-  const iterations = actualPassword.hash_iterations ?? constants.HASH_ITERATIONS_LEGACY;
-  const passwordHash = await hashPassWithSalt(password, actualPassword.hash_salt, iterations);
+  const passwordHash = await hashPassWithSalt(password, actualPassword.hash_salt);
   // Constant time comparison so response timing doesn't leak how much of the hash matched
   const expected = Buffer.from(actualPassword.hash_pass, constants.HASH_ENCODING);
   const actual = Buffer.from(passwordHash, constants.HASH_ENCODING);
   return expected.length === actual.length && nodeCrypto.timingSafeEqual(expected, actual);
-}
-
-// Whether a stored hash should be re-hashed with the current parameters
-export function needsRehash (hashedPassword : IHashedPassword) : boolean {
-  return (hashedPassword.hash_iterations ?? constants.HASH_ITERATIONS_LEGACY) < constants.HASH_ITERATIONS;
 }

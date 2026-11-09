@@ -29,7 +29,6 @@ export const JWT_REFRESH_EXPIRATION  = 604800; // 1 week
 export const HASH_LEN  = 64;
 export const HASH_ENCODING : BufferEncoding = "hex";
 export const HASH_ITERATIONS  = 210000; // OWASP recommendation for PBKDF2-HMAC-SHA512
-export const HASH_ITERATIONS_LEGACY = 100; // Used for accounts created before hash_iterations was stored
 export const HASH_DIGEST  = "sha512";
 
 // ID prefixes
