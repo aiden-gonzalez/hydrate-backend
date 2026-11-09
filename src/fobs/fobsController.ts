@@ -31,7 +31,7 @@ import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // Initialize S3 client once at the top level
@@ -47,12 +47,25 @@ export async function ratingPermissionCheck(req, res, next) {
   // Get rating from the database
   const rating = await db.getRating(ratingId);
 
+  // Rating must exist and belong to this fob
+  if (rating === undefined || rating === null || rating.fob_id !== req.fob.id) {
+    return res.sendStatus(HTTP_NOT_FOUND);
+  }
+
   // Check if user owns rating
-  if (!rating.user_id == userId) {
+  if (rating.user_id !== userId) {
     return res.status(HTTP_FORBIDDEN).send(HTTP_FORBIDDEN_MESSAGE);
   }
 
   // User owns the rating, carry on
+  return next();
+}
+
+export function fobPermissionCheck(req, res, next) {
+  // Only the user who created the fob may perform this action
+  if (req.fob.user_id !== req.user.id) {
+    return res.status(HTTP_FORBIDDEN).send(HTTP_FORBIDDEN_MESSAGE);
+  }
   return next();
 }
 
@@ -135,6 +148,23 @@ export async function updateFob(req, res) {
     const fob = await db.updateFob(req.fob.id, fobUpdate);
     res.status(HTTP_OK).json(fob);
   } catch (error) {
+    res.status(HTTP_INTERNAL_ERROR).send(error);
+  }
+}
+
+export async function deleteFob(req, res) {
+  try {
+    // Remove picture files from storage first (db rows cascade with the fob)
+    const fobPictures = await db.getPicturesForFob(req.fob.id);
+    await Promise.all(fobPictures.map((picture) => s3.send(new DeleteObjectCommand({
+      Bucket: bucketName,
+      Key: picture.url
+    })).catch((error) => console.error("Error deleting picture from S3:", error))));
+
+    await db.deleteFob(req.fob.id);
+    res.sendStatus(HTTP_OK);
+  } catch (error) {
+    console.error("Error deleting fob:", error);
     res.status(HTTP_INTERNAL_ERROR).send(error);
   }
 }
@@ -264,6 +294,9 @@ export async function getFobRating(req, res) {
   // Get fountain rating
   try {
     const fobRating = await db.getRating(ratingId);
+    if (fobRating === undefined || fobRating === null || fobRating.fob_id !== req.fob.id) {
+      return res.sendStatus(HTTP_NOT_FOUND);
+    }
     res.status(HTTP_OK).json(fobRating);
   } catch (error) {
     res.status(HTTP_INTERNAL_ERROR).send(error);
@@ -316,7 +349,7 @@ export async function getFobWithDetails(req, res) {
     // Combine details
     const fobWithDetails : IFobWithDetails = {
       fob,
-      user,
+      user: db.toPublicUser(user),
       pictures,
       ratingsWithDetails
     };

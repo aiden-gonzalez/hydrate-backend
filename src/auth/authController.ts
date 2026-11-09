@@ -41,21 +41,21 @@ export async function validateRefresh(req, res) {
   // Get refresh token from request
   const refreshRequest : IAuthRefreshRequest = req.body;
 
-  // Validate token
-  validateToken(refreshRequest.refresh_token).then((user: IUser) => {
-    // Check that user still exists in db
-    const dbUser = db.getUserById(user.id);
-
-    // If user account is non-existent, then we consider the tokens invalid
-    if (dbUser === undefined || dbUser === null) {
-      return res.sendStatus(constants.HTTP_UNAUTHORIZED);
-    }
-
-    // Send new tokens
-    return res.status(constants.HTTP_OK).send(getAuthSuccessResponse(user));
-  }).catch((error) => {
+  let tokenUser : IUser;
+  try {
+    tokenUser = await validateToken(refreshRequest.refresh_token);
+  } catch (error) {
     return res.sendStatus(constants.HTTP_UNAUTHORIZED);
-  });
+  }
+
+  // Check that user still exists in db.  If user account is non-existent, then we consider the tokens invalid
+  const dbUser = await db.getUserById(tokenUser.id);
+  if (dbUser === undefined || dbUser === null) {
+    return res.sendStatus(constants.HTTP_UNAUTHORIZED);
+  }
+
+  // Send new tokens (using fresh db user so profile / username changes are picked up)
+  return res.status(constants.HTTP_OK).send(getAuthSuccessResponse(dbUser));
 }
 
 export function success(req, res) {

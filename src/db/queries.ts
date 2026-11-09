@@ -130,7 +130,7 @@ export async function getRatingsWithDetailsForFob(fobId: string) : Promise<IRati
   const queryResult : RatingWithDetails[] = await db.selectFrom('rating_with_details')
     .where('fob_id', '=', fobId).selectAll().execute();
 
-  let results : IRatingWithDetails[] = [];
+  const results : IRatingWithDetails[] = [];
   queryResult.forEach(ratingWithDetails => {
     results.push({
       rating: parseTimestamps({
@@ -144,7 +144,6 @@ export async function getRatingsWithDetailsForFob(fobId: string) : Promise<IRati
       user: parseTimestamps({
         id:  ratingWithDetails.user_id,
         username: ratingWithDetails.username,
-        email: ratingWithDetails.email,
         profile: ratingWithDetails.profile,
         created_at: ratingWithDetails.user_created_at,
         updated_at: ratingWithDetails.user_updated_at
@@ -164,6 +163,16 @@ export function updateRating(id: string, updateWith: IRatingDetails) : Promise<R
     details: updateWith
   };
   return parseTimestampsPromise(db.updateTable('rating').set(update).where('id', '=', id).returningAll().executeTakeFirst());
+}
+
+// Strip private fields (email) from a user that is shown to other users
+export function toPublicUser(user: IUser) : IUser {
+  if (user === undefined || user === null) {
+    return user;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { email, ...publicUser } = user;
+  return publicUser as IUser;
 }
 
 // AUTH

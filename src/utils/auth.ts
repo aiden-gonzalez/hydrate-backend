@@ -13,7 +13,7 @@ export function validateToken(token: string) : Promise<IUser> {
   return new Promise((resolve, reject) => {
     jwt.verify(token, process.env.JWT_SECRET, (err, tokenUser) => {
       if (err) {
-        reject(err);
+        return reject(err);
       }
       resolve(tokenUser.user);
     });
@@ -68,7 +68,7 @@ export function hashPassWithSalt (password : string, salt : string): Promise<str
       constants.HASH_DIGEST,
       (err, hash) => {
         if (err) {
-          reject(err);
+          return reject(err);
         }
         resolve(hash.toString(constants.HASH_ENCODING));
       });

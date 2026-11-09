@@ -48,7 +48,10 @@
                         "description": "Filter Fobs by type (fountain or bathroom)",
                         "schema": {
                             "type": "string",
-                            "enum": ["fountain", "bathroom"]
+                            "enum": [
+                                "fountain",
+                                "bathroom"
+                            ]
                         },
                         "in": "query",
                         "required": false
@@ -489,7 +492,7 @@
                 "summary": "Get picture upload link for a Fob"
             }
         },
-       "/api/pictures/{id}": {
+        "/api/pictures/{id}": {
             "summary": "Get, update status, or delete a specific picture by its ID",
             "parameters": [
                 {
@@ -544,7 +547,9 @@
                                         "description": "Updated pending status of the picture"
                                     }
                                 },
-                                "required": ["pending"]
+                                "required": [
+                                    "pending"
+                                ]
                             }
                         }
                     },
@@ -649,8 +654,12 @@
                             "schema": {
                                 "description": "Details of the rating, specific to the type of Fob",
                                 "oneOf": [
-                                    { "$ref": "#/components/schemas/FountainRatingDetails" },
-                                    { "$ref": "#/components/schemas/BathroomRatingDetails" }
+                                    {
+                                        "$ref": "#/components/schemas/FountainRatingDetails"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/BathroomRatingDetails"
+                                    }
                                 ]
                             }
                         }
@@ -730,7 +739,15 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Rating"
+                                "description": "Details of the rating, specific to the type of Fob",
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/components/schemas/FountainRatingDetails"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/BathroomRatingDetails"
+                                    }
+                                ]
                             }
                         }
                     },
@@ -786,7 +803,7 @@
             ]
         },
         "/api/fobs/{id}": {
-            "summary": "Primary endpoint for retrieving (GET) and updating (PUT) a Fob.",
+            "summary": "Primary endpoint for retrieving (GET), updating (PUT) and deleting (DELETE) a Fob.",
             "get": {
                 "responses": {
                     "200": {
@@ -865,7 +882,29 @@
                     "in": "path",
                     "required": true
                 }
-            ]
+            ],
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "Fob successfully deleted"
+                    },
+                    "401": {
+                        "description": "Invalid auth"
+                    },
+                    "403": {
+                        "description": "Only the creator of a Fob may delete it"
+                    },
+                    "404": {
+                        "description": "Fob not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
+                "summary": "Delete a Fob (creator only)"
+            }
         },
         "/api/fobs/{id}/details": {
             "summary": "Retrieve detailed information about a Fob, including all pictures and ratings",
@@ -1043,7 +1082,6 @@
                 "description": "",
                 "required": [
                     "username",
-                    "email",
                     "profile",
                     "id"
                 ],
@@ -1054,7 +1092,7 @@
                         "type": "string"
                     },
                     "email": {
-                        "description": "Email address of user",
+                        "description": "Email address of user. Only included when the user is the authenticated user.",
                         "type": "string"
                     },
                     "profile": {
@@ -1132,8 +1170,12 @@
                     "details": {
                         "description": "Details of the rating, specific to the type of Fob",
                         "oneOf": [
-                            { "$ref": "#/components/schemas/FountainRatingDetails" },
-                            { "$ref": "#/components/schemas/BathroomRatingDetails" }
+                            {
+                                "$ref": "#/components/schemas/FountainRatingDetails"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BathroomRatingDetails"
+                            }
                         ]
                     },
                     "created_at": {
@@ -1169,7 +1211,10 @@
                         "$ref": "#/components/schemas/User"
                     }
                 },
-                "required": ["rating", "user"],
+                "required": [
+                    "rating",
+                    "user"
+                ],
                 "example": {
                     "rating": {
                         "id": "rating123",
@@ -1244,7 +1289,11 @@
                 }
             },
             "PictureSignedUrl": {
-                "required": ["picture_id", "signed_url", "expires"],
+                "required": [
+                    "picture_id",
+                    "signed_url",
+                    "expires"
+                ],
                 "type": "object",
                 "properties": {
                     "picture_id": {
@@ -1352,8 +1401,12 @@
                     "info": {
                         "description": "Info about the Fob, can be either FountainInfo or BathroomInfo",
                         "oneOf": [
-                            { "$ref": "#/components/schemas/FountainInfo" },
-                            { "$ref": "#/components/schemas/BathroomInfo" }
+                            {
+                                "$ref": "#/components/schemas/FountainInfo"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BathroomInfo"
+                            }
                         ]
                     },
                     "created_at": {
@@ -1783,7 +1836,10 @@
                 "properties": {
                     "type": {
                         "description": "Type of the Fob",
-                        "enum": ["fountain", "bathroom"]
+                        "enum": [
+                            "fountain",
+                            "bathroom"
+                        ]
                     },
                     "name": {
                         "description": "Name of the Fob",
@@ -1795,8 +1851,12 @@
                     "info": {
                         "description": "Details about the Fob",
                         "oneOf": [
-                            { "$ref": "#/components/schemas/FountainInfo" },
-                            { "$ref": "#/components/schemas/BathroomInfo" }
+                            {
+                                "$ref": "#/components/schemas/FountainInfo"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BathroomInfo"
+                            }
                         ]
                     }
                 },
@@ -1836,7 +1896,12 @@
                         }
                     }
                 },
-                "required": ["fob", "user", "pictures", "ratingsWithDetails"],
+                "required": [
+                    "fob",
+                    "user",
+                    "pictures",
+                    "ratingsWithDetails"
+                ],
                 "example": {
                     "fob": {
                         "id": "fob123",
