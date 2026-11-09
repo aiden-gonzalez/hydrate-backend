@@ -190,8 +190,7 @@ export function updateAuthForUser(userId: string, newPassword: string): Promise<
   return hashPass(newPassword).then((hashed) => {
     return parseTimestampsPromise(db.updateTable('auth').set({
       hash_pass: hashed.hash_pass,
-      hash_salt: hashed.hash_salt,
-      hash_iterations: hashed.hash_iterations
+      hash_salt: hashed.hash_salt
     }).where('user_id', '=', userId).returningAll().executeTakeFirstOrThrow());
   });
 }

@@ -1,4 +1,4 @@
-import {generateToken, isValidPass, needsRehash, validateToken} from "../utils/auth";
+import {generateToken, isValidPass, validateToken} from "../utils/auth";
 import {IPasswordResetRequest, IPasswordResetResetRequest, IAuthRefreshRequest, IAuthRequest, IAuthSuccessResponse} from "./types";
 import {IHashedPassword, IUser} from "../utils/types";
 import * as constants from "../utils/constants";
@@ -31,11 +31,6 @@ export async function validatePassword (req, res) {
   const passwordValid = await isValidPass(authRequest.user_credentials.password, hashed_password);
   if (!passwordValid) {
     return res.sendStatus(constants.HTTP_UNAUTHORIZED);
-  }
-
-  // Upgrade hashes made with older, weaker parameters now that we have the plain password
-  if (needsRehash(hashed_password)) {
-    await db.updateAuthForUser(user.id, authRequest.user_credentials.password);
   }
 
   // Send tokens

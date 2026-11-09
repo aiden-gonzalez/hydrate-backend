@@ -3,7 +3,7 @@ import {expect} from "chai";
 import app from "./app";
 import * as db from "./db/queries";
 import * as constants from "./utils/constants";
-import {generateToken, hashPass, hashPassWithSalt} from "./utils/auth";
+import {generateToken, hashPass} from "./utils/auth";
 import {getDb} from "./db/database";
 import {getFountain, getFountainRating, getLocation, getPicture, getUser} from "./testHelper.test";
 import {hashPasswordResetCode} from "./utils/generate";
@@ -282,24 +282,6 @@ describe("API: end to end requests through the express app", () => {
     async function login(email: string, password: string) {
       return request(app).post("/api/auth/").send({user_credentials: {email, password}});
     }
-
-    it("upgrades legacy password hashes on login", async () => {
-      const user = await db.createUser(await getUser("legacy", "legacy@example.com"));
-      const salt = "legacysalt";
-      await db.createAuth({
-        user_id: user.id,
-        hash_salt: salt,
-        hash_pass: await hashPassWithSalt("password123", salt, constants.HASH_ITERATIONS_LEGACY),
-        hash_iterations: constants.HASH_ITERATIONS_LEGACY
-      });
-
-      expect((await login("legacy@example.com", "password123")).status).to.equal(constants.HTTP_OK);
-
-      const upgraded = await db.getAuthForUser(user.id);
-      expect(upgraded.hash_iterations).to.equal(constants.HASH_ITERATIONS);
-      expect((await login("legacy@example.com", "password123")).status).to.equal(constants.HTTP_OK);
-      expect((await login("legacy@example.com", "wrong password")).status).to.equal(constants.HTTP_UNAUTHORIZED);
-    });
 
     it("resets a password with an emailed code, accepting lower case and dashes", async () => {
       const user = await createUser("forgetful", "forgetful@example.com");
