@@ -26,12 +26,12 @@ import {
   generateFountainRatingId,
   generatePictureId,
 } from "../utils/generate";
-import {generateCloudfrontSignedUrl, generateS3PictureKey, getS3Client} from "../utils/aws";
+import {deletePictureObjects, generateCloudfrontSignedUrl, generateS3PictureKey, getS3Client} from "../utils/aws";
 import {IFountainRatingDetails, IBathroomRatingDetails} from "./types";
 import {NewFob} from "../db/types";
 import {ratingDetailValueValidator} from "../utils/validation";
 import {IPicture, IPictureSignedUrl} from "../pictures/types";
-import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // Initialize S3 client once at the top level
@@ -156,10 +156,7 @@ export async function deleteFob(req, res) {
   try {
     // Remove picture files from storage first (db rows cascade with the fob)
     const fobPictures = await db.getPicturesForFob(req.fob.id);
-    await Promise.all(fobPictures.map((picture) => s3.send(new DeleteObjectCommand({
-      Bucket: bucketName,
-      Key: picture.url
-    })).catch((error) => console.error("Error deleting picture from S3:", error))));
+    await deletePictureObjects(fobPictures);
 
     await db.deleteFob(req.fob.id);
     res.sendStatus(HTTP_OK);
@@ -180,7 +177,7 @@ export async function getFobPicturesUrls(req, res) {
 
     // Generate signed URLs for each picture in the fobPictures array that is not pending
     const signedUrls = fobPictures
-      .filter((picture) => !picture.pending)
+      .filter((picture) => !picture.pending && !picture.hidden)
       .map(generateCloudfrontSignedUrl);
 
     res.status(HTTP_OK).json(signedUrls);
@@ -340,7 +337,7 @@ export async function getFobWithDetails(req, res) {
 
     // Filter for pending and replace picture URLs with signed cloudfront URLs
     const pictures = dbPictures
-      .filter((picture) => !picture.pending)
+      .filter((picture) => !picture.pending && !picture.hidden)
       .map((picture) => ({
         ...picture,
         url: generateCloudfrontSignedUrl(picture).signed_url

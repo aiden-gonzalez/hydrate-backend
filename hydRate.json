@@ -1074,6 +1074,74 @@
                 "summary": "Get contributions for the authenticated user",
                 "description": "Uses an optimized database query to get the authenticated user's created fountains, bathrooms, ratings, and pictures without requiring the username in the path."
             }
+        },
+        "/api/me": {
+            "summary": "Endpoint for the authenticated user's account",
+            "delete": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DeleteAccountRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Account and the user's ratings and pictures were permanently deleted"
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Invalid auth or wrong password"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
+                "summary": "Permanently delete the authenticated user's account",
+                "description": "Deletes the user, their credentials, ratings and pictures. Fobs (places) they created are kept as community data but are no longer linked to an account."
+            }
+        },
+        "/api/reports": {
+            "summary": "Endpoint for reporting objectionable content",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReportRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Report received"
+                    },
+                    "400": {
+                        "description": "Malformed request"
+                    },
+                    "401": {
+                        "description": "Invalid auth"
+                    },
+                    "404": {
+                        "description": "Reported content not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Access_Token": []
+                    }
+                ],
+                "summary": "Report a Fob, picture or user"
+            }
         }
     },
     "components": {
@@ -1277,6 +1345,10 @@
                     "updated_at": {
                         "description": "Updated timestamp.  Unix epoch milliseconds.",
                         "type": "integer"
+                    },
+                    "hidden": {
+                        "description": "Whether the picture has been hidden by moderation (e.g. after multiple reports).",
+                        "type": "boolean"
                     }
                 },
                 "example": {
@@ -1879,7 +1951,8 @@
                         "$ref": "#/components/schemas/Fob"
                     },
                     "user": {
-                        "$ref": "#/components/schemas/User"
+                        "$ref": "#/components/schemas/User",
+                        "description": "User that created the Fob. Absent if that user has deleted their account."
                     },
                     "pictures": {
                         "description": "Array of pictures associated with the Fob",
@@ -1898,7 +1971,6 @@
                 },
                 "required": [
                     "fob",
-                    "user",
                     "pictures",
                     "ratingsWithDetails"
                 ],
@@ -1998,6 +2070,65 @@
                             }
                         }
                     ]
+                }
+            },
+            "DeleteAccountRequest": {
+                "description": "Request to permanently delete the authenticated user's account",
+                "required": [
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "description": "Current password, to confirm the deletion",
+                        "type": "string"
+                    }
+                }
+            },
+            "ReportRequest": {
+                "description": "Report objectionable user-generated content",
+                "required": [
+                    "content_type",
+                    "content_id",
+                    "reason"
+                ],
+                "type": "object",
+                "properties": {
+                    "content_type": {
+                        "description": "Type of content being reported",
+                        "type": "string",
+                        "enum": [
+                            "fob",
+                            "picture",
+                            "user"
+                        ]
+                    },
+                    "content_id": {
+                        "description": "ID of the Fob or picture, or username of the user, being reported",
+                        "type": "string"
+                    },
+                    "reason": {
+                        "description": "Reason for the report",
+                        "type": "string",
+                        "enum": [
+                            "spam",
+                            "inappropriate",
+                            "offensive",
+                            "inaccurate",
+                            "other"
+                        ]
+                    },
+                    "details": {
+                        "description": "Optional extra details from the reporter",
+                        "type": "string",
+                        "maxLength": 1000
+                    }
+                },
+                "example": {
+                    "content_type": "picture",
+                    "content_id": "pic_123",
+                    "reason": "inappropriate",
+                    "details": "Not a picture of a fountain"
                 }
             }
         },

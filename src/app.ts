@@ -8,6 +8,7 @@ import profilesRouter from './profiles/profilesRouter';
 import meRouter from './profiles/meRouter';
 import signupRouter from './signup/signupRouter';
 import picturesRouter from './pictures/picturesRouter';
+import reportsRouter from './reports/reportsRouter';
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use('/api/profiles', profilesRouter);
 app.use('/api/me', meRouter);
 app.use('/api/signup', signupRouter);
 app.use('/api/pictures', picturesRouter);
+app.use('/api/reports', reportsRouter);
 
 // Base endpoint
 app.get('/', (req, res) => {
